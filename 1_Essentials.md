@@ -994,3 +994,9 @@ a = b * 2;
 - The combination of promises and generators that **"yields"** our most effective asynchronous coding pattern to date in **Javascript**.
 - To be serious about programming effectively in an async world, you're going to need to get really comfortable with combining promises and generators.
 - You should take a program from **"it works"** to **"it works well"**.
+
+## ES6 & Beyond
+
+- **Javascript** evoulation is increasing rapidly.
+- ES6 includes new syntax, new data structures (collections), new processing capabilities and new API's.
+- ES6 have some exciting things to look forward to reading about: destructuring, default parameter values, symbols, concise methods, computed properties, arrow functions, block scoping, promises, generators, iterators, modules, proxies,weakmaps and much, much more.
