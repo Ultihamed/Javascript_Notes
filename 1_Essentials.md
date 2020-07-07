@@ -1,4 +1,4 @@
-# Preface
+# Essentials
 
 ![Javascript](https://www.educative.io/api/page/5330288608542720/image/download/6288755792019456)
 
