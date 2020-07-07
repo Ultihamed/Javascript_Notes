@@ -971,3 +971,16 @@ a = b * 2;
 
 - The `undefined` is the only value that can't get explicitly passed in for a default-value parameter, but the transpiled code makes that much more clear.
 - You can use **Babel** and **Traceur** for transpiling.
+
+## Non-JavaScript
+
+- The most common non-JavaScript JavaScript you'll encounter is the DOM API. For example:
+
+    ```js
+    var el = document.getElementById("foo");
+    ```
+
+    The `document` variable exists as a global variable when your code is running in a browser. It's not provided by the **Javascript** engine. These kind of variables are called **"host objects"**. `getElementById(..)` is also a built-in method on `document` provided by the DOM from your browser.
+
+- `alert(..)` is provided to your **Javascript** program by the browser, not by the **Javascript** engine itself. The same goes with `console.log(..)`.
+- You need to be aware of non-**Javascript** variable or methods, as they'll be in every **Javascript** program you write.
