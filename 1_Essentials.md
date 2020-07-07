@@ -903,3 +903,71 @@ a = b * 2;
     4. `new foo()` sets `this` to a brand new empty object.
 
 ## Prototypes
+
+- You could think of prototype almost as a fallback if the property is missing.
+- Consider:
+
+    ```js
+    var foo() {
+        a: 42;
+    }
+
+    // create `bar` and link it to `foo`
+    var bar = Object.create(foo);
+
+    bar.b = "hello world";
+
+    bar.b; // "hello world"
+    bar.a; // 42 <-- delegated to `foo`
+    ```
+
+    The `a` property doesn't actually exist on the `bar` object, but because `bar` is prototype-linked to `foo`, **Javascript** automatically falls back to looking for `a` on the `foo` object, where it's found.
+
+## Polyfilling
+
+- Consider:
+
+    ```js
+    if (!Number.isNaN) {
+        Number.isNaN = function isNaN(x) {
+            return x !== x;
+        };
+    }
+    ```
+
+    The `if` statement guards againts applying the polyfill definition in ES6 browsers where it will already exist. If it's not already present, we define `Number.isNaN(..)`.
+
+  - The `NaN` value is the only one that would make `x !== x` be `true`.
+  - The `NaN` is the only value in the whole language that is not equal to itself.
+
+## Transpiling
+
+- Transpiling means transforming + compiling.
+- The new syntax added to the language is designed to make your code more readable and maintainable and you should prefer writing newer and cleaner syntax, not only for yourself but for all other memebers of the development team.
+- Using the new syntax earlier allows it to be tested more robustly in the real world, which provides earlier feedback to the **Javascript** committee (TC39).
+- ES6 adds a feature called **"default parameter values"**. It looks like this:
+
+    ```js
+    function foo(a = 2) {
+        console.log(a);
+    }
+
+    foo(); // 2
+    foo(42); // 42
+    ```
+
+    So this new syntax is invalid in pre-ES6 engines. The transpiler should make it run in older environments, like this:
+
+    ```js
+    // `void 0` means `undefined`
+    function foo() {
+        var a = arguments[0] !== (void 0) ? arguments[0] : 2;
+        console.log(a);
+    }
+
+    foo(); // 2
+    foo(42); // 42
+    ```
+
+- The `undefined` is the only value that can't get explicitly passed in for a default-value parameter, but the transpiled code makes that much more clear.
+- You can use **Babel** and **Traceur** for transpiling.
