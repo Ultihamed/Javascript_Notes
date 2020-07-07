@@ -984,3 +984,13 @@ a = b * 2;
 
 - `alert(..)` is provided to your **Javascript** program by the browser, not by the **Javascript** engine itself. The same goes with `console.log(..)`.
 - You need to be aware of non-**Javascript** variable or methods, as they'll be in every **Javascript** program you write.
+
+## Async & Performance
+
+- The callback alone is hopelessly insufficient for the modern demands of asynchronous programming.
+- There are two major deficiencies of callbacks-only coding: Inversion of Control (IoC) trust loss and lack of linear reason-ability. ES6 introduces two new mechanisms (and indeed, patterns): **Promises** and **Generators**.
+- Promises are a time-independent wrapper around a "future value," which lets you reason about and compose them regardless of if the value is ready or not yet. Moreover, they effectively solve the IoC trust issues by routing callbacks through a trustable and composable promise mechanism.
+- The generator can be paused `yield` points and be resumed asynchronously later.
+- The combination of promises and generators that **"yields"** our most effective asynchronous coding pattern to date in **Javascript**.
+- To be serious about programming effectively in an async world, you're going to need to get really comfortable with combining promises and generators.
+- You should take a program from **"it works"** to **"it works well"**.
