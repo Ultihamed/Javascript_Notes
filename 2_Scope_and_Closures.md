@@ -47,3 +47,10 @@
 
     The RHS reference for `b` cannot be resolved inside the function `foo`, but it can be resolved in the scope surrounding it (in this case, the global).
 - The simple rules for traversing nested scope: **Engine** starts at the currently executing scope, looks for the variable there, then if not found, keeps going up one level, and so on. If the outermost global scope is reached, the search stops, whether it finds the variable or not.
+
+## Errors
+
+- If an RHS look-up fails to ever find a variable, anywhere in the nested scopes, this results in a `ReferenceError` being thrown by the **Engine**. It's important to note that the error is of the type `ReferenceError`.
+- if the **Engine** is performing an LHS look-up and arrives at the top floor (global scope) without finding it, and if the program is not running in **"Strict Mode"**, then the global scope will create a new variable of that name **in the global scope**, and hand it back to **Engine**.
+- Strict mode behavior is that it disallows the automatic/implicit global variable creation and **Engine** whould throw a `ReferenceError`.
+- if a variable is found for an RHS look-up, but you try to do something with its value that is impossible, such as trying to execute-as-function a non-function value, or reference a property on a `null` or `undefined` value, then **Engine** throws a different kind of error, called a `TypeError`.
