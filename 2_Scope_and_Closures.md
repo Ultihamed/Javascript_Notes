@@ -133,3 +133,42 @@
 ## Performance
 
 - Using both `eval(..)` and `with` will decrease **Javascript Engine**'s performance, because it cannot know at lexing time exactly what code you may pass to `eval(..)` to modify the lexical scope, or the contents of the object you may pass to `with` to create a new lexical scope to be consulted. **Don't use them at all**.
+
+## Hiding In Plain Scope
+
+- You can **"hide"** variables and functions by enclosing them in the scope of a function.
+- Giving the enclosing scope "access" to some variables which are unnecessary, may be **"dangerous"**. For example you should do like this:
+
+    ```js
+    function doSomething(a) {
+        function doSomethingElse(a) {
+            return a - 1;
+        }
+
+        var b;
+
+        b = a + doSomethingElse(a * 2);
+
+        console.log(b * 3);
+    }
+
+    doSomething(2); // 15
+    ```
+
+    Instead doing:
+
+    ```js
+    function doSomething(a) {
+        b = a + doSomethingElse(a * 2);
+
+        console.log(b * 3);
+    }
+
+    function doSomethingElse(a) {
+        return a - 1;
+    }
+
+    var b;
+
+    doSomething(2); // 15
+    ```
