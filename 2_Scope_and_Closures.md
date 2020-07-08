@@ -20,3 +20,13 @@
 
 - Scope is **Javascript Engine** friend, that collects and maintains list of all identifiers (variables), and enforces a strict set of rules as to how these are accessible to currently executing code.
 - Consider: `var a = 2;`. Encountering `var a`, **Compiler** asks scope to see if a variable exists for that particular scope collection. If so, **Compiler** ignores this declaration and moves on. Otherwise, **Compiler** asks scope to declare a new variable called `a` for that scope collection. The code **Engine** runs will ask scope if there is a variable called `a` accessible in the current scope collection. If so, **Engine** uses that variable. If not, **Engine** looks elsewhere. To summarize: two distinct actions are taken for a variable assignment: First, **Compiler** declares a variable (if not previously declared in the current scope), and second, when executing, **Engine** looks up the variable in Scope and assigns to it, if found.
+
+## Compiler Speak
+
+- An **LHS** (**L**eft-**H**and **S**ide) look-up is done when a variable appears on the left-hand side of an assignment operation, and an **RHS** (**R**ight-**H**and **S**ide) look-up is done when a variable appears on the right-hand side of an assignment operation.
+- LHS look-up is trying to find the variable container itself. RHS look-up is indistinguishable and it means **"go get that value of..."**.
+- Consider: `console.log(a)`. The reference to `a` is an RHS reference.
+- Consider: `a = 2;`. The reference to `a` is an LHS reference.
+- It's better to conceptually think about LHS as "who's the target of the assignment".
+- It's better to conceptually think about RHS as "who's the source of the assignment".
+- To (implicitly) assign to a function parameter, an LHS look-up is performed, like `function foo(a) {..}`.
