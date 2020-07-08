@@ -210,3 +210,8 @@
         }
     };
     ```
+
+## Module Management
+
+- Another option for collision avoidance is the more modern **"module"** approach, using any of various dependency managers.
+- Modules are kept in private, non-collision-susceptible scopes, which prevents any accidental scope coillisions.
