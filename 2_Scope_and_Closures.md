@@ -219,3 +219,29 @@
 ## Functions As Scopes
 
 - The easiest way to distinguish function declaration vs. function expression is the position of the word "function" in the statement (not just a line, but a distinct statement). If "function" is the very first thing in the statement, then it's a function declaration. Otherwise, it's a function expression. In other words, `(function foo(){ .. })` as an expression means the identifier `foo` is found only in the scope where the `..` indicates, not in the outer scope. Hiding the name `foo` inside itself means it's not pollute the enclosing scope unnecessarily.
+
+## Anonymous vs. Named
+
+- Consider:
+
+    ```js
+    setTimeout( function(){
+        console.log("I waited 1 second!");
+    }, 1000 );
+    ```
+
+    This is called an **"anonymous function expression"**, becauses `function()...` has no name identifier on it.
+
+- Function expressions can be anonymous, but function declarations cannot omit the name. That would be illegal **Javascript** grammer.
+- Anonymous functions have some draw-backs:
+    1. Anonymous functions have no useful name to display in stack traces, which can make debugging more difficult.
+    2. Event handler function wants to unbind itself after it fires. With anonymous it can't, because the function need a name to self-referencing.
+    3. Anonymous functions omit a name that is often helpful in providing more readable/understandable code. A descriptive name helps self-document the code in question.
+- Inline function expressions are powerful and useful.
+- Providing a name for your function expression quite effectively addresses all these draw-backs, but has no tangible downsides. The best practice is to always name your function expressions:
+
+    ```js
+    setTimeout(function timeOutHandler() { // <-- Look, I have a name!
+        console.log("I waited 1 second");
+    }), 1000);
+    ```
