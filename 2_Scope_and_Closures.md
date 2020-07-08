@@ -193,3 +193,20 @@
     ```
 
     Here you can type `var i = 3` instead of `i = 3` to solve this infinite loop problem.
+
+## Global "NameSpaces"
+
+- Multiple libraries loaded into your program can quite easily collide with each other if the don't properly hide their internal/private functions and variables.
+- Libraries typically will create a single variable declaration, often an object with a sufficiently unique name, in the global scope. This object is then used as a **"namespace"** for that library, where all specific exposures of functionality are made as properties off that object (namespace), rather than as top-level lexically scoped identifiers themselves. For example:
+
+    ```js
+    var MyRealCoolLibrary = {
+        awesome: "stuff",
+        doSomething: function () {
+            // ....
+        },
+        doAnotherThing: function () {
+            // ...
+        }
+    };
+    ```
