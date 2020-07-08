@@ -215,3 +215,7 @@
 
 - Another option for collision avoidance is the more modern **"module"** approach, using any of various dependency managers.
 - Modules are kept in private, non-collision-susceptible scopes, which prevents any accidental scope coillisions.
+
+## Functions As Scopes
+
+- The easiest way to distinguish function declaration vs. function expression is the position of the word "function" in the statement (not just a line, but a distinct statement). If "function" is the very first thing in the statement, then it's a function declaration. Otherwise, it's a function expression. In other words, `(function foo(){ .. })` as an expression means the identifier `foo` is found only in the scope where the `..` indicates, not in the outer scope. Hiding the name `foo` inside itself means it's not pollute the enclosing scope unnecessarily.
