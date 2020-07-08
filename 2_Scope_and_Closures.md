@@ -30,3 +30,20 @@
 - It's better to conceptually think about LHS as "who's the target of the assignment".
 - It's better to conceptually think about RHS as "who's the source of the assignment".
 - To (implicitly) assign to a function parameter, an LHS look-up is performed, like `function foo(a) {..}`.
+
+## Nested Scope
+
+- If a variable cannot be found in the immediate scope, **Engine** consults the next outer containing scope, continuing until found or until the outermost (aka, global) scope has been reached. Consider:
+
+    ```js
+    function foo(a) {
+        console.log(a + b);
+    }
+
+    var b = 2;
+
+    foo(2); // 4
+    ```
+
+    The RHS reference for `b` cannot be resolved inside the function `foo`, but it can be resolved in the scope surrounding it (in this case, the global).
+- The simple rules for traversing nested scope: **Engine** starts at the currently executing scope, looks for the variable there, then if not found, keeps going up one level, and so on. If the outermost global scope is reached, the search stops, whether it finds the variable or not.
