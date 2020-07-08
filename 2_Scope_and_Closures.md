@@ -172,3 +172,24 @@
 
     doSomething(2); // 15
     ```
+
+## Collision Avoidance
+
+- You can avoid unintended collision between two different identifiers with the same name. For example:
+
+    ```js
+    function foo() {
+        function bar(a) {
+            i = 3; // changing the `i` in the enclosing scope's for-loop
+            console.log(a + i);
+        }
+
+        for (var i = 0; i < 10; i++) {
+            bar(i * 2); // oops, infinite loop ahead!
+        }
+    }
+
+    foo();
+    ```
+
+    Here you can type `var i = 3` instead of `i = 3` to solve this infinite loop problem.
