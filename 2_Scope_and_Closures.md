@@ -129,3 +129,7 @@
     Don't use `with` anymore. It's now **deprecated**.
 - The `with` statement takes an object, one which has zero or more properties, and treats that object as if it is a wholly separate lexical scope, and thus the object's properties are treated as lexically defined identifiers in that "scope". The `with` statement actually creates a whole new lexical scope out of thin air, from the object you pass to in.
 - In addition to being a bad idea to use, both `eval(..)` and `with` are affected (restricted) by **strict mode**.
+
+## Performance
+
+- Using both `eval(..)` and `with` will decrease **Javascript Engine**'s performance, because it cannot know at lexing time exactly what code you may pass to `eval(..)` to modify the lexical scope, or the contents of the object you may pass to `with` to create a new lexical scope to be consulted. **Don't use them at all**.
