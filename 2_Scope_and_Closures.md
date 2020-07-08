@@ -80,3 +80,52 @@
   - Had there been a `c` both inside of `bar(..)` and inside of `foo(..)`, the `console.log(..)` statement would have found and used the one in `bar(..)`, never getting to the one in `foo(..)`.
 - Scope look-ups stops once it finds the first match. The same identifier name can be specified at multiple layers of nested scope, which is called **"shadowing"** (the inner identifier "shadows" the outer identifier).
 - `a = 5` actually is `window.a = 5`. So global variables are also automatically properties of the global object (`window` in browsers, etc).
+
+## Cheating Lexical
+
+- Cheating lexical scope leads to poorer performance.
+- Consider:
+
+    ```js
+    function foo(str, a) {
+        eval(str); // cheating!
+        console.log(a, b);
+    }
+
+    var b = 2;
+
+    foo("var b = 3;", 1); // 1, 3
+    ```
+
+    This `eval(..)` take takes a string a as an argument, and threats the contents of the string as if it had actually been authored code at that point in the program. This code actually creates variable `b` inside of `foo(..)` that shadows the `b` that was declared in the outer (global) scope.
+- `eval(..)` is usually used to execute dynamically create code, as dynamically evaluating essentially static code from a string literal would provide no real benefit to just authoring the code directly.
+- `eval(..)` can modifies the existing lexical scope.
+- This `eval(..)` is old, legacy behavior and long-since **deprecated**.
+- The `new Function (..)` function constructors similarly takes a string of code in its last argument to turn into a dynamically-generated function. This function-constructor syntax is slightly safer than `eval(..)`, but it should still be avoided in your code.
+- `with` is typically explained as a short-hand for making multiple property references against an object without repeating the object reference itself each time. For example:
+
+    ```js
+    var obj = {
+        a: 1,
+        b: 2,
+        c: 3
+    };
+
+    // more "tedious" to repeat "obj"
+    obj.a = 2;
+    obj.b = 3;
+    obj.c = 4;
+
+    // "easier" short-hand
+    with (obj) {
+        a = 3;
+        b = 4;
+        c = 5;
+    }
+
+    console.log(obj.c); // 5
+    ```
+
+    Don't use `with` anymore. It's now **deprecated**.
+- The `with` statement takes an object, one which has zero or more properties, and treats that object as if it is a wholly separate lexical scope, and thus the object's properties are treated as lexically defined identifiers in that "scope". The `with` statement actually creates a whole new lexical scope out of thin air, from the object you pass to in.
+- In addition to being a bad idea to use, both `eval(..)` and `with` are affected (restricted) by **strict mode**.
