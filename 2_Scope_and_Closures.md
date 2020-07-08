@@ -54,3 +54,29 @@
 - if the **Engine** is performing an LHS look-up and arrives at the top floor (global scope) without finding it, and if the program is not running in **"Strict Mode"**, then the global scope will create a new variable of that name **in the global scope**, and hand it back to **Engine**.
 - Strict mode behavior is that it disallows the automatic/implicit global variable creation and **Engine** whould throw a `ReferenceError`.
 - if a variable is found for an RHS look-up, but you try to do something with its value that is impossible, such as trying to execute-as-function a non-function value, or reference a property on a `null` or `undefined` value, then **Engine** throws a different kind of error, called a `TypeError`.
+
+## Lex-time & Look-ups
+
+- Consider:
+
+    ```js
+    function foo(a) {
+
+        var b = a * 2;
+
+        function bar(c) {
+            console.log(a, b, c);
+        }
+
+        bar(b * 3);
+    }
+
+    foo(2); // 2 4 12
+    ```
+
+  - The global scope has just one identifier in it: `foo`.
+  - The scope of `foo` includes the three identifiers: `a`, `bar`, `c`.
+  - The scope of `bar` includes just one identifier: `c`.
+  - Had there been a `c` both inside of `bar(..)` and inside of `foo(..)`, the `console.log(..)` statement would have found and used the one in `bar(..)`, never getting to the one in `foo(..)`.
+- Scope look-ups stops once it finds the first match. The same identifier name can be specified at multiple layers of nested scope, which is called **"shadowing"** (the inner identifier "shadows" the outer identifier).
+- `a = 5` actually is `window.a = 5`. So global variables are also automatically properties of the global object (`window` in browsers, etc).
