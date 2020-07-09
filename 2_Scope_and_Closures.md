@@ -349,6 +349,8 @@
     // Error: Cannot access 'bar' before initialization
     ```
 
+- A particular case where `let` shines is in the for-loop case.
+
 ## Garbage Collection
 
 - Declaring explicit blocks for variables to locally bind to is a powerful tool that you can add to your code toolbox. Consider:
@@ -391,3 +393,24 @@
     ```
 
 - **Javascript Engine** have automatic memory management known as garbage collection (GC).
+
+## `const`
+
+- Any attempt to change `const` value at a later time results in an error.
+- `const` means constant (fixed value).
+- `const` block-scoping is like `let` block-scoping. For example:
+
+    ```js
+    var foo = true;
+
+    if (foo) {
+        var a = 2;
+        const b = 3; // block-scoped to the containing `if`
+
+        a = 3; // just fine!
+        b = 4; // error!
+    }
+
+    console.log(a); // 3
+    console.log(b); // ReferenceError!
+    ```
