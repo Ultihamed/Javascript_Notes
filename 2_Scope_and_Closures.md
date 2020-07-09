@@ -289,3 +289,18 @@
     ```
 
 - Block scope is a tool to hiding information in functions to hiding information in blocks of our code.
+
+## `try/catch`
+
+- Many linters seem to still complain if you have two or more `catch` clauses in the same scope which each declare their error variable with the same identifier name. To avoid these unnecessary warnings, some devs will name their `catch` variables `err1`, `err2`, etc. Other devs will simply turn off the linting check for duplicate variable names. For example:
+
+    ```js
+    try {
+        undefined(); // illegal operation to force an exception!
+    }
+    catch (err) {
+        console.log(err); // works!
+    }
+
+    console.log(err); // ReferenceError: `err` not found
+    ```
