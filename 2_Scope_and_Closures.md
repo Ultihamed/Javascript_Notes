@@ -556,3 +556,119 @@
     ```
 
 - Avoid declaring functions in blocks.
+
+## Closures
+
+- Closure is all around you in **Javascript**, you just have to recognize and embrace it.
+- You do not even really have to intentionally create closures to take advantage of them.
+- Consider and remember:
+
+    ```js
+    function foo() {
+        var a = 2;
+
+        function bar() {
+            console.log(a);
+        }
+
+        return bar; // return a function
+    }
+
+    var baz = foo();
+
+    baz(); // 2 -- Whoa, closure was just observed, man.
+    ```
+
+- Closure lets the function continue to access the lexical scope it was defined in at author-time.
+- Consider:
+
+    ```js
+    function foo() {
+        var a = 2;
+
+        function baz() {
+            console.log(a); // 2
+        }
+
+        bar(baz);
+    }
+
+    function bar(fn) {
+        fn(); // look ma, I saw closure!
+    }
+    ```
+
+    These passings-around of functions can be indirect, too:
+
+    ```js
+    var fn;
+
+    function foo() {
+        var a = 2;
+
+        function baz() {
+            console.log(a);
+        }
+
+        fn = baz; // assign `baz` to global variable
+    }
+
+    function bar() {
+        fn(); // look ma, I saw closure!
+    }
+
+    foo();
+
+    bar(); // 2
+    ```
+
+- All kind of **Javascript** frameworks (like jQuery or etc) uses closures:
+
+    ```js
+    // jQuery
+    function setupBot(name, selector) {
+        $(selector).click(function activator() {
+            console.log("Activating: " + name);
+        });
+    }
+
+    setupBot("Closure Bot 1", "#bot_1");
+    setupBot("Closure Bot 2", "#bot_2");
+    ```
+
+- Consider:
+
+    ```js
+    for (var i = 1; i <= 5; i++) {
+        (function () {
+            var j = i;
+            setTimeout(function timer() {
+                console.log(j);
+            }, j * 1000);
+        })();
+    }
+    ```
+
+    You can use this snippet simpler like this:
+
+    ```js
+    for (var i = 1; i <= 5; i++) {
+        (function (j) {
+            setTimeout(function timer() {
+                console.log(j);
+            }, j * 1000);
+        })(i);
+    }
+    ```
+
+    You can use `let` keyword. This behavior says that the variable will be declared not just once for the loop, **but each iteration**. For example:
+
+    ```js
+    for (let i = 1; i <= 5; i++) {
+        setTimeout(function timer() {
+            console.log(i);
+        }, i * 1000);
+    }
+    ```
+
+    I don't know about you, but that makes me a happy **Javascripter**.
