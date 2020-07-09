@@ -348,3 +348,46 @@
 
     // Error: Cannot access 'bar' before initialization
     ```
+
+## Garbage Collection
+
+- Declaring explicit blocks for variables to locally bind to is a powerful tool that you can add to your code toolbox. Consider:
+
+    ```js
+    function process(data) {
+        // do something interesting
+    }
+
+    var someReallyBigData = { .. };
+
+    process(someReallyBigData);
+
+    var btn = document.getElementById("my_button");
+
+    btn.addEventListener("click", function click(evt) {
+        console.log("button clicked");
+    }, /*capturingPhase=*/false);
+    ```
+
+    The `click` function click handler callback doesn't need the `someReallyBigData` variable at all. That means, theoretically, after `process(..)` runs, the big memory-heavy data structure could be garbage collected. Block-scoping can address this concern, making it clearer to the engine that it does not need to keep `someReallyBigData` around:
+
+    ```js
+    function process(data) {
+        // do something interesting
+    }
+
+    // anything declared inside this block can go away after!
+    {
+        let someReallyBigData = { .. };
+
+        process(someReallyBigData);
+    }
+
+    var btn = document.getElementById("my_button");
+
+    btn.addEventListener("click", function click(evt) {
+        console.log("button clicked");
+    }, /*capturingPhase=*/false);
+    ```
+
+- **Javascript Engine** have automatic memory management known as garbage collection (GC).
