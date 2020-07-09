@@ -414,3 +414,145 @@
     console.log(a); // 3
     console.log(b); // ReferenceError!
     ```
+
+## Chicken Or The Egg
+
+- Both variables and functions, are processed first, before any part of your code is executed.
+- **Javascript** will see `var a = 2;` as two statements: `var a;` and `a = 2;`. So `var a;` (variable dcelaration) compiles first. Consider:
+
+    ```js
+    a = 2;
+
+    var a;
+
+    console.log(a);
+    ```
+
+    **Javascript Engine** looks this code like:
+
+    ```js
+    var a;
+
+    a = 2;
+
+    console.log(a); // 2
+    ```
+
+    Now Consider:
+
+    ```js
+    console.log(a);
+
+    var a = 2;
+    ```
+
+    We said functions and variables will compiles (hoisting) first. So **Javascript Engine** looks this code like:
+
+    ```js
+    var = a;
+
+    console.log(a); // undefined
+
+    a = 2;
+    ```
+
+    Another example:
+
+    ```js
+    foo();
+
+    function foo() {
+        console.log(a); // undefined
+        var a = 2;
+    }
+    ```
+
+    **Javascript Engine** looks this code like:
+
+    ```js
+    function foo() {
+        var a;
+
+        console.log(a); // undefined
+
+        a = 2;
+    }
+
+    foo();
+    ```
+
+    Another example:
+
+    ```js
+    foo(); // TypeError
+    bar(); // ReferenceError
+
+    var foo = function bar() {
+        // ...
+    };
+    ```
+
+    This snippet is more accurately interpreted (with hoisting) as:
+
+    ```js
+    var foo;
+
+    foo(); // TypeError
+    bar(); // ReferenceError
+
+    foo = function () {
+        var bar = ...self...
+        // ...
+    }
+    ```
+
+    Another example about functions hoisting:
+
+    ```js
+    foo(); // 1
+
+    var foo;
+
+    function foo() {
+        console.log(1);
+    }
+
+    foo = function () {
+        console.log(2);
+    };
+    ```
+
+    `1` is printed instead of `2`. This snippet is interpreted by the **Engine** as:
+
+    ```js
+    function foo() {
+        console.log(1);
+    }
+
+    foo(); // 1
+
+    foo = function () {
+        console.log(2);
+    };
+    ```
+
+- Always the egg (declaration) comes before the chicken (assignment).
+- While multiple/duplicate `var` declarations are effectively ignored, subsequent function declarations do override previous ones. For example:
+
+    ```js
+    foo(); // 3
+
+    function foo() {
+        console.log(1);
+    }
+
+    var foo = function () {
+        console.log(2);
+    };
+
+    function foo() {
+        console.log(3);
+    }
+    ```
+
+- Avoid declaring functions in blocks.
