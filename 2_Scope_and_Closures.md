@@ -4,8 +4,8 @@
 
 ## Preface
 
-- While flickering mouse trails and annoying pop-up prompts may be where **Javascript** started.
-- **Javascript** was made by **Brendan Eich**.
+- While flickering mouse trails and annoying pop-up prompts may be where **JavaScript** started.
+- **JavaScript** was made by **Brendan Eich**.
 - variables are living in **Scopes**.
 
 ## Compiler Theory
@@ -14,11 +14,11 @@
     1. **Tokenizing/Lexing:** breaking up a string of characters into meaningful (to the language) chunks, called tokens. For instance, consider the program: `var a = 2;`. This program would likely be broken up into the following tokens: `var`, `a`, `=`, `2` and `;`. Whitespace may or may not be persisted as a token, depending on whether it's meaningful or not.
     2. **Parsing:** taking a stream (array) of tokens and turning it into a tree of nested elements, which collectively represent the grammatical structure of the program. This tree is called **"AST"** (**A**bstract **S**yntax **T**ree). For instance, consider this program: `var a = 2;`: this might start with a top-level node called `VariableDeclaration` with a child node called `Identifier` (whose value is `a`), and another child called `AssignmentExpression` which itself has a child called `NumericLiteral` (whose value is `2`).
     3. **Code-Generation:** the process of taking as AST and turning it into executable code.
-- For **Javascript**, the compilation that occurs happens, in many cases, mere microseconds (or less!) before the code is executed. To ensure the fastest performance, **Javascript** **Engines** use all kinds of tricks (like JITs, which lazy compile and even hot re-compile, etc).
+- For **JavaScript**, the compilation that occurs happens, in many cases, mere microseconds (or less!) before the code is executed. To ensure the fastest performance, **JavaScript** **Engines** use all kinds of tricks (like JITs, which lazy compile and even hot re-compile, etc).
 
 ## Understanding Scope
 
-- Scope is **Javascript Engine** friend, that collects and maintains list of all identifiers (variables), and enforces a strict set of rules as to how these are accessible to currently executing code.
+- Scope is **JavaScript Engine** friend, that collects and maintains list of all identifiers (variables), and enforces a strict set of rules as to how these are accessible to currently executing code.
 - Consider: `var a = 2;`. Encountering `var a`, **Compiler** asks scope to see if a variable exists for that particular scope collection. If so, **Compiler** ignores this declaration and moves on. Otherwise, **Compiler** asks scope to declare a new variable called `a` for that scope collection. The code **Engine** runs will ask scope if there is a variable called `a` accessible in the current scope collection. If so, **Engine** uses that variable. If not, **Engine** looks elsewhere. To summarize: two distinct actions are taken for a variable assignment: First, **Compiler** declares a variable (if not previously declared in the current scope), and second, when executing, **Engine** looks up the variable in Scope and assigns to it, if found.
 
 ## Compiler Speak
@@ -132,7 +132,7 @@
 
 ## Performance
 
-- Using both `eval(..)` and `with` will decrease **Javascript Engine**'s performance, because it cannot know at lexing time exactly what code you may pass to `eval(..)` to modify the lexical scope, or the contents of the object you may pass to `with` to create a new lexical scope to be consulted. **Don't use them at all**.
+- Using both `eval(..)` and `with` will decrease **JavaScript Engine**'s performance, because it cannot know at lexing time exactly what code you may pass to `eval(..)` to modify the lexical scope, or the contents of the object you may pass to `with` to create a new lexical scope to be consulted. **Don't use them at all**.
 
 ## Hiding In Plain Scope
 
@@ -232,7 +232,7 @@
 
     This is called an **"anonymous function expression"**, becauses `function()...` has no name identifier on it.
 
-- Function expressions can be anonymous, but function declarations cannot omit the name. That would be illegal **Javascript** grammer.
+- Function expressions can be anonymous, but function declarations cannot omit the name. That would be illegal **JavaScript** grammer.
 - Anonymous functions have some draw-backs:
     1. Anonymous functions have no useful name to display in stack traces, which can make debugging more difficult.
     2. Event handler function wants to unbind itself after it fires. With anonymous it can't, because the function need a name to self-referencing.
@@ -392,7 +392,7 @@
     }, /*capturingPhase=*/false);
     ```
 
-- **Javascript Engine** have automatic memory management known as garbage collection (GC).
+- **JavaScript Engine** have automatic memory management known as garbage collection (GC).
 
 ## `const`
 
@@ -418,7 +418,7 @@
 ## Chicken Or The Egg
 
 - Both variables and functions, are processed first, before any part of your code is executed.
-- **Javascript** will see `var a = 2;` as two statements: `var a;` and `a = 2;`. So `var a;` (variable dcelaration) compiles first. Consider:
+- **JavaScript** will see `var a = 2;` as two statements: `var a;` and `a = 2;`. So `var a;` (variable dcelaration) compiles first. Consider:
 
     ```js
     a = 2;
@@ -428,7 +428,7 @@
     console.log(a);
     ```
 
-    **Javascript Engine** looks this code like:
+    **JavaScript Engine** looks this code like:
 
     ```js
     var a;
@@ -446,7 +446,7 @@
     var a = 2;
     ```
 
-    We said functions and variables will compiles (hoisting) first. So **Javascript Engine** looks this code like:
+    We said functions and variables will compiles (hoisting) first. So **JavaScript Engine** looks this code like:
 
     ```js
     var = a;
@@ -467,7 +467,7 @@
     }
     ```
 
-    **Javascript Engine** looks this code like:
+    **JavaScript Engine** looks this code like:
 
     ```js
     function foo() {
@@ -559,7 +559,7 @@
 
 ## Closures
 
-- Closure is all around you in **Javascript**, you just have to recognize and embrace it.
+- Closure is all around you in **JavaScript**, you just have to recognize and embrace it.
 - You do not even really have to intentionally create closures to take advantage of them.
 - Consider and remember:
 
@@ -622,7 +622,7 @@
     bar(); // 2
     ```
 
-- All kind of **Javascript** frameworks (like jQuery or etc) uses closures:
+- All kind of **JavaScript** frameworks (like jQuery or etc) uses closures:
 
     ```js
     // jQuery
@@ -671,4 +671,4 @@
     }
     ```
 
-    I don't know about you, but that makes me a happy **Javascripter**.
+    I don't know about you, but that makes me a happy **JavaScripter**.
