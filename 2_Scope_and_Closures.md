@@ -263,3 +263,29 @@
         console.log(global.a); // 2
     });
     ```
+
+## Blocks As Scopes
+
+- Using `var` in `if` or `for` loop (or etc) scope is **fake** block-scoping, for stylistic reasons. So you can access it from outside the scope. For example:
+
+    ```js
+    // you can access `bar` from outside of `if` scope, so it have fake block-scoping
+    var foo = true;
+
+    if (foo) {
+        var bar = foo * 2;
+        bar = something(bar);
+        console.log(bar);
+    }
+
+    bar = 10; // you can modify `bar` value, because it is accessible
+
+    // you can access `i` from outside of `if` scope, so it have fake block-scoping
+    for (var i = 5; i < 10; i++) {
+        // ..
+    }
+
+    console.log(i); // 10
+    ```
+
+- Block scope is a tool to hiding information in functions to hiding information in blocks of our code.
