@@ -245,3 +245,21 @@
         console.log("I waited 1 second");
     }), 1000);
     ```
+
+## Invoking Function Expressions Immedialtely
+
+- **IIFE** stands for **I**mmediately **I**nvoked **F**unction **E**xpression. We have a function as an expression by virtue of wrapping it in a `()` pair, we can execute that function by adding another `()` on the end, like `(function foo() {..})()`.
+- There is another form of IIFE, that inverts the order of things, where the function to execute is given second, after the invokation and parameters to pass it. This pattern is used in the UMD (**U**niversal **M**odule **D**efinition). For example:
+
+    ```js
+    var a = 2;
+
+    (function IIFE(def) {
+        def(window);
+    })(function def(global) {
+
+        var a = 3;
+        console.log(a); // 3
+        console.log(global.a); // 2
+    });
+    ```
