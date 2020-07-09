@@ -304,3 +304,47 @@
 
     console.log(err); // ReferenceError: `err` not found
     ```
+
+## `let`
+
+- Fortunately, ES6 changes that, and introduces a new keyword `let` which sits alongside `var` as another way to declare variables.
+- The `let` keyword implicitly hijacks any block's scope for its variable declaration. For example:
+
+    ```js
+    var foo = true;
+
+    if (foo) {
+        let bar = foo * 2;
+        bar = something(bar);
+        console.log(bar);
+    }
+
+    console.log(bar); // ReferenceError
+    ```
+
+- We can create an arbitrary block for `let` to bind by simply including a `{..}` pair anywhere a statement is valid grammer. For example:
+
+    ```js
+    var foo = true;
+
+    if (foo) {
+        { // <-- explicit block
+            let bar = foo * 2;
+            bar = something(bar);
+            console.log(bar);
+        }
+    }
+
+    console.log(bar); // ReferenceError
+    ```
+
+- Declarations made with `let` **will not hoist** to the entire scope of the block they appear in. For example:
+
+    ```js
+    {
+        console.log(bar); // ReferenceError!
+        let bar = 2;
+    }
+
+    // Error: Cannot access 'bar' before initialization
+    ```
