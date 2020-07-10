@@ -115,3 +115,51 @@
 
     baz(); // <-- call-site for `baz`
     ```
+
+## Default Binding
+
+- Consider:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var a = 2;
+
+    foo(); // 2
+    ```
+
+    Think of it as two sides of the same coin. `var a = 2` and `this.a` are point to the same thing (in global scope). The default binding for `this` applies to the function call, and so points `this` at the global object.
+
+    In our snippet, `foo()` is called with a plain, un-decorated function reference. None of the outer rules will demonstrate will apply here, so the default binding applies instead. If `strict mode` is in effect, the global object is not eligible for the default binding, so `this` is instead set to `undefined`. For example:
+
+    ```js
+    function foo() {
+        "use strict"
+
+        console.log(this.a);
+    }
+
+    var a = 2;
+
+    foo(); // TypeError: `this` is `undefined`
+    ```
+
+    The `strict mode` state of the call-site of `foo()` is irrelevent. Now consider:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var a = 2;
+
+    (function () {
+        "use strict"
+
+        foo(); // 2
+    })();
+    ```
+
+    Intentionally mixing `strict mode` and non-`strict mode` together in your own code is generally frowned upon.
