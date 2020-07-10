@@ -918,3 +918,26 @@
     ```
 
     As you see, the `catch` clause has block-scoping to it.
+
+## Implicit vs. Explicit Block
+
+- You can use this method to create explicit methods:
+
+    ```js
+    let (a = 2) {
+        console.log(a);
+    }
+
+    console.log(a); // ReferenceError
+    ```
+
+    This let-statement is not an official part of any ES version (yet). So better to use it like this:
+
+    ```js
+    {
+        let a = 2;
+        console.log(a);
+    }
+
+    console.log(a); // ReferenceError
+    ```
