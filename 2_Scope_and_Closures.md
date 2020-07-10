@@ -942,3 +942,64 @@
 
     console.log(a); // ReferenceError
     ```
+
+## Lexical `this`
+
+- ES6 introduces a behavior called **"lexical this"**. Consider:
+
+    ```js
+    var obj = {
+        count: 0,
+        cool: function coolFn() {
+            var self = this;
+
+            if (self.count < 1) {
+                setTimeout(function timer() {
+                    self.count++;
+                    console.log("awesome?");
+                }, 100);
+            }
+        }
+    };
+
+    obj.cool(); // awesome?
+    ```
+
+    Instead writing this verbose stuff, you can use **arrow-function**. For example:
+
+    ```js
+    var object = {
+        count: 0,
+        cool: function CoolFn() {
+            if (this.count < 1) {
+                setTimeout(() => { // arrow-function ftw?
+                    this.count++;
+                    console.log("awesome?");
+                }, 100)
+            }
+        }
+    }
+
+    object.cool(); // awesome?
+    ```
+
+- Arrow-functions are anonymous (not named).
+- Consider:
+
+    ```js
+    var object = {
+        count: 0,
+        cool: function CoolFn() {
+            if (this.count < 1) {
+                setTimeout(function timer() {
+                    this.count++; // `this` is safe because of `bind(..)`
+                    console.log("awesome?");
+                }.bind(this), 100) // look, `bind()`!
+            }
+        }
+    }
+
+    object.cool(); // awesome?
+    ```
+
+    Whether you prefer the new lexical-this behavior of arrow-functions, or you prefer the tried-and-true `bind()`, it's important to note that arrow-functions are **not** just about less typing of `function`.
