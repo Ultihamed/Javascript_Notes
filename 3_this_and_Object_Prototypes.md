@@ -202,3 +202,67 @@
 
     obj1.obj2.foo(); // 42
     ```
+
+## Implicitly Lost
+
+- Consider:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj = {
+        a: 2,
+        foo: foo
+    };
+
+    var bar = obj.foo; // function reference/alias!
+
+    var a = "oops, global"; // `a` also property on global object
+
+    bar(); // "oops, global"
+    ```
+
+    The call-site is `bar()`, which is plain, un-decorated call and thus the default binding applies. The more subtle, more common, and more unexpected way this occurs is when we consider passing a callback function:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    function doFoo(fn) {
+        // `fn` is just another reference to `foo`
+
+        fn(); // <-- call-site!
+    }
+
+    var obj = {
+        a: 2,
+        foo: foo
+    };
+
+    var a = "oops, global"; // `a` also property on global object
+
+    doFoo(obj.foo); // "oops, global"
+    ```
+
+    Parameter passing is just an **implicit** assignment, and since we're passing a function, it's an implicit reference assignment, so the end result is the same as the previous snippet. Now, what if the function you're passing your callback to is not your own, but built-in to the language? No difference, same outcome:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj = {
+        a: 2,
+        foo: foo
+    };
+
+    var a = "oops, global"; // `a` also property on global object
+
+    setTimeout(obj.foo, 100); // "oops, global"
+    ```
+
+- Event handlers in popular **JavaScript** libraries are quite fond of forcing your callback to have a `this` which points to, for instance, the DOM element that triggered the event.
+- Either way the this is changed unexpectedly, you are not really in control of how your callback function reference will be executed, so you have no way (yet) of controlling the call-site to give your intended binding.
