@@ -133,6 +133,7 @@
 ## Performance
 
 - Using both `eval(..)` and `with` will decrease **JavaScript Engine**'s performance, because it cannot know at lexing time exactly what code you may pass to `eval(..)` to modify the lexical scope, or the contents of the object you may pass to `with` to create a new lexical scope to be consulted. **Don't use them at all**.
+- The performance of `try/catch` is slow.
 
 ## Hiding In Plain Scope
 
