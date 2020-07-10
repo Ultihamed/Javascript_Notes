@@ -672,3 +672,202 @@
     ```
 
     I don't know about you, but that makes me a happy **JavaScripter**.
+
+## Modules
+
+- Here you see a simple module:
+
+    ```js
+    function CoolModule() {
+        var something = "cool";
+        var another = [1, 2, 3];
+
+        function doSomething() {
+            console.log(something);
+        }
+
+        function doAnother() {
+            console.log(another.join(" ! "));
+        }
+
+        return {
+            doSomething: doSomething,
+            doAnother: doAnother
+        };
+    }
+
+    var foo = CoolModule();
+
+    foo.doSomething(); // cool
+    foo.doAnother(); // 1 ! 2 ! 3
+    ```
+
+    It's appropriate to think of this object return value as essentially a **public API for our module**.
+- Without the execution of the outer function, the creation of the inner scope and the closures would not occur. Because it is a `function`.
+- There are two **requirements** for the module pattern to be exercised:
+    1. There must be an outer enclosing function, and it must be invoked at least once (each time creates a new module instance).
+    2. The enclosing function must return back at least one inner function, so that this inner function has closure over the private scope, and can access and/or modify that private state.
+- An object with a function property on it alone is not really a module.
+- You can turn your module function into an IIFE. For example:
+
+    ```js
+    var foo = (function CoolModule() {
+        var something = "cool";
+        var another = [1, 2, 3];
+
+        function doSomething() {
+            console.log(something);
+        }
+
+        function doAnother() {
+            console.log(another.join(" ! "));
+        }
+
+        return {
+            doSomething: doSomething,
+            doAnother: doAnother
+        };
+    })();
+
+    foo.doSomething(); // cool
+    foo.doAnother(); // 1 ! 2 ! 3
+    ```
+
+- Another slight but powerful variation on the module pattern is to name the object you are returning as your public API:
+
+    ```js
+    var foo = (function CoolModule(id) {
+        function change() {
+            // modifying the public API
+            publicAPI.identify = identify2;
+        }
+
+        function identify1() {
+            console.log(id);
+        }
+
+        function identify2() {
+            console.log(id.toUpperCase());
+        }
+
+        var publicAPI = {
+            change: change,
+            identify: identify1
+        }
+
+        return publicAPI;
+    })("foo module");
+
+    foo.identify(); // foo module
+    foo.change();
+    foo.identify(); // FOO MODULE
+    ```
+
+- You can create a module manager like this:
+
+    ```js
+    var MyModules = (function Manager() {
+        var modules = {}
+
+        function define (name, deps, impl) {
+            for (var i = 0; i < deps.lenght; i++) {
+                deps[i] = modules[deps[i]];
+            }
+            modules[name] = impl.apply(impl, deps);
+        }
+
+        function get(name) {
+            return modules[name];
+        }
+
+        return {
+            define: define,
+            get: get
+        };
+    })();
+    ```
+
+    Here you can add some modules to your module manager:
+
+    ```js
+    MyModules.define("bar", [], function () {
+        function hello(who) {
+            return "Let me introduce:" + who;
+        }
+
+        return {
+            hello: hello
+        };
+    });
+
+    MyModules.define("foo", ["bar"], function (bar) {
+        var hungry = "hippo";
+
+        function awesome() {
+            console.log(bar.hello(hungry).toUpperCase());
+        }
+
+        return {
+            awesome: awesome
+        };
+    });
+
+    var bar = MyModules.get("bar");
+    var foo = MyModules.get("foo");
+
+    console.log(
+        bar.hello("hippo")
+    ); // Let me introduce: hippo
+
+    foo.awesome(); // LET ME HIPPO
+    ```
+
+    Here `foo` even receives the instance of `bar` as a dependency parameter, and can use it accordingly.
+- ES6 adds first-class syntax support for the concept of modules. When loaded via the module system, ES6 treats a file as a separate module. Each module can both import other modules or specific API members, as well export their own public API members.
+- ES6 Module APIs are static (the APIs don't change at run-time).
+- ES6 modules do not have an "inline" format, they must be defined in separate files (one per module).
+- You can use `export` keyword in ES6 to export a module. Then use `import` keyword to import that module into your file. For example:
+
+    ```js
+    function hello(who) {
+        return "Let me introduce:" + who;
+    }
+
+    export hello;
+    ```
+
+    Then you can import it to another file:
+
+    ```js
+    // import only `hello()` from the "bar" module
+    import hello from "bar";
+
+    var hungry = "hippo";
+
+    function awesome() {
+        console.log(
+            hello(hungry).toUpperCase()
+        );
+    }
+
+    export awesome;
+    ```
+
+    You can import the entire modules into a file using `module` keyword. For example:
+
+    ```js
+    // import the entire "foo" and "bar" modules
+    module foo from "foo";
+    module bar from "bar";
+
+    console.log(
+        bar.hello("rhino)
+    ); // Let me introduce: rhino
+
+    foo.awesome(); // LET ME INTRODUCE: HIPPO
+    ```
+
+- `import` imports one or more members from a module's API into the current scope, each to a bound variable (like `hello` API).
+- `module` imports an entire module API to a bound variable (like `foo`, `bar` API).
+- `export` exports an identifier (variable, function) to the public API for the current module.
+- Closure is when a function can remember and access its lexical scope even when it's invoked outside its lexical scope.
