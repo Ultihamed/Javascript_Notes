@@ -871,3 +871,50 @@
 - `module` imports an entire module API to a bound variable (like `foo`, `bar` API).
 - `export` exports an identifier (variable, function) to the public API for the current module.
 - Closure is when a function can remember and access its lexical scope even when it's invoked outside its lexical scope.
+
+## Dynamic Scope
+
+- Consider:
+
+    ```js
+    function foo() {
+        console.log(a); // 3 (not 2!)
+    }
+
+    function bar() {
+        var a = 3;
+        foo();
+    }
+
+    var a = 2;
+
+    bar();
+    ```
+
+    To be clear, **JavaScript** does not, in fact, have dynamic scope. It has lexical scope. Plain and simple. But the `this` mechanism is kind of like dynamic scope.
+- Lexical scope is write-time, whereas dynamic scope (and `this`!) are runtime. Lexical scope cares where a function was declared, but dynamic scope cares where a function was called from.
+- `this` cares how a function was called, which shows how closely related the `this` mechanism is to the idea of dynamic scoping.
+- You can use `try`, `throw` and `catch` to change pre-ES6 behavior like ES6 about unfettered block-scoping (in ES6, we use `let`). For examle:
+
+    ```js
+    // ES6
+    {
+        let a = 2;
+        console.log(a); // 2
+    }
+
+    console.log(a); // ReferenceError
+    ```
+
+    Pre-ES6:
+
+    ```js
+    // pre-ES6
+    try {throw 2} catch(a) {
+        console.log(a); // 2
+    }
+
+    console.log(a); // ReferenceError
+    ```
+
+    As you see, the `catch` clause has block-scoping to it.
