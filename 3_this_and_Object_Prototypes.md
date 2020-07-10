@@ -163,3 +163,42 @@
     ```
 
     Intentionally mixing `strict mode` and non-`strict mode` together in your own code is generally frowned upon.
+
+## Implicit Binding
+
+- Consider:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj = {
+        a; 2,
+        foo: foo
+    };
+
+    obj.foo(); // 2
+    ```
+
+    Here the function really **"owned"** or **"contained"** by the `obj` object. However, the call-site uses the `obj` context to **reference** the function, so you could say that the `obj` object **"owns"** or **"contains"** the **function reference** at the time the function is called. When there is a context object for a function reference, the implicit binding rule says that it's that object which should be used for the function call's `this` binding. Because `obj` is the `this` for the `foo()` call, `this.a` is synonymous with `obj.a`.
+
+    Only the **top/last** level of an object property reference chain matters to the call-site. For instance:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj2 = {
+        a: 42,
+        foo: foo
+    }
+
+    var obj1 = {
+        a: 2,
+        obj2: obj2
+    }
+
+    obj1.obj2.foo(); // 42
+    ```
