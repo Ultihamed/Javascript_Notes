@@ -631,3 +631,52 @@
     ```
 
     The soft-bound version of the `foo()` function can be manually `this`-bound to `obj2` or `obj3` as shown, but it falls back to `obj` if the default binding would otherwise apply.
+
+## Lexical `this`
+
+- Normal functions abide by the 4 rules we just covered. But ES6 introduces a special kind of function that does not use these rules: **arrow-function**.
+- Arrow-functions are signified not by the `function` keyword, but by the `=>` so called **"fat arrow"** operator. Instead of using four standard `this` rules, arrow-functions adopt the `this` binding from enclosing (function or global) scope. For example:
+
+    ```js
+    function foo() {
+        // return an arrow function
+        return (a) => {
+            // `this` here is lexically adopted from `foo()`
+            console.log(this.a);
+        };
+    }
+
+    var obj1 = {
+        a: 2
+    };
+
+    var obj2 = {
+        a: 3
+    };
+
+    var bar = foo.call(obj1);
+
+    bar.call(obj2); // 2, not 3
+    ```
+
+    The lexical binding of an arrow-function cannot be ovverridden (even with `new`!). The most common use-case will likely be in the use of callbacks, such as event handlers or timers:
+
+    ```js
+    function foo() {
+        setTimeout(() => {
+            // `this`here is lexically adopted from `foo()`
+            console.log(this.a);
+        }, 100);
+    }
+
+    var obj = {
+        a: 2
+    };
+
+    foo.call(obj); // 2
+    ```
+
+- It's important to note that arrow-functions essentially are disabling the traditional `this` mechanism in favor of more widely-understood lexical scoping.
+- If you find yourself writing `this`-style code, but most or all the time, you defeat the `this` mechanism with lexical `self = this` or arrow-function "tricks", perhaps you should either:
+    1. Use only lexical scope and forget the false pretense of `this`-style code.
+    2. Embrace `this`-style mechanisms completely, including using `bind(..)` where necessary, and try to avoid `self = this` and arrow-function "lexical this" tricks.
