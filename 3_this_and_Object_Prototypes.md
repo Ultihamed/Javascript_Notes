@@ -584,3 +584,23 @@
     ```
 
     Not only functionally **safer**, there's a sort of stylistic benefit to `ø`, that is semantically conveys "I want the `this` to be empty" a little more clear than `null` might. But again, name your DMZ (**d**e-**m**ilitarized **z**one) object whatever you prefer.
+
+## Indirection
+
+- Another thing to be aware of is you can (intentionally or not!) create **indirect references** to functions, and in those cases, when that function reference is invoked, the default binding rule also applies.
+- One of the most common ways that indirect references occur is from an assignment:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var a = 2;
+    var o = { a: 3, foo: foo };
+    var p = { a: 4 }
+
+    o.foo(); // 3
+    (p.foo = o.foo)(); // 2
+    ```
+
+    Here the effective call-site is just `foo()`, not `p.foo()` or `o.foo()` as you might expect. So the default binding rule applies.
