@@ -287,3 +287,111 @@
     Invoking `foo` with explicit binding by `foo.call(..)` allows us to force its `this` to be `obj`.
 
 - With respect to `this` binding, `call(..)` and `apply(..)` are identical.
+
+## Hard Binding
+
+- Consider:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj = {
+        a: 2
+    };
+
+    var bar = function () {
+        foo.call(obj);
+    }
+
+    bar(); // 2
+    setTimeout(bar, 100); // 2
+
+    // `bar` hard binds `foo`'s `this` to `obj`
+    // so that is cannot be overriden
+
+    bar.call(window); // 2
+    ```
+
+    This binding is both explicit and strong, so we call it **hard binding**.
+- The most typical way to wrap a function with a hard binding creates a pass-thru of any arguments passed and any return value received:
+
+    ```js
+    function foo(something) {
+        console.log(this.a, something);
+        return this.a + something;
+    }
+
+    var obj = {
+        a: 2
+    }
+
+    var bar = function () {
+        return foo.apply(obj, arguments);
+    }:
+
+    var b = bar(3); // 2 3
+
+    console.log(b); // 5
+    ```
+
+    Another way to express this pattern is to create a re-usable helper:
+
+    ```js
+    function foo(something) {
+        console.log(this.a, something);
+        return this.a + something;
+    }
+
+    // simple `bind` helper
+    function bind(fn, obj) {
+        return function () {
+            return fn.apply(obj, arguments);
+        };
+    }
+
+    var obj = {
+        a: 2
+    };
+
+    var bar = bind(foo, obj);
+
+    var b = bar(3); // 2 3
+    console.log(b); // 5
+    ```
+
+    Since hard binding is such a common pattern, it's provided with a built-in utility as of ES5: `Function.prototype.bind`, and it's used like this:
+
+    ```js
+    function foo(something) {
+        console.log(this.a, something);
+        return this.a + something;
+    }
+
+    var obj = {
+        a: 2
+    };
+
+    var bar = foo.bind(obj);
+
+    var b = bar(3); // 2 3
+    console.log(b); // 5
+    ```
+
+    Here `bind(..)` returns a new function that is **hard-coded** to call the original function with the `this` context set as your specified.
+- As of ES6, the hard-bound function produced by `bind(..)` has a `.name` property that derives from the original target function. For example: `bar = foo.bind(..)` should have a bar.name value of `"bound foo"`, which is the function call name that should show up in a stack trace.
+- Many libaries functions and indeed many new built-in functions in the **JavaScript** language and host environment, provide an optional parameter, usually called **"context"**, which is designed for you not having to use `bind(..)` to ensure your callback function uses a particular `this`. For example:
+
+    ```js
+    function foo(el) {
+        console.log(el, this.id);
+    }
+
+    var obj = {
+        id: "awesome"
+    };
+
+    // use `obj` as `this` for `foo(..)` calls
+    [1, 2, 3].forEach(foo, obj); // 1 awesome 2 awesome 3 awesome
+    ```
