@@ -680,3 +680,24 @@
 - If you find yourself writing `this`-style code, but most or all the time, you defeat the `this` mechanism with lexical `self = this` or arrow-function "tricks", perhaps you should either:
     1. Use only lexical scope and forget the false pretense of `this`-style code.
     2. Embrace `this`-style mechanisms completely, including using `bind(..)` where necessary, and try to avoid `self = this` and arrow-function "lexical this" tricks.
+
+## Object Syntax
+
+- Objects come in two forms: the declarative (literal) form, and the constructed form. The literal syntax for an object looks like this:
+
+    ```js
+    var myObj = {
+        key: value
+        // ...
+    }
+    ```
+
+    The constructed form looks like this:
+
+    ```js
+    var myObj = new Object();
+    myObj.key = value;
+    ```
+
+    The constructed form and the literal form result in exactly the same sort of object. The only difference really is that you can add one or more key/value pairs to the literal declaration, whereas with constructed-form objects, you must add the properties one-by-one.
+- It's extremely uncommon to use the **constructed form** for creating objects. You would pretty much always want to use the literal syntax form. The same will be true of most of the built-in objects.
