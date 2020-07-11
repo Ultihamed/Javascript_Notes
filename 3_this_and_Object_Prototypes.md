@@ -529,3 +529,36 @@
     ```js
     var bar = foo();
     ```
+
+## Ignored `this`
+
+- If you pass `null` or `undefined` as a `this` binding parameter to `call`, `apply` or `bind`, those values are effectively ignored, and instead the **default binding** rule applies to the invocation.
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var a = 2;
+
+    foo.call(null); // 2
+    ```
+
+- Consider:
+
+    ```js
+    function foo(a, b) {
+        console.log("a:" + a + "b:" + b);
+    }
+
+    // spreading out array as parameters
+    foo.apply(null, [2, 3]); // a:2, b:3
+
+    //currying with `bind(..)`
+    var bar = foo.bind(null, 2);
+    bar(3); // a:2, b:3
+    ```
+
+    Both these utilities require a `this` binding for the first parameter. If the functions in question don't care about `this`, you need a placeholder value, and `null` might seem like a reasonable choice as shown in this snippet.
+- Unfortunately, there's no ES6 syntactic substitute for currying, so the `this` parameter of the `bind(..)`call still needs attension.
+- There's a slight hidden **danger** in always using `null` when you don't care about the `this` binding. It might inadvertently reference (or worse, mutate!) the `global` object (`window` in the browser).
