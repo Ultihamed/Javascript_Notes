@@ -266,3 +266,24 @@
 
 - Event handlers in popular **JavaScript** libraries are quite fond of forcing your callback to have a `this` which points to, for instance, the DOM element that triggered the event.
 - Either way the this is changed unexpectedly, you are not really in control of how your callback function reference will be executed, so you have no way (yet) of controlling the call-site to give your intended binding.
+
+## Explicit Binding
+
+- **"All"** functions in the language have some utilities available to them (via their `[[prototype]]) which can be useful for explicit binding.
+- The vast majority of functions provided, and certainly all function you will create, do have access to `call(..)` and `apply(..)`. They both take, as their first parameter, an object to use for the `this`, and then invoke the function with that `this` specified. Since you are directly stating what you want the `this` to be, we call it explicit binding. Consider:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj = {
+        a: 2
+    };
+
+    foo.call(obj); // 2
+    ```
+
+    Invoking `foo` with explicit binding by `foo.call(..)` allows us to force its `this` to be `obj`.
+
+- With respect to `this` binding, `call(..)` and `apply(..)` are identical.
