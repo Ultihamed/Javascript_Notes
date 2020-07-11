@@ -562,3 +562,25 @@
     Both these utilities require a `this` binding for the first parameter. If the functions in question don't care about `this`, you need a placeholder value, and `null` might seem like a reasonable choice as shown in this snippet.
 - Unfortunately, there's no ES6 syntactic substitute for currying, so the `this` parameter of the `bind(..)`call still needs attension.
 - There's a slight hidden **danger** in always using `null` when you don't care about the `this` binding. It might inadvertently reference (or worse, mutate!) the `global` object (`window` in the browser).
+
+## Safer `this`
+
+- `Object.create(null)` is similar to `{}`, but without the delegation to `Object.prototype`, so it's **more empty** than just `{}`. Consider:
+
+    ```js
+    function foo(a, b) {
+        console.log("a:" + a + ", b:" + b);
+    }
+
+    // our DMZ empty object
+    var ø = Object.create(null);
+
+    // spreading out array as parameters
+    foo.apply(ø, [2, 3]); // a:2, b:3
+
+    // currying with `bind(..)`
+    var bar = foo.bind(ø, 2);
+    bar(3); // a:2, b:3
+    ```
+
+    Not only functionally **safer**, there's a sort of stylistic benefit to `ø`, that is semantically conveys "I want the `this` to be empty" a little more clear than `null` might. But again, name your DMZ (**d**e-**m**ilitarized **z**one) object whatever you prefer.
