@@ -395,3 +395,111 @@
     // use `obj` as `this` for `foo(..)` calls
     [1, 2, 3].forEach(foo, obj); // 1 awesome 2 awesome 3 awesome
     ```
+
+## `new` Binding
+
+- There is no connection to class-oriented functionality implied by `new` usage is **JavaScript**.
+- In **JavaScript**, constructors are **just functions** that happen to be called with the `new` operator front of them. They are not attached to classes, nor are they instantiating a class.
+- Pretty much any function, including the built-in object functions like `Number(..)` can be called with `new` in front of it, and that make that function call a **constructor** call.
+- When a function is invoked with `new` in front of it, otherwise known as a constructor call, the following things are done automatically:
+    1. a brand new object is created (aka, constructed) out of thin air
+    2. the newly constructed object is `[[prototype]]`-linked
+    3. the newly constructed object is set as the `this` binding for that function call
+    4. unless the function returns its own alternate **object**, the `new`-invoked function call will automatically return the newly constructed object.
+- Consider:
+
+    ```js
+    function foo(a) {
+        this.a = a;
+    }
+
+    var bar = new foo(2);
+    console.log(bar.a); // 2
+    ```
+
+    Here `new` is the final way that a function call's `this` can be bound. We'll call this **new binding**.
+- All you need to do is find the call-site and inspect it to see which rule applies. It should be clear that the default binding is the lowest priority rule of the 4. Which is more precedent, implicit binding or explicit binding? Let's test it:
+
+    ```js
+    function foo() {
+        console.log(this.a);
+    }
+
+    var obj1 = {
+        a: 2,
+        foo: foo
+    };
+
+    var obj2 = {
+        a: 3,
+        foo: foo
+    };
+
+    obj1.foo(); // 2
+    obj2.foo(); // 3
+
+    obj1.foo.call(obj2); // 3
+    obj2.foo.call(obj1); // 2
+    ```
+
+    So, explicit binding takes precedence over implicit binding, which means you should ask first if explicit binding applies before checking for implicit binding.
+- Consider:
+
+    ```js
+    function foo(something) {
+        this.a = something;
+    }
+
+    var obj1 = {
+        foo: foo
+    };
+
+    var obj2 = {};
+
+    obj1.foo(2);
+    console.log(obj1.a); // 2
+
+    obj1.foo.call(obj2, 3);
+    console.log(obj2.a); // 3
+
+    var bar = new obj1.foo(4);
+    console.log(obj1.a); // 2
+    console.log(bar.a); // 4
+    ```
+
+- `new` and `call/apply` cannot be used together, so `new foo.call(obj)` is not allowd.
+- Consider:
+
+    ```js
+    function foo(something) {
+        this.a = something;
+    }
+
+    var obj = {};
+
+    var bar = foo.bind(obj1);
+    bar(2);
+    console.log(obj1.a); // 2
+
+    var baz = new bar(3);
+    console.log(obj1.a); // 2
+    console.log(baz.a); // 4
+    ```
+
+    `bar` is hard-bound againts `obj1`, but `new bar(3)` did **not** change `obj1.a` to be `3` as we would have expected. Since `new` was applied, we got the newly created object back, which we named `baz`, and we see in fact that `baz.a` has the value `3`.
+- One of the capabilities of `bind(..)` is that any arguments passed after the first `this` binding argument are defaulted as standard arguments to the underlying function (technically called **"partial application"**, which is a subset of **"currying"**). For example:
+
+    ```js
+    function foo(p1, p2) {
+        this.val = p1 + p2;
+    }
+
+    // using `null` here because we don't care about
+    // the `this` hard-binding in this scenario, and
+    // it will be overridden by the `new` call anyway!
+    var bar = foo.bind(null, "p1");
+
+    var baz = new bar("p2");
+
+    console.log(baz.val); // p1p2
+    ```
