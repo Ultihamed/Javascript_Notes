@@ -973,3 +973,17 @@
 
 - `delete` is only used to remove object properties (which can be removed) directly from the object in question.
 - If an object property is the last remaining reference to some object/function, and you `delete` it, that removes the reference and now that unreferenced object/function can be garbage collected.
+
+## Object Constant
+
+- By combining `writable: false;` and `configurable: false;`, you can essentially create a constant (cannot be changed, redefined or deleted) as an object property, like:
+
+    ```js
+    var myObject = {};
+
+    Object.defineProperty(myObject, "FAVORITE_NUMBER", {
+        value: 42,
+        writable: false,
+        configurable: false
+    });
+    ```
