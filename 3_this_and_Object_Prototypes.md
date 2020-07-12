@@ -803,3 +803,75 @@
 
 - Every time you access a property on an object, that is a property access, regardless of the type of value you get back.
 - The safest conclusion is probably that "function" and "method" are interchangeable in **JavaScript**.
+
+## Arrays
+
+- Arrays assume numeric indexing, which means that values are stored in locations, usually called indices, at non-negative integers, such as `0` and `42`. For example:
+
+    ```js
+    var myArray = ["foo", 42, "bar"];
+
+    myArray.length; // 3
+
+    myArray[0]; // "foo"
+
+    myArray[2]; // "bar"
+    ```
+
+- Arrays are objects, so you can add propeties onto the array:
+
+    ```js
+    var myArray = ["foo", 42, "bar"];
+
+    myArray.baz = "baz";
+
+    myArray.length; // 3
+
+    myArray.baz; // "baz"
+    ```
+
+- Adding named properties (regardless of `.` or `[]` operator syntax) does not change the reported `lenght` of the array.
+- Use objects to store key/value pairs, and arrays to store values at numeric indices.
+- If you try to add a property to an array, but the property name looks like a number, it will end up instead as a numeric index (thus modifying the array contents):
+
+    ```js
+    var myArray = ["foo", 42, "bar"];
+
+    myArray["3"] = "baz";
+
+    myArray.length; // 4
+
+    myArray[3]; // "baz"
+    ```
+
+- Consider:
+
+    ```js
+    function anotherFunction() { /*..*/ }
+
+    var anotherObject = {
+        c: true
+    };
+
+    var anotherArray = [];
+
+    var myObject = {
+        a: 2,
+        b: anotherObject, // reference, not a copy!
+        c: anotherArray, // another reference!
+        d: anotherFunction
+    };
+
+    anotherArray.push(anotherObject, myObject);
+    ```
+
+    It's refers to references, so it's not a copy. You can have a copy for your objects with `assign(..)` function. For example:
+
+    ```js
+    var newObj = Object.assign({}, myObject);
+
+    newObj.a; // 2
+    newObj.b === anotherObject; // true
+    newObj.c === anotherArray; // true
+    newObj.d === anotherFynction; // true
+    ```
