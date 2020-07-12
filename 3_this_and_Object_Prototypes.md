@@ -909,3 +909,38 @@
 
     myObject.a; // 2
     ```
+
+## Writable
+
+- The ability for you to change the value of a property is controlled by `writable`. Consider:
+
+    ```js
+    var myObject = {};
+
+    Object.defineProperty(myObject, "a", {
+        value: 2,
+        writable: false, // not writable!
+        configurable: true,
+        enumerable: true
+    });
+
+    myObject.a = 3;
+
+    myObject.a; // 2
+    ```
+
+    As you can see, our modification of the `value` silently failed. If we try in `strict mode`, we get an error:
+
+    ```js
+    "use strict";
+
+    var myObject = {};
+    Object.defineProperty(myObject, "a", {
+        value: 2,
+        writable: false, // not writable!
+        configurable: true,
+        enumerable: true
+    });
+
+    myObject.a = 3; // TypeError
+    ```
