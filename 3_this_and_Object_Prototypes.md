@@ -1037,3 +1037,10 @@
 
     myObject.b; // undefined - performed a bit more "work" for the reference `myObject.b`
     ```
+
+## [[Put]]
+
+- If the property of a object presents, the `[[Put]]` algorithm roughly check:
+    1. Is the property an accessor descriptor? **If so, call the setter, if any**.
+    2. Is the property a data descriptor with `writable` of `false`? **If so, silently fail in `non-strict mode`, or throw `TypeError` in `strict mode`**.
+    3. Otherwise, set the value to the existing property as normal.
