@@ -944,3 +944,32 @@
 
     myObject.a = 3; // TypeError
     ```
+
+## Configurable
+
+- Changing `configurable` to `false` is a **one-way action, and cannot be undone!**
+- `configurable:false` prevents is the ability to use the `delete` operator to remove an existing property. For example:
+
+    ```js
+    var myObject = {
+        a: 2
+    };
+
+    myObject.a; // 2
+    delete myObject.a;
+    myObject.a; // undefined
+
+    Object.defineProperty(myObject, "a", {
+        value: 2,
+        writable: true,
+        configurable: false,
+        enumerable: true
+    });
+
+    myObject.a; // 2
+    delete myObject.a;
+    myObject.a; // 2
+    ```
+
+- `delete` is only used to remove object properties (which can be removed) directly from the object in question.
+- If an object property is the last remaining reference to some object/function, and you `delete` it, that removes the reference and now that unreferenced object/function can be garbage collected.
