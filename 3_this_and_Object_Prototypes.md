@@ -1163,3 +1163,71 @@
     ```
 
     `Object.keys(..)` returns an array of all enumerable properties, whereas `Object.getOwnPropertyNames(..)` returns an array of all properties, enumerable or not.
+
+## Iteration
+
+- With numerically-indexed arrays, iterating over the values is typically done with a standard `for` loop, like:
+
+    ```js
+    var myArray = [1, 2, 3];
+
+    for (var i = 0; i < myArray.length; i++) {
+        console.log(myArray[i]);
+    }
+    // 1 2 3
+    ```
+
+- `forEach(..)` will iterate over all values in the array, and ignores any callback return values.
+- `every(..)` keeps going until the end or the callback returns a `false` (or **falsy**) value.
+- `some(..)` keeps going until the end or the callback returns a `true` (or **truthy**) value.
+- Helpfully, ES6 adds a `for..of` loop syntax for iterating over arrays (and objects, if the object defines its own custom itertor):
+
+    ```js
+    var myArray = [1, 2, 3];
+
+    for (var v of myArray) {
+        console.log(v);
+    }
+    // 1
+    // 2
+    // 3
+    ```
+
+- You can manually iterate the array, using the built-in `@@iterator`. For example:
+
+    ```js
+    var myArray = [1, 2, 3];
+
+    var it = myArray[Symbol.iterator]();
+
+    it.next(); // { value: 1, done: false }
+    it.next(); // { value: 2, done: false }
+    it.next(); // { value: 3, done: false }
+    it.next(); // { done: true }
+    ```
+
+- `foo..of` calls `next()` function automatically and it's a powerful new syntactic tool for manipulating user-defined objects.
+- We could have declared `Symbol` directly in a object, like `var myObject = { a: 2, b: 3, [Symbol.iterator]: function () { /* .. */ } }`.
+- You can even generate **infinite** iterators which never **finish** and always return a new value (such as a random number, an incremented value, a unique identifier, etc), though you probably will not use such iterators with an unbounded `for..of` loop, as it would never end and would hang your program. For example:
+
+    ```js
+    var randoms = {
+        [Symbol.iterator]: function () {
+            return {
+                next: function () {
+                    return { value: Math.random() };
+                }
+            };
+        }
+    };
+
+    var randoms_pool = [];
+    for (var n of randoms) {
+        randoms_pool.push(n);
+
+        // don't proceed unbounded!
+        if (randoms_pool.length === 100) break;
+    }
+    ```
+
+    This iterator will generate random numbers "forever", so we're careful to only pull out 100 values so our program doesn't hang.
