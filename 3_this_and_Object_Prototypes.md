@@ -798,3 +798,8 @@
     myObject["foobar"]; // hello
     myObject["foobaz"]; // world
     ```
+
+## Property vs. Method
+
+- Every time you access a property on an object, that is a property access, regardless of the type of value you get back.
+- The safest conclusion is probably that "function" and "method" are interchangeable in **JavaScript**.
