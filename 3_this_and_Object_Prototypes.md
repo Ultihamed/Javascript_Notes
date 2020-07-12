@@ -1038,9 +1038,48 @@
     myObject.b; // undefined - performed a bit more "work" for the reference `myObject.b`
     ```
 
-## [[Put]]
+## `[[Put]]`
 
 - If the property of a object presents, the `[[Put]]` algorithm roughly check:
     1. Is the property an accessor descriptor? **If so, call the setter, if any**.
     2. Is the property a data descriptor with `writable` of `false`? **If so, silently fail in `non-strict mode`, or throw `TypeError` in `strict mode`**.
     3. Otherwise, set the value to the existing property as normal.
+
+## Getters & Setters
+
+- Getters are properties which actually call a hidden function to retrieve a value.
+- Setters are properties which actually call a hidden function to set a value.
+- Consider:
+
+    ```js
+    var myObejct = {
+        // define a getter for `a`
+        get a() {
+            return 2;
+        }
+    };
+
+    myObject.a = 3;
+
+    myObject.a; // 2
+    ```
+
+    Since we only defined a getter for `a`, if we try to set the value of `a` later, the set operation won't throw an error but will just silently throw the assignment away. Even if there was a valid setter, our custom getter is hard-coded to return only `2`, so the set operation would be moot. Another example:
+
+    ```js
+    var myObject = {
+        // define a getter for `a`
+        get a() {
+            return this._a_;
+        },
+
+        // define a setter for `a`
+        set a(val) {
+            this._a_ = val * 2;
+        }
+    };
+
+    myObject.a = 2;
+
+    myObject.a; // 4
+    ```
