@@ -1102,3 +1102,64 @@
 
     The `in` operator will check to see if the property is in the object, or if it exist at any higher level of the `[[Prototype]]` chain object traversal. By contrast, `hasOwnProperty(..)` checks to see if only `myObject` has the property or not, and will not consult the `[[Prototype]]` chain.
 - It's possible to create an object that does not link to `Object.prototype` (via `Object.create(null)`). In this case, a method call like `myObject.hasOwnProperty(..)` would fail.
+
+## Enumeration
+
+- Consider:
+
+    ```js
+    var myObject = {};
+
+    Object.defineProperty(
+        myObject,
+        "a",
+        // make `a` enumerable, as normal
+        { enumerable: true, value: 2 }
+    );
+
+    Object.defineProperty(
+        myObject,
+        "b",
+        // make `b` NON-enumerable
+        { enumerable: false, value: 3 }
+    );
+
+    myObject.b; // 3
+    ("b" in myObject); // true
+    myObject.hasOwnProperty("b"); // true
+
+    // .......
+
+    for (var k in myObject) {
+        console.log(k, myObject[k]);
+    }
+    // "a" 2
+    ```
+
+    You'll notice that `myObject.b` in fact exist and has an accessible value, but it doesn't show up in a `for..in` loop. That's because **enumerable** basically means **will be included if the object's properties are iterated through**. Another way that enumerable and non-enumerable properties can be distinguished:
+
+    ```js
+    var myObject = {};
+
+    Object.defineProperty(
+        myObject,
+        "a",
+        // make `a` enumerable, as normal
+        { enumerable: true, value: 2 }
+    );
+
+    Object.defineProperty(
+        myObject,
+        "b",
+        // make `b` non-enumerable
+        { enumerable: false, value: 3 }
+    );
+
+    myObject.propertyIsEnumerable("a"); // true
+    myObject.propertyIsEnumerable("b"); // false
+
+    Object.keys(myObject); // ["a"]
+    Object.getOwnPropertyNames(myObject); // ["a", "b"]
+    ```
+
+    `Object.keys(..)` returns an array of all enumerable properties, whereas `Object.getOwnPropertyNames(..)` returns an array of all properties, enumerable or not.
