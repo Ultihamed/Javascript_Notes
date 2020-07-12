@@ -701,3 +701,36 @@
 
     The constructed form and the literal form result in exactly the same sort of object. The only difference really is that you can add one or more key/value pairs to the literal declaration, whereas with constructed-form objects, you must add the properties one-by-one.
 - It's extremely uncommon to use the **constructed form** for creating objects. You would pretty much always want to use the literal syntax form. The same will be true of most of the built-in objects.
+
+## Built-in Objects
+
+- There are several object sub-types, usually referred to as built-in objects. For some of them, their names seems to imply they are directly related to their simple primitives counter-parts, but in fact, their relation is more complicated:
+  - `String`
+  - `Number`
+  - `Boolean`
+  - `Object`
+  - `Function`
+  - `Array`
+  - `Date`
+  - `RegExp`
+  - `Error`
+- Each of Object built-in functions can be used as a constructor (that is, a function call with the `new` operator) with the result being a newly constructed object of the sub-type in question. For instance:
+
+    ```js
+    var strPrimitive = "I am a string";
+    typeof strPrimitive; // string
+    strPrimitive instanceof String; // false
+
+    var strObject = new String("Im a a string");
+    typeof strObject; // object
+    strObject instanceof String; // ture
+
+    // inspect the object sub-type
+    Object.prototype.toString.call(strObject); // [object String]
+    ```
+
+    The primitive value `"I am a string"` is not an object, it's a primitive literal and immutable value.
+- Luckily, the language automatically coerces a `"string"` primitive to a `String` object when necessary, which means you almost never need to explicitly create the **Object** form. It is **strongly preferred** by the majority of the **JavaScript** community to use the literal form for a value, where possible, rather than the constructed object form.
+- `null` and `undefined` have no object wrapper form, only their primitive values. By contrast, `Date` values can only be created with their constructed object form, as they have no literal form counter-part.
+- Since objects are created either way, the simpler literal form is almost universally preferred.
+- Only use the constructed form if you need the extra options.
