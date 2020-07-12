@@ -1008,3 +1008,8 @@
 ## Seal
 
 - `Object.seal(..)` creates a **sealed** object, which means it takes an existing object and essentially calls `Object.preventExtensions(..)` on it, but also marks all its existing properties as `configurable: false`. So, not only can you not add any more properties, but you also cannot reconfigure or delete any existing properties (though you can still modify their values).
+
+## Freeze
+
+- `Object.free(..)` creates a frozen object, which means it takes an existing object and essentially calls `Object.seal(..)` on it, but it also mark all **data accessor** properties as `writable: false`, so their values cannot be changed.
+- This approach is the highest level of immutability that you can attain for an object itself, as it prevents any changes to the object or to any of its direct properties.
