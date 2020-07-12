@@ -1083,3 +1083,22 @@
 
     myObject.a; // 4
     ```
+
+## Existence
+
+- We can ask an object if it has a certain property without asking to get that property's value:
+
+    ```js
+    var myObejct = {
+        a: 2
+    };
+
+    ("a" in myObejct); // true
+    ("b" in myObejct); // false
+
+    myObejct.hasOwnProperty("a"); // true
+    myObejct.hasOwnProperty("b"); // false
+    ```
+
+    The `in` operator will check to see if the property is in the object, or if it exist at any higher level of the `[[Prototype]]` chain object traversal. By contrast, `hasOwnProperty(..)` checks to see if only `myObject` has the property or not, and will not consult the `[[Prototype]]` chain.
+- It's possible to create an object that does not link to `Object.prototype` (via `Object.create(null)`). In this case, a method call like `myObject.hasOwnProperty(..)` would fail.
