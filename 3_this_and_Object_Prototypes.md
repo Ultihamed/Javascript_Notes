@@ -734,3 +734,51 @@
 - `null` and `undefined` have no object wrapper form, only their primitive values. By contrast, `Date` values can only be created with their constructed object form, as they have no literal form counter-part.
 - Since objects are created either way, the simpler literal form is almost universally preferred.
 - Only use the constructed form if you need the extra options.
+
+## Object Contents
+
+- What is stored in the container are these property names, which act as pointers (technically, references) to where the values are stored. Consider:
+
+    ```js
+    var myObject = {
+        a: 2
+    };
+
+    myObject.a; // 2
+
+    myObject["a"]; // 2
+    ```
+
+    `.a` is a **property access** and `["a"]` is a **key access**. We will use the most common term, **property access** from here on.
+- The main difference between the two `.` and `[".."]` syntaxes, is that `.` operator requires an `Identifier` compatible property name after it, whereas the `[".."]` syntax can take basically any UTF-8/unicode compatible string as the name for the property. For example:
+
+    ```js
+    var wantA = true;
+    var myObject = {
+        a; 2;
+    };
+
+    var idx;
+
+    id (wantA) {
+        idx = "a";
+    }
+
+    // later
+
+    console.log(myObject[idx]); // 2
+    ```
+
+- In objects, property names are always strings. If you use any other value besides a `string` (primitive) as the property, it will first be converted to a string. For example:
+
+    ```js
+    var myObject = {};
+
+    myObject[true] = "foo";
+    myObject[3] = "bar";
+    myObject[myObject] = "baz";
+
+    myObject["true"]; // "foo"
+    myObject["3"]; // "bar"
+    myObject["[object Object]"]; // "baz"
+    ```
