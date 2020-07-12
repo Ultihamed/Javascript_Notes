@@ -782,3 +782,19 @@
     myObject["3"]; // "bar"
     myObject["[object Object]"]; // "baz"
     ```
+
+## Computed Property Names
+
+- ES6 adds computed property names, where you can specifiy an expression, surrounded by a `[]` pair, in the key-name position of an object-literal declaration:
+
+    ```js
+    var prefix = "foo";
+
+    var myObject = {
+        [prefix + "bar"]: "hello",
+        [prefix + "baz"]: "world"
+    };
+
+    myObject["foobar"]; // hello
+    myObject["foobaz"]; // world
+    ```
