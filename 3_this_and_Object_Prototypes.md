@@ -1013,3 +1013,27 @@
 
 - `Object.free(..)` creates a frozen object, which means it takes an existing object and essentially calls `Object.seal(..)` on it, but it also mark all **data accessor** properties as `writable: false`, so their values cannot be changed.
 - This approach is the highest level of immutability that you can attain for an object itself, as it prevents any changes to the object or to any of its direct properties.
+
+## `[[Get]]`
+
+- One important result of this `[[Get]]` operation is that if it cannot through any means come up with a value for the requested property, it instead returns the value `undefined`. For example:
+
+    ```js
+    var myObject = {
+        a: 2
+    };
+
+    myObject.b; // undefined
+    ```
+
+- Inspecting only the value results, you cannot distinguish whether a property exists and holds the explicit value `undefined`, or whether the property does not exist and `undefined` was the default return value afer `[[Get]]` failed to return something explicitly. For example:
+
+    ```js
+    var myObject = {
+        a: undefined
+    };
+
+    myObject.a; // undefined
+
+    myObject.b; // undefined - performed a bit more "work" for the reference `myObject.b`
+    ```
