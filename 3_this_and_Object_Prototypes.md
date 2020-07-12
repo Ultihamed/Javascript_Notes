@@ -875,3 +875,37 @@
     newObj.c === anotherArray; // true
     newObj.d === anotherFynction; // true
     ```
+
+## Property Descriptors
+
+- Consider:
+
+    ```js
+    var myObject = {
+        a: 2
+    };
+
+    Object.getOwnPropertyDescriptor(myObject, "a");
+    // {
+    // value: 2,
+    // writable: true,
+    // enumerable: true,
+    // configurable: true
+    // }
+    ```
+
+    As you can see, the property descriptor for our normal object property `a` is much more than just its `value` of `2`. It includes 3 more other characteristics: `writable`, `enumerable`, and `configurable`.
+- We can use `Object.defineProperty(..)` to add a new property, or modify an existing one (if it's `configurable`!), with the desired characteristics. For example:
+
+    ```js
+    var myObject = {};
+
+    Object.defineProperty(myObject, "a", {
+        value: 2,
+        writable: true,
+        configurable: true,
+        enumerable: true
+    });
+
+    myObject.a; // 2
+    ```
