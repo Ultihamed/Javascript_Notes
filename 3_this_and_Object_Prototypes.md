@@ -1405,3 +1405,57 @@
 
     We essentially **borrow** the function `Something.cool()` and call it in the context of `Another` (via its `this` binding) instead of `Something`. The end result is that the assignments that `Something.cool()` makes are applied against the `Another` object rather than the `Something` object.
 - Generally, avoid such constructs where possible to keep cleaner and more maintainable code.
+
+## `[[Prototype]]`
+
+- The default `[[Get]]` proceeds to follow the `[[Prototype]]` **link** of the object if it cannot find the requested property on the object directly.
+- Consider:
+
+    ```js
+    var anotherObject = {
+        a: 2
+    };
+
+    // create an object linked to `anotherObject`
+    var myObject = Object.create(anotherObject);
+
+    for (var k in myObject) {
+        console.log("found: " + k);
+    }
+    // found: a
+
+    ("a" in myObject); // true
+    ```
+
+    If you use `in` for a object, you can see all of the object properties.
+- All normal (built-in, not host-specific extension) objects in **JavaScript "descend from"** (aka, have at the top of their `[[Prototype]]` chain) the `Object.protorype` object.
+- Consider:
+
+    ```js
+    myObject.foo = "bar";
+    ```
+
+    If the `myObject` object already has a normal data accessor property called `foo` directly present on it, the assignment is as simple as changing the value of the exisiting property. If the `foo` is not already present directly on `myObject`, the `[[Prototype]]` chain in traversed, just like for the `[[Get]]` operation. If `foo` is not found anywhere in the chain, the property `foo` is added directly to `myObject` with the specified value, as expected.
+- You can define a property for a object with `Object.defineProperty(..)` function.
+- Consider:
+
+    ```js
+    var anotherObject = {
+        a: 2
+    };
+
+    var myObject = Object.create(anotherObject);
+
+    anotherObject.a; // 2
+    myObject.a; // 2
+
+    anotherObject.hasOwnProperty("a"); // true
+    myObject.hasOwnProperty("a"); // false
+
+    myObject.a++; // oops, implicit shadowing!
+
+    anotherObject.a; // 2
+    myObject.a; // 3
+
+    myObject.hasOwnProperty("a"); // true
+    ```
