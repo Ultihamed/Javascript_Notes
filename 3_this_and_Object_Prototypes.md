@@ -1235,8 +1235,9 @@
 ## Class Theory
 
 - Does **JavaScript** actually has classes? Plain and simple: **No**.
-- A class is a blue-print. To actually get an object we can interact with, we must build (aka, **instantiate**) something from the class. The end result of such **construction** is an object, typically called an **instance**, which we can directly call methods on and access any public data properties from, as necessary. **This object is a copy** of all the characteristics described by the class.
+- A class is a blue-print. To actually get an object we can interact with, we must build (aka, **instantiate**) something from the class. The end result of such **construction** is an object, typically called an **instance**, which we can directly call methods on and access any public data properties from, as necessary. **This object is a copy** of all the characteristics described by the class (Classes mean copies).
 - A class is instantiated into object form by a copy operation.
+- Classes are a design pattern. Many languages provide syntax which enables natural class-oriented software design. **JavaScript** also has a similar syntax, but it behaves very differently from what you're used to with classes in those other languages.
 
 ## Constructor
 
@@ -1273,6 +1274,7 @@
 
 ## Polymorphism
 
+- Polymorphism means having different functions at multiple levels of an inheritance chain with the same name.
 - In many languages, the keyword `super` is used, in **JavaScript** we use `inherited:`, which leans on the idea that a **super class** is the parent/ancentor of the current class.
 - When classes are inherited, there is a way for the classes themselves (not the object instances created from them!) to relatively reference the class inherited from, and this relative reference is usually called `super`.
 - If the child **overrides** a method it inherits, both the original and overriden versions og the method are actually maintained, so that they are both accessible.
@@ -1329,6 +1331,7 @@
 
 ## Parasitic Inheritance
 
+- **JavaScript** does not automatically create copies (as classes imply) between objects.
 - Consider:
 
     ```js
@@ -1371,3 +1374,34 @@
     // Steering and moving forward!
     // Rolling on all 4 wheels!
     ```
+
+## Implicit Mixins
+
+- Consider:
+
+    ```js
+    var Something = {
+        cool: function () {
+            this.greeting = "Hello World";
+            this.count = this.count ? this.count + 1 : 1;
+        }
+    };
+
+    Something.cool();
+    Something.greeting; // "Hello World"
+    Something.count; // 1
+
+    var Another = {
+        cool: function () {
+            // implicit mixin of `Something` to `Another`
+            Something.cool.call(this);
+        }
+    };
+
+    Another.cool();
+    Another.greeting; // "Hello World"
+    Another.count; // 1 (not shared state with `Something`)
+    ```
+
+    We essentially **borrow** the function `Something.cool()` and call it in the context of `Another` (via its `this` binding) instead of `Something`. The end result is that the assignments that `Something.cool()` makes are applied against the `Another` object rather than the `Something` object.
+- Generally, avoid such constructs where possible to keep cleaner and more maintainable code.
