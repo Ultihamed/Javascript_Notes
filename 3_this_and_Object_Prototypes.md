@@ -1270,3 +1270,10 @@
 
 - Once a child class is defined, it's separate and distinct from the parent class.
 - The child class contains an initial copy of the behavior from the parent, but can then override any inherited behavior and even define new behavior.
+
+## Polymorphism
+
+- In many languages, the keyword `super` is used, in **JavaScript** we use `inherited:`, which leans on the idea that a **super class** is the parent/ancentor of the current class.
+- When classes are inherited, there is a way for the classes themselves (not the object instances created from them!) to relatively reference the class inherited from, and this relative reference is usually called `super`.
+- If the child **overrides** a method it inherits, both the original and overriden versions og the method are actually maintained, so that they are both accessible.
+- Don't let polymorphism confuse you into thinking a child class is linked to its parent class. A child class instead gets a copy of what it needs from the parent class. **Class inheritance implies copies**.
