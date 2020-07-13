@@ -1231,3 +1231,9 @@
     ```
 
     This iterator will generate random numbers "forever", so we're careful to only pull out 100 values so our program doesn't hang.
+
+## Class Theory
+
+- Does **JavaScript** actually has classes? Plain and simple: **No**.
+- A class is a blue-print. To actually get an object we can interact with, we must build (aka, **instantiate**) something from the class. The end result of such **construction** is an object, typically called an **instance**, which we can directly call methods on and access any public data properties from, as necessary. **This object is a copy** of all the characteristics described by the class.
+- A class is instantiated into object form by a copy operation.
