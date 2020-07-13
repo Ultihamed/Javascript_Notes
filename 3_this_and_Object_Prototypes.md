@@ -1265,3 +1265,8 @@
     ```
 
     Notice that the `CoolGuy` class has a constructor `CoolGuy()`, which is actually what we call when we say `new CoolGuy(..)`. We get an object back (an instance of our class) from the constructor, and we can call the method `showOff()`, which prints out that particular `CoolGuy`s special trick.
+
+## Class Inheritance
+
+- Once a child class is defined, it's separate and distinct from the parent class.
+- The child class contains an initial copy of the behavior from the parent, but can then override any inherited behavior and even define new behavior.
