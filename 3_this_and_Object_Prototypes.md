@@ -1283,3 +1283,46 @@
 - If a class could inherit from two other classes, it would more closely fit the parent/child metaphor.
 - Multiple-inheritance means that each parent class definition is copied into the child class.
 - there are no **classes** in **JavaScript** to instantiate, only objects.
+
+## Explicit Mixins
+
+- There is no class in **JavaScript**, the mechanism is like this:
+
+    ```js
+    // vastly simplified `mixin(..)` example:
+    function mixin(sourceObj, targetObj) {
+        for (var key in sourceObj) {
+            // only copy if not already present
+            if (!(key in targetObj)) {
+                targetObj[key] = sourceObj[key];
+            }
+        }
+
+        return targetObj;
+    }
+
+    var Vehicle = {
+        engines: 1,
+
+        ignition: function () {
+            console.log("Turning on my engine.");
+        },
+
+        drive: function () {
+            this.ignition();
+            console.log("Steering and moving forward!");
+        }
+    };
+
+    var Car = mixin(Vehicle, {
+        wheels: 4,
+
+        drive: function () {
+            Vehicle.drive.call(this);
+            console.log("Rolling on all " + this.wheels + " wheels!");
+        }
+    });
+    ```
+
+    `Car` now has a copy of the properties and functions from `Vehicle`. Technically, functions are not actually duplicated, but rather references to the functions are copied. `Car` already had a `drive` property (function), so that property reference was not overridden (see the `if` statement in `mixin(..)` above).
+- Explicit pseudo-polymorphism should be avoided wherever possible, because the cost outweighs the benefit in most respects.
