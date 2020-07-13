@@ -1277,3 +1277,9 @@
 - When classes are inherited, there is a way for the classes themselves (not the object instances created from them!) to relatively reference the class inherited from, and this relative reference is usually called `super`.
 - If the child **overrides** a method it inherits, both the original and overriden versions og the method are actually maintained, so that they are both accessible.
 - Don't let polymorphism confuse you into thinking a child class is linked to its parent class. A child class instead gets a copy of what it needs from the parent class. **Class inheritance implies copies**.
+
+## Multiple Inheritance
+
+- If a class could inherit from two other classes, it would more closely fit the parent/child metaphor.
+- Multiple-inheritance means that each parent class definition is copied into the child class.
+- there are no **classes** in **JavaScript** to instantiate, only objects.
