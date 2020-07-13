@@ -1237,3 +1237,31 @@
 - Does **JavaScript** actually has classes? Plain and simple: **No**.
 - A class is a blue-print. To actually get an object we can interact with, we must build (aka, **instantiate**) something from the class. The end result of such **construction** is an object, typically called an **instance**, which we can directly call methods on and access any public data properties from, as necessary. **This object is a copy** of all the characteristics described by the class.
 - A class is instantiated into object form by a copy operation.
+
+## Constructor
+
+- Consider:
+
+    ```js
+    class CoolGuy {
+        specialTrick = nothing
+
+        CoolGuy(trick) {
+            specialTrick = trick
+        }
+
+        showOff() {
+            output("Here's my trick: ", specialTrick)
+        }
+    }
+    ```
+
+    To make a `CoolGuy` instance, we would call the class constructor:
+
+    ```js
+    Joe = new CoolGuy("jumping rope");
+
+    Joe.showOff(); // Here's my trick: jumping rope
+    ```
+
+    Notice that the `CoolGuy` class has a constructor `CoolGuy()`, which is actually what we call when we say `new CoolGuy(..)`. We get an object back (an instance of our class) from the constructor, and we can call the method `showOff()`, which prints out that particular `CoolGuy`s special trick.
