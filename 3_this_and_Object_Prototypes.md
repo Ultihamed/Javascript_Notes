@@ -1578,3 +1578,31 @@
     ```
 
     About the only difference is that object literals will still require `,` comma separators between elements whereas `class` syntax doesn't.
+
+## Unlexical
+
+- Consider:
+
+    ```js
+    var Foo = {
+        bar() { /* .. */ },
+        baz = function baz() { /* .. */ }
+    };
+    ```
+
+    Here's the syntactic de-sugaring that expresses how that code will operate:
+
+    ```js
+    var Foo = {
+        bar: function () { /* .. */ },
+        baz: function baz() { /* .. */ }
+    }
+    ```
+
+    Lack of a `name` identifier on an anonymous function:
+
+    1. makes debugging stack traces harder
+    2. makes self-referencing (recursion, event (un)binding, etc) harder
+    3. makes code (a little bit) harder to understand
+
+    Items 1 and 3 don't apply to concise methods. Item 2 is, unfortunately, **still a drawback to concise methods**. They will not have a lexical identifier to use as a self-reference.
