@@ -1266,6 +1266,7 @@
     ```
 
     Notice that the `CoolGuy` class has a constructor `CoolGuy()`, which is actually what we call when we say `new CoolGuy(..)`. We get an object back (an instance of our class) from the constructor, and we can call the method `showOff()`, which prints out that particular `CoolGuy`s special trick.
+- In **JavaScript**, it's most appropriate to say that a **constructor** is any function called with `new` kewword in front of it. Functions aren't constructors, but function calls are **constructor calls** if and only if `new` is used.
 
 ## Class Inheritance
 
@@ -1459,3 +1460,28 @@
 
     myObject.hasOwnProperty("a"); // true
     ```
+
+## **Class** Functions
+
+- Each object created from calling `new Foo()` will end up `[[Prototype]]`-linked to this (below) "Foo dot prototype" object. For example:
+
+    ```js
+    function Foo() {
+        // ...
+    }
+
+    Foo.prototype; // { }
+
+    // ====== Next Example ======
+
+    function Bar() {
+        // ...
+    }
+
+    var a = new Bar();
+
+    Object.getPrototypeOf(a) === Bar.protortype; // true
+    ```
+
+- In **JavaScript**, we don't make copies from one object (**class**) to another (**instance**). We make links between objects. For the `[[Prototype]]` mechanism, visually, the arrows move from right to left, and from bottom to top.
+- **Inheritance** implies a copy operation, and JavaScript doesn't copy object properties (natively, by default). Instead, **JavaScript** creates a link between two objects, where one object can essentially delegate property/function access to another object.
