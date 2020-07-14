@@ -1512,3 +1512,69 @@
 - **Behavior Delegation** means let some object provide a delegation for property or method references if not found on the object.
 - You cannot create a cycle where two or more objects are mutually delegated (bi-directionally) to each other. If you make `B` lineked to `A`, and then try to link `A` to `B`, you will get an error.
 - **Chrome** (browser) is actively tracking, as an internal property, the name of the actual function that did the construction, whereas other browsers don't track that additional information.
+
+## ES6 `class` sugar
+
+- Consider:
+
+    ```js
+    class Widget {
+        constructor(width, height) {
+            this.width = width || 50;
+            this.height = height || 50;
+            this.$elem = null;
+        }
+        render($where) {
+            if (this.$elem) {
+                this.$elem.css({
+                    width: this.width + "px",
+                    height: this.height + "px"
+                }).appendTo($where);
+            }
+        }
+    }
+
+    class Button extends Widget {
+        constructor(width, height, label) {
+            super(width, height);
+            this.label = label || "Default";
+            this.$elem = $("<button>").text(this.label);
+        }
+        render($where) {
+            super.render($where);
+            this.$elem.click(this.onClick.bind(this));
+        }
+        onClick(evt) {
+            console.log("Button '" + this.label + "' clicked!");
+        }
+    }
+
+    $(document).ready(function () {
+        var $body = $(document.body);
+        var btn1 = new Button(125, 30, "Hello");
+        var btn2 = new Button(150, 40, "World");
+
+        btn1.render($body);
+        btn2.render($body);
+    });
+    ```
+
+- With class constructors, you are **forced** (not really, but strongly suggested) to do both construction and initialization in the same step.
+- **OLOO** supports better the principle of separation of concerns, where creation and initialization are not necessarily conflated into the same operation.
+- We get to drop the word `function` from the declaration, which makes **JavaScript** developers everywhere cheer.
+- As of ES6, we can use concise method declarations in any object literal, so an object in OLOO style can be declared this way (same short-hand sugar as with `class` body syntax):
+
+    ```js
+    var LoginController = {
+        errors: [],
+        getUser() { // Look ma, no `function`!
+            // ...
+        },
+        getPassword() {
+            // ...
+        }
+        // ...
+    }
+    ```
+
+    About the only difference is that object literals will still require `,` comma separators between elements whereas `class` syntax doesn't.
