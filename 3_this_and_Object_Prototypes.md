@@ -1505,3 +1505,10 @@
     a.myName(); // "a"
     b.myName(); // "b"
     ```
+
+## Delegation Theory
+
+- **OLOO** style means **o**bject-**l**inked-to-**o**ther-**o**bject.
+- **Behavior Delegation** means let some object provide a delegation for property or method references if not found on the object.
+- You cannot create a cycle where two or more objects are mutually delegated (bi-directionally) to each other. If you make `B` lineked to `A`, and then try to link `A` to `B`, you will get an error.
+- **Chrome** (browser) is actively tracking, as an internal property, the name of the actual function that did the construction, whereas other browsers don't track that additional information.
