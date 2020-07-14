@@ -1606,3 +1606,34 @@
     3. makes code (a little bit) harder to understand
 
     Items 1 and 3 don't apply to concise methods. Item 2 is, unfortunately, **still a drawback to concise methods**. They will not have a lexical identifier to use as a self-reference.
+
+## `class` Gotchas
+
+- The `class` is not actually copying definitions statically at declaration time the way it does in traditional class-oriented languages. If you change/replace a method (on purpose or by accident) on the parent class, the child class and/or instances will still be affected. For example:
+
+    ```js
+    class C {
+        constructor() {
+            this.num = Math.random();
+        }
+        rand() {
+            console.log("Random: " + this.num);
+        }
+    }
+
+    var c1 = new C();
+    c1.rand(); // "Random: 0.4324299..."
+
+    C.prototype.rand = function () {
+        console.log("Random: " + Math.round(this.num * 1000));
+    };
+
+    var c2 = new C();
+    c2.rand(); // "Random: 867"
+
+    c1.rand(); // "Random: 432" -- oops!!!
+    ```
+
+- The `super` would always be bound to one level higher than whatever the current method's position in the `[[Prototype]]` chain is.
+- In traditional class-oriented languages, you never adjust the definition of a class later, so the class design pattern doesn't suggest such capabilities. But one of the most powerful parts of **JavaScript** is that it is dynamic, and the definition of any object is (unless you make it immutable) a fluid and mutable thing.
+- What a sad commentary on **JavaScript**: dynamic is too hard, let's pretend to be (but not actually be!) static.
