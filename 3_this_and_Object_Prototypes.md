@@ -1485,3 +1485,23 @@
 
 - In **JavaScript**, we don't make copies from one object (**class**) to another (**instance**). We make links between objects. For the `[[Prototype]]` mechanism, visually, the arrows move from right to left, and from bottom to top.
 - **Inheritance** implies a copy operation, and JavaScript doesn't copy object properties (natively, by default). Instead, **JavaScript** creates a link between two objects, where one object can essentially delegate property/function access to another object.
+
+## Mechanics
+
+- **JavaScript** developers have strived to simulate as much as they can of class-orientation:
+
+    ```js
+    function Foo(name) {
+        this.name = name;
+    }
+
+    Foo.prototype.myName = function () {
+        return this.name;
+    };
+
+    var a = new Foo("a");
+    var b = new Foo("b");
+
+    a.myName(); // "a"
+    b.myName(); // "b"
+    ```
