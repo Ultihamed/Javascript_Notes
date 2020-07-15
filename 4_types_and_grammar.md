@@ -43,3 +43,24 @@
     ```js
     a.length; // 2
     ```
+
+## Values as Types
+
+- In **JavaScript**, variables don't have types -- **values have types**. Variables can hold any value, at any time.
+- A variable can, in one assignment statement, hold a `string`, and in the next hold a `number`, and so on.
+- The value, like `"42"` with the `string` type, can be created from the `number` value through a process called **coercion**.
+- If you use `typeof` against a variable, it's not asking "what's the type of the variable?" as it may seem, since **JavaScript** variables have to types. Instead, it's asking "what's the type of the value in the variable?". For example:
+
+    ```js
+    var a = 42;
+    typeof a; // "number"
+
+    a = true;
+    typeof a; // "boolean"
+    ```
+
+- The `typeof` operator always returns a string. So:
+
+    ```js
+    typeof typeof 42; // "string"
+    ```
