@@ -64,3 +64,36 @@
     ```js
     typeof typeof 42; // "string"
     ```
+
+- Avoid declare variables using `window`, for example: `window.a = 42;`. It's not working in some **JavaScript** environments (like **Node.js**).
+
+## `undefined` vs undeclared
+
+- Variables that have no value currently, actually have the `undefined` value. Calling `typeof` against such variables will return `"undefined"`. For example:
+
+    ```js
+    var a;
+
+    typeof a; // "undefined"
+
+    var b = 42;
+    var c;
+
+    // later
+    b = c;
+
+    typeof b; // "undefined"
+    typeof c; // "undefined"
+    ```
+
+- An **undeclared** variable is one of that has not been formally declared in the accessible scope. For example:
+
+    ```js
+    var a;
+
+    a; // "undefined"
+    b; // ReferenceError: b is not defined
+
+    typeof a; // "undefined"
+    typeof b; // "undefined"
+    ```
