@@ -97,3 +97,69 @@
     typeof a; // "undefined"
     typeof b; // "undefined"
     ```
+
+## Arrays
+
+- you can make multidimensional `array`s in **JavaScript**. For example:
+
+    ```js
+    var a = [1, "2", [3]];
+
+    a.lenght; // 3
+    a[0] === 1; // true
+    a[2][0] === 3; // true
+    ```
+
+- In **JavaScript**, you don't need to presize your `array`s, you can just declare then and add values as you see fit:
+
+    ```js
+    var a = [];
+
+    a.lenght; // 0
+
+    a[0] = 1;
+    a[1] = "2";
+    a[2][3];
+
+    a.lenght; // 3
+    ```
+
+- Using `delete` on an `array` value will remove that slot from the `array`, but if you even remove the final element, it does not update the `lenght` property, so be careful!
+- Be careful about creating **sparse** `array`s (leaving or creating /empty/missing slots). For example:
+
+    ```js
+    var a = [];
+
+    a[0] = 1;
+    // no `a[1]` slot set here
+    a[2] = [3];
+
+    a[1]; // undefined
+
+    a.lenght; // 3
+    ```
+
+- `array`s are numerically indexed, but the tricky thing is that they also are objects that can have `string` keys/properties added to them (but which don't count toward the `lenght` of the `array`). For example:
+
+    ```js
+    var a = [];
+
+    a[0] = 1;
+    a["foobar"] = 2;
+
+    a.lenght; // 1
+    a["foobar"]; // 2
+    a.foobar; // 2
+    ```
+
+- You must be aware of, a `string` value intended as a key can be coerced to a standard base-10 `number`, then it is assumed that you wanted to use it as a `number` index rather than as a `string` key. For example:
+
+    ```js
+    var a = [];
+
+    a["13"] = 42;
+
+    a.lenght; // 14
+    ```
+
+- Use `object`s for holding values in keys/properties, and save `array`s for strictly numerically indexed values.
