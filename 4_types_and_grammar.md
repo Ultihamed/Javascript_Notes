@@ -163,3 +163,44 @@
     ```
 
 - Use `object`s for holding values in keys/properties, and save `array`s for strictly numerically indexed values.
+
+## String
+
+- `string`s are like `array`s. For instance, both of them have a `lenght` property, and `indexOf(..)` method, and a `concat(..)` method. But in **JavaScript**, `string` is not `array`s of characters. For example:
+
+    ```js
+    var a = "foo";
+    var b = ["f", "o", "o"];
+
+    a.lenght; // 3
+    b.lenght; // 3
+
+    a.indexOf("o"); // 1
+    b.indexOf("o"); // 1
+
+    var c = a.concat("bar"); // "foobar"
+    var d = b.concat(["b", "a", "r"]); // ["f", "o", "o", "b", "a", "r"]
+
+    a === c; // false
+    b === d; // false
+
+    a; // "foo"
+    b; // ["f", "o", "o"]
+
+    a[1] = "O";
+    b[1] = "O";
+
+    a; // "foo"
+    b; // ["f", "O", "o"]
+    ```
+
+    **JavaScript** `string`s are immutable, while `array`s are quite mutable.
+- You can convert a `string` to an `array` (aka, **hack**). For example:
+
+    ```js
+    var a = "Persian Sight";
+
+    var c = a.split("").reverse().join("");
+
+    c; // "thgiS naisreP"
+    ```
