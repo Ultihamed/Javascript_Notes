@@ -417,3 +417,40 @@
     Object.is(b, -0); // true
     Object.is(b, 0); // false
     ```
+
+## Value vs. Reference
+
+- In **JavaScript** the type of the value solely controls whether that value will be assigned by value-copy or by reference-copy.
+- Consider:
+
+    ```js
+    var a = 2;
+    var b = a; // `b` is always a copy of the value in `a`
+    b++;
+    a; // 2
+    b; // 3
+
+    var c = [1, 2, 3];
+    var d = c; // `d` is a reference to the shared `[1, 2, 3]` value
+    d.push(4);
+    c; // [1, 2, 3, 4]
+    d; // [1, 2, 3, 4]
+    ```
+
+    Simple values (aka scalar primitives) are always assigned/passed by value-copy: `null`, `undefined`, `string`, `number`, `boolean`, and ES6's `symbol`. Compound values -- `object`s (including `array`s, and all boxed object wrappers) and `function`s -- always create a copy of the reference on assignment or passing.
+- Consider:
+
+    ```js
+    function foo(x) {
+        x = x + 1;
+        x; // 3
+    }
+
+    var a = 2;
+    var b = new Number(a); // or equivalently `Object(a)`
+
+    foo(b);
+    console.log(b); // 2, not 3
+    ```
+
+    If a `Number` object holds the scalar primitive value `2`, that exact `Number` object can never be changed to hold another value. You can only create a whole new `Number` object with a different value.
