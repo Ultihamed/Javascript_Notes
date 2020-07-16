@@ -322,3 +322,48 @@
 
     console.log(void a, a); // undefined 42
     ```
+
+## NaN
+
+- It would be much more accurate to think of `NaN` as being **invalid number**, **failed number**, or even **bad number**, than to think of it as **not a number**. For example:
+
+    ```js
+    var a = 2 / "foo"; // NaN
+
+    typeof a === "number"; // true
+    ```
+
+    The type of not-a-number is `number`.
+- `NaN` is a very special value in that it's never equal to another `NaN` value (i.e., it's never equal to itself). It's the only value, in fact, that is not reflexive (without the Identity characteristic `x === x`).
+- Consider:
+
+    ```js
+    var a = 2 / "foo";
+    var b = "foo";
+
+    a; // NaN
+    b; // "foo"
+
+    window.isNaN(a); // true
+    window.isNaN(b); // true -- ouch!
+    ```
+
+    Clearly, `"foo"` is literally not a `number`, but it's definitely not the `NaN` value either! This bug has been in JS since the very beginning (over 19 years of ouch).
+- As of ES6, finally a replacement utility has been provided: `Number.isNaN(..)`. A simple polyfill for it so that you can safely check `NaN` values now even in pre-ES6 browsers is:
+
+    ```js
+    if (!Number.isNaN) {
+        Number.isNaN = function (n) {
+            return (
+                typeof n === "number" &&
+                window.isNaN(n)
+            );
+        };
+    }
+
+    var a = 2 / "foo";
+    var b = "foo";
+
+    Number.isNaN(a); // true
+    Number.isNaN(b); // false -- phew!
+    ```
