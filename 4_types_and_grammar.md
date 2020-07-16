@@ -383,3 +383,37 @@
 
     Infinity / Infinity; // NaN
     ```
+
+## Zeros
+
+- Consider:
+
+    ```js
+    var a = 0 / 3; // -0
+    var b = 0 * -3; // -0
+    ```
+
+    Addition and subtraction cannot result in a negative zero.
+- if you want to distinguish a `-0` from a `0` in your code, you can't just rely on what the developer console outputs, so you're going to have to be abit more clever:
+
+    ```js
+    function isNegZero(n) {
+        n = Number(0);
+        return (n === 0) && (1 / n === -Infinity);
+    }
+
+    isNegZero(-0); // true
+    isNegZero(0 / 3); // true
+    isNegZero(0); // false
+    ```
+
+- As of ES6, there's a new utility that can be used to test two values for absolute equality, without any exceptions. It's called `Object.is(..)`. For example:
+
+    ```js
+    var a = 2 / "foo";
+    var b = -3 * 0;
+
+    Object.is(a, NaN); // true
+    Object.is(b, -0); // true
+    Object.is(b, 0); // false
+    ```
