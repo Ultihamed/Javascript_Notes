@@ -299,3 +299,26 @@
     Number.isSafeInteger(Math.pow(2, 53)); // false
     Number.isSafeInteger(Math.pow(2, 53) - 1); // true
     ```
+
+## Undefined
+
+- In both non-`strict` mode and `strict` mode, however, you can create a local variable of the name `undefined`. But this is a terrible idea. For example:
+
+    ```js
+    function foo() {
+        "use strict"
+        var undefined = 2;
+        console.log(undefined); // 2
+    }
+
+    foo();
+    ```
+
+    Friends don't let friends override `undefined`. Ever.
+- If there's ever a place where a value exists (from some expression) and you'd find it useful for the value to be `undefined` instead, use the `void` operator. That probably won't be terribly common in your programs, but in the rare cases you do need it, it can be quite helpful. For example:
+
+    ```js
+    var a = 42;
+
+    console.log(void a, a); // undefined 42
+    ```
