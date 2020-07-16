@@ -204,3 +204,98 @@
 
     c; // "thgiS naisreP"
     ```
+
+## Numbers
+
+- **JavaScript** has just one numeric type: `number`. This type includes both **integer** values and fractional **decimal** numbers.
+- In **JavaScript**, an integer is just a value that has no fractional decimal value. That is, `42.0` is as much an integer as `42`.
+- The leading portion of a decimal value, if `0`, is optional. For example:
+
+    ```js
+    var a = 0.42;
+    var b = .42;
+    ```
+
+    Similarly, the trailing portion (the fractional) of a decimal value after the `.`, if `0`, is optional. For example:
+
+    ```js
+    var a = 42.0;
+    var b = 42.;
+    ```
+
+- By default, most `number`s will be outputted as base-10 decimals, with trailing fractional `0`s removed. So:
+
+    ```js
+    var a = 42.300;
+    var b = 42.0;
+
+    a; // 42.3
+    b; // 42
+    ```
+
+- Very large or very small `number`s will by default be outputted in exponent form, the same as the output of the `toExponential()` method, like:
+
+    ```js
+    var a = 5E10;
+    a; // 50000000000
+    a.toExponential(); // "5e+21"
+
+    var b = a * a;
+    b; // 2.5e+21
+
+    var c = 1 / a;
+    c; // 2e-11
+    ```
+
+- The `toFixed(..)` method allows you to specify how many fractional decimal places you'd like the value to be represented with. For example:
+
+    ```js
+    var a = 42.59;
+
+    a.toFixed(0); // "42"
+    a.toFixed(1); // "42.6"
+    a.toFixed(2); // "42.59"
+    a.toFixed(3); // "42.590"
+    a.toFixed(4); // "42.5900"
+    ```
+
+    `toPrecision(..)` is similar, but specifies how many significant digits should be used to represent the value:
+
+    ```js
+    var a = 42.59;
+
+    a.toPrecision(1); // "4e+1"
+    a.toPrecision(2); // "43"
+    a.toPrecision(3); // "42.6"
+    a.toPrecision(4); // "42.59"
+    a.toPrecision(5); // "42.590"
+    a.toPrecision(6); // "42.5900"
+    ```
+
+- `number` literals can also be expressed in other bases, like binary, octal, and hexadecimal. These formats work in current versions of **JavaScript**. For example:
+
+    ```js
+    0xf3; // hexadecimal for: 243
+    0Xf3l; // ditto
+
+    0363; // octal for: 243
+    ```
+
+    The `0363` form is still allowed in non-`strict` mode, but you should stop using it anyway, to be future-friendly (and because you should be using `strict` mode by now.
+- The maximum floating-point value that can be represented is roughly `798e+308` (which is really, really, really huge!), predefined for you as `Number.MAX_VALUE`. One the small end, `Number.MIN_VALUE` is roughly `5e-324`, which isn't negative but is really close to zero.
+- The maximum integer that can **safely** be represented is `2^53-1`, which is `9007199254740991`. If you insert your commas, you'll see that this is just over 9 quadrillion. So that's pretty darn big for `number`s to range up to. This value is actually automatically predefined in ES6, as `Number.MAX_SAFE_INTEGER`. Unsurprisingly, there's a minimum value, `-9007199254740991`, and it's defined in ES6 as `Number.MIN_SAFE_INTEGER`.
+- To test if a value is an integer, you can use the ES6-specified `Number.isInteger(..)`. For example:
+
+    ```js
+    Number.isInteger(42); // true
+    Number.isInteger(42.000); // true
+    Number.isInteger(42.3); // false
+    ```
+
+- To test if a value is a safe integer, use the ES6-specified `Number.isSafeInteger(..)`:
+
+    ```js
+    Number.isSafeInteger(Number.MAX_SAFE_INTEGER); // true
+    Number.isSafeInteger(Math.pow(2, 53)); // false
+    Number.isSafeInteger(Math.pow(2, 53) - 1); // true
+    ```
