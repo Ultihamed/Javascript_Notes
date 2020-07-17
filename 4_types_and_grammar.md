@@ -527,3 +527,25 @@
     ```
 
 - An array with at least one **empty slot** in it is often called a **sparse array**.
+
+## `Object(..), Function(..), and RegExp(..)`
+
+- Consider:
+
+    ```js
+    var c = new Object();
+    c.foo = "bar";
+    c; // { foo: "bar" }
+
+    var d = { foo: "bar" };
+    d; // { foo: "bar" }
+
+    var e = new Function("a", "return a * 2;");
+    var f = function (a) { return a * 2; };
+    function g(a) { return a * 2; }
+
+    var h = new RegExp( "^a*b+", "g" );
+    var i = /^a*b+/g;
+    ```
+
+- Do not just treat `Function(..)` as an alternate form of `eval(..)`.
