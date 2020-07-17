@@ -775,3 +775,18 @@
     Number([]);        // 0
     Number(["abc"]);   // NaN
     ```
+
+## `toBoolean`
+
+- In **JavaScript** `number`s are `number`s and the `boolean`s are `boolean`s. You can coerce `1` to `true` (and vice versa) or `0` to `false` (and vice versa). But they're not the same.
+- All of **JavaScript**'s values can be divided into two categories:
+  - values that will become `false` if coerced to `boolean`
+  - everything else (which will obviously become `true`)
+- We have a **falsy** value list in **JavaScript**:
+  - `undefined`
+  - `null`
+  - `false`
+  - `+0`, `-0`, and `NaN`
+  - `""`
+
+  By logical conclusion, if a value is not on that list, it must be on another list, which we call the **truthy** values list. So anything not explicitly on the falsy list is therefore truthy.
