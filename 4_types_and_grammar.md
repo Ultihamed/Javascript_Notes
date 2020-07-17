@@ -632,3 +632,16 @@
 
     var c = String(a); // explicit coercion
     ```
+
+## `toString`
+
+- For regular objects, unless you specify your own, the default `toString()` (located in `Object.prototype.toString()`) will return the internal `[[Class]]`, like for instance `"[object Object]"`.
+- Arrays have an overridden default `toString()` that stringifies as the (string) concatenation of all its value (each stringified themselves), with `","` in between each value. For example:
+
+    ```js
+    var a = [1, 2, 3];
+
+    a.toString(); // "1,2,3"
+    ```
+
+- `toString()` can either be called explicitly, or it will automatically be called if a non-`strict` is used in a `string` context.
