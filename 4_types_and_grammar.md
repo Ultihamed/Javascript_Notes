@@ -590,3 +590,19 @@
     ```
 
     You can also create `EvalError(..)`, `RangeError(..)`, `ReferenceError(..)`, `SyntaxError(..)`, `TypeError(..)` and `URIError(..)`. But it's very rare to manually use these specific error natives. They are automatically used if your program actually suffers from a real exception.
+
+## `Symbol(..)`
+
+- To define your own custom symbols, use the `Symbol(..)` native. The `Symbol(..)` native **constructor** is unique in that you're not allowed to use `new` with it, as doing so will throw an error. For example:
+
+    ```js
+    var mysym = new Symbol("my own symbol");
+    mysym; // Symbol(my own symbol)
+    mysym.toString(); // "Symbol(my own symbol)"
+    typeof mysym; // "symbol"
+
+    var a = {};
+    a[mysym] = "foobar";
+
+    Object.getOwnPropertySymbols(a); // [Symbol(my own symbol)]
+    ```
