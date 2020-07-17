@@ -645,3 +645,99 @@
     ```
 
 - `toString()` can either be called explicitly, or it will automatically be called if a non-`strict` is used in a `string` context.
+
+## JSON Stringification
+
+- Consider:
+
+    ```js
+    JSON.stringify(42); // "42"
+    JSON.stringify("42"); // ""42"" (a string with a quoted string value in it)
+    JSON.stringify(null); // "null"
+    JSON.stringify(true); // "true"
+    ```
+
+- Any value that can be represented validly in a JSON representation, called **JSON-safe**.
+- `undefined`s, `function`s, `symbol`s and `object`s with circular references are not JSON-safe. The `JSON.stringify(..)` utility will automatically omit `undefined`, `function`, and `symbol` values when it comes across them. If such a value is found in an `array`, that value is replaced by `null`. If found as a property of an `object`, that property will simply be excluded. For example:
+
+    ```js
+    JSON.stringify(undefined); // undefined
+    JSON.stringify(function () {}); // undefined
+
+    JSON.stringify([1, undefined, function () {}, 4]); // "[1,null,null,4]"
+    JSON.stringify({ a: 2, b: function () {} }); // "{"a":2}"
+    ```
+
+    You can filter `JSON.stringify(..)` serialization by passing an `array` or a `function` to its second parameter as an argument. For example:
+
+    ```js
+    var a = {
+        b: 42,
+        c: "42",
+        d: [1, 2, 3]
+    };
+
+    JSON.stringify(a, ["b", "c"]); // "{"b":42,"c":"42"}"
+
+    JSON.stringify(a, function (k, v) {
+        if (l !== "c") return v;
+    }); // "{"b":42,"d":[1,2,3]}"
+    ```
+
+- A third optional argument can also be passed to `JSON.stringify(..)`, called space, which is used as indentation for prettier human-friendly output. For example:
+
+    ```js
+    var a = {
+        b: 42,
+        c: "42",
+        d: [1, 2, 3];
+    }
+
+    JSON.stringify(a, null, 3);
+    // "{
+    //     "b":42,
+    //     "c":"42",
+    //     "d": [
+    //        1,
+    //        2,
+    //        3
+    //     ]
+    // }"
+
+    JSON.stringify(a, null, "-----");
+    // "{
+    // -----"b":42,
+    // -----"c":"42",
+    // -----"d": [
+    // --------1,
+    // --------2,
+    // --------3
+    // -----]
+    // }"
+    ```
+
+- If you intend to JSON stringify an object that may contain illegal JSON value(s), or if you just have values in the `object` that aren't appropriate for the serialization, you should define a `toJSON()` method for it that returns a JSON-safe version of the `object`. For example:
+
+    ```js
+    var o = {};
+
+    var a = {
+        b: 42,
+        c: o,
+        d: function () { }
+    };
+
+    // create a circular reference inside `a`
+    o.e = a;
+
+    // would throw an error on the circular reference
+    // JSON.stringify(a);
+
+    // define a custom JSON value serialization
+    a.toJSON = function () {
+        // only include the `b` property for serialization
+        return { b: this.b };
+    };
+
+    JSON.stringify(a); // "{"b":42}"
+    ```
