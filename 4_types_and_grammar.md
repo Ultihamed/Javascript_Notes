@@ -479,3 +479,37 @@
 
     Object.prototype.toString.call(a); // "[object String]"
     ```
+
+## Internal `[[Class]]` & Boxing Wrappers
+
+- Values that are `typeof "object"` (such as an array) are additionally tagged with an internal `[[Class]]`. For instance:
+
+    ```js
+    Object.prototype.toString.call([1,2,3]); // "[object Array]"
+    Object.prototype.toString.call(/regex-literal/i); // "[object RegExp]"
+    Object.prototype.toString.call(null); // "[object Null]"
+    Object.prototype.toString.call(undefined); // "[object Undefined]"
+    Object.prototype.toString.call("abc"); // "[object String]"
+    Object.prototype.toString.call(42); // "[object Number]"
+    Object.prototype.toString.call(true); // "[object Boolean]"
+    ```
+
+- If you want to manually box a primitive value, you can use the `Object(..)` function (no `new` keyword). For example:
+
+    ```js
+    var a = "abc";
+    var b = new String(a);
+    var c = Object(a);
+
+    typeof a; // "string"
+    typeof b; // "object"
+    typeof c; // "object"
+
+    a instanceof String; // true
+    b instanceof String; // true
+    c instanceof String; // true
+
+    Object.prototype.toString.call(a); // "[object String]"
+    Object.prototype.toString.call(b); // "[object String]"
+    Object.prototype.toString.call(c); // "[object String]"
+    ```
