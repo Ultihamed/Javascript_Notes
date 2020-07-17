@@ -549,3 +549,44 @@
     ```
 
 - Do not just treat `Function(..)` as an alternate form of `eval(..)`.
+
+## `Date(..)` and `Error(..)`
+
+- The `Date(..)` and `Error(..)` native constructors are much more useful than the other natives, because there is no literal form for either.
+- You can call `getTime()` on a date object instance. For example:
+
+    ```js
+    var a = new Date(); // the current date/time is assumed here, because the constructor have no arguments
+
+    a.getTime(); // 1594980331074 (a signed integer number of milliseconds since Jan 1, 1970)
+    ```
+
+    But an even easier way is to just call the static helper function defined as of ES5: `Date.Now()`.
+- If you call `Date()` without `new`, you'll get back a string representation of the date/time at that moment. For example:
+
+    ```js
+    console.log(Date()); // "Fri Jul 17 2020 14:46:41 GMT+0430 (Iran Daylight Time)"
+    ```
+
+- You can create an `Error(..)` object with throwing a new error in some places. Error object instances generally have at least a `message` property and sometimes other, like `type`. For example:
+
+    ```js
+    function foo(x) {
+        if (!x) {
+            throw new Error("x wasn't provided");
+        }
+        // ..
+    }
+
+    foo();
+
+   /*
+   /home/hamed/Documents/Notes - Javascript/scratch.js:3
+        throw new Error("x wasn't provided");
+        ^
+    Error: x wasn't provided
+    ...
+    */
+    ```
+
+    You can also create `EvalError(..)`, `RangeError(..)`, `ReferenceError(..)`, `SyntaxError(..)`, `TypeError(..)` and `URIError(..)`. But it's very rare to manually use these specific error natives. They are automatically used if your program actually suffers from a real exception.
