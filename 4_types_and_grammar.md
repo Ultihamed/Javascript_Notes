@@ -618,4 +618,17 @@
   - `String#trim()`: create a new string that's stripped of any trailing or leading whitespace
 
   None of the methods modify the string in place. Modifications (like case conversion or trimming) create a new value from the existing value.
-- s
+- As of ES6, we don't need to use the `vals = vals || ..` default value syntax trick anymore, because default values can be set for parameters via native syntax in function declaration.
+
+## Converting Value
+
+- Converting a value from one type to another is often called **type casting**, when done explicitly, and **coercion** when done implicitly.
+- Example of **implicit coercion** and **explicit coersion**:
+
+    ```js
+    var a = 42;
+
+    var b = a + ""; // implicit coercion
+
+    var c = String(a); // explicit coercion
+    ```
