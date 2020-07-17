@@ -454,3 +454,28 @@
     ```
 
     If a `Number` object holds the scalar primitive value `2`, that exact `Number` object can never be changed to hold another value. You can only create a whole new `Number` object with a different value.
+
+## Natives
+
+- Here's a list of the most commonly used natives:
+  - `String()`
+  - `Number()`
+  - `Boolean()`
+  - `Array()`
+  - `Object()`
+  - `Function()`
+  - `RegExp()`
+  - `Date()`
+  - `Error()`
+  - `Symbol()` -- added in ES6
+- The result of the constructor form of value creation (`new String("abc")`) is an object wrapper around the primitive (`"abc"`) value. For example:
+
+    ```js
+    var s = new String("abc");
+
+    typeof a; // "object" ... not "String"
+
+    a instanceof String; // true
+
+    Object.prototype.toString.call(a); // "[object String]"
+    ```
