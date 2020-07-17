@@ -513,3 +513,17 @@
     Object.prototype.toString.call(b); // "[object String]"
     Object.prototype.toString.call(c); // "[object String]"
     ```
+
+## `Array(..)`
+
+- The `Array(..)` constructor does not require the `new` keyword in front of it. If you ommit it, it will behave as if you have used it anyway. So, `Array(1, 2, 3)` is the same outcome as `new Array(1, 2, 3)`. For example:
+
+    ```js
+    var a = new Array(1, 2, 3);
+    a; // [1, 2, 3]
+
+    var b = [1, 2, 3];
+    b; // [1, 2, 3]
+    ```
+
+- An array with at least one **empty slot** in it is often called a **sparse array**.
