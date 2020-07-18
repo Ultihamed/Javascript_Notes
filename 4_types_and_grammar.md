@@ -1008,7 +1008,13 @@
 
         console.log(a + " " + b);
     }
-    
-    foo();
-    foo("yeah", "yeah");
+
+    foo(); // "hello world"
+    foo("yeah", "yeah"); // "yeah yeah!"
+    ```
+
+    Be careful, it may cause a problem:
+
+    ```js
+    foo("That's it!", ""); // "That's it! world <-- Oops!
     ```
