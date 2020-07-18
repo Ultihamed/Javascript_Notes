@@ -970,3 +970,31 @@
     3. The test expression in `while(..)` and `do..while(..)` loops
     4. The test expression (first clause) in `? :` ternary expressions.
     5. The left-hand operand to the `||` (**logical or**) and `&&` (**logical and**) operators.
+
+## Operators `||` and `&&`
+
+- Consider:
+
+    ```js
+    var a = 42;
+    var b = "abc";
+    var c = null;
+
+    a || b; // 42
+    a && b; // "abc"
+
+    c || b; // "abc"
+    c && b; // null
+    ```
+
+    These operators act as **operand selectors**. Another way of thinking about these operators:
+
+    ```js
+    a || b;
+    // roughly equivalent to:
+    a ? a : b;
+
+    a && b;
+    // roughly equivalent to:
+    a ? b : a;
+    ```
