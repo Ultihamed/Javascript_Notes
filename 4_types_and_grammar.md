@@ -1018,3 +1018,17 @@
     ```js
     foo("That's it!", ""); // "That's it! world <-- Oops!
     ```
+
+## Symbol Coercion
+
+- Coercion of a `symbol` to a `string` is allowed, but implicit coercion of the same is disallowed and throws an error. For example:
+
+    ```js
+    var s1 = Symbol("cool");
+    String(s1); // "Symbol(cool)"
+
+    var s2 = Symbol("not cool");
+    s2 + ""; // TypeError
+    ```
+
+- `symbol` values cannot coerce to `number` at all (throw an error either way), but strangely they can both explicitly and implicitly coerce to `boolean` (always `true`).
