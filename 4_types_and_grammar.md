@@ -998,3 +998,17 @@
     // roughly equivalent to:
     a ? b : a;
     ```
+
+    An extremely common and helpful usage of this behavior, which there's a good chance you may have used before and not fully understood, is:
+
+    ```js
+    function foo(a, b) {
+        a = a || "hello";
+        b = b || "world";
+
+        console.log(a + " " + b);
+    }
+    
+    foo();
+    foo("yeah", "yeah");
+    ```
