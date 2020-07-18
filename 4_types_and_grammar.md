@@ -1032,3 +1032,91 @@
     ```
 
 - `symbol` values cannot coerce to `number` at all (throw an error either way), but strangely they can both explicitly and implicitly coerce to `boolean` (always `true`).
+
+## Loose Equals vs. Strict Equals
+
+- Loose equals is the `==` operator, and strict equals is the `===` operator. Both operators are used for comparing two values for **equality**.
+- `==` allows coercion in the equality comparison and `===` disallows coercion.
+- `==` is going to be slower than `===` in any revelant way.
+- If you want coercion, use `==` loose equality, but if you don't want coercion, use `===` strict equality.
+- `NaN` is never equal to itself.
+- `+0` and `-0` are equal to each other.
+- It's a very little known fact that `==` and `===` behave identically in the case where two `object`s are being compared.
+- Consider:
+
+    ```js
+    var a = 42;
+    var b = "42";
+
+    a === b; // false
+    a == b; // true
+    ```
+
+    If Type(x) is Number and Type(y) is String, return the result of the comparison `x == ToNumber(y)`. If Type(x) is String and Type(y) is Number, return the result of the comparison `ToNumber(x) == y`.
+- A `boolean` always coerces to a `number` first.
+- Consider:
+
+    ```js
+    var a = "42";
+
+    // bad (will fail!):
+    if (a == true) {
+        // ...
+    }
+
+    // also bad (will fail!):
+    if (a === true) {
+        // ...
+    }
+
+    // good enough (works implicitly):
+    if (a) {
+        // ...
+    }
+
+    // better (works explicitly):
+    if (!!a) {
+        // ...
+    }
+
+    // also great (works explicitly):
+    if (Boolean(a)) {
+        // ...
+    }
+    ```
+
+    If you avoid ever using `== true` or `== false` (aka loose equality with `boolean`s) in your code, you'll never have to worry about this truthiness/falsiness mental gotcha.
+- Consider:
+
+    ```js
+    var a = `null`;
+    var b;
+
+    a == b;      // true
+    a == null;   // true
+    b == null;   // true
+
+    a == false;  // false
+    b == false;  // false
+    a == "";     // false
+    b == "";     // false
+    a == 0;      // false
+    b == 0;      // false
+    ```
+
+    The coercion between `null` and `undefined` is safe and predictable, and no other values can give false positives in such a check.
+- Consider:
+
+    ```js
+    var a = 42;
+    var b = [42];
+
+    a == b; // true
+    ```
+
+    The `[42]` value has its `ToPrimitive` abstract operation called, which results in the `"42"` value. From there, it's just `42 == "42"`, which as we've already covered becomes `42 == 42`, so `a` and `b` are found to be coercively equal.
+- The `null` and `undefined` values cannot be boxed -- they have no object wrapper equivalent -- so `Object(null)` is just like `Object()` in that both just produce a normal object.
+- `NaN` can be boxed to its `Number` object wrapper equivalent, but when `==` causes an unboxing, the `NaN == NaN` comparison fails because `Nan` is never equal to itself.
+- If either side of the comparison can have `true` or `false` values, don't ever, EVER use `==`.
+- If either side of the comparison can have `[]`, `""`, or `0` values,
+seriously consider not using `==`.
