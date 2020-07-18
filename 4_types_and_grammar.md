@@ -790,3 +790,183 @@
   - `""`
 
   By logical conclusion, if a value is not on that list, it must be on another list, which we call the **truthy** values list. So anything not explicitly on the falsy list is therefore truthy.
+
+## Coercion
+
+- We do not use the `new` keyword in front of explicit coercion functions, like `String()`, `Number()` and etc. For example:
+
+    ```js
+    var a = 42;
+    var b = String(a);
+
+    var c = "3.14";
+    var d = Number(c);
+
+    b; // "42"
+    d; // 3.14
+    ```
+
+    There is another way to **explicitly** convert these values between `string` and `number`:
+
+    ```js
+    var a = 42;
+    var b = a.toString();
+
+    var c = "3.14";
+    var d = +c;
+
+    b; // "42"
+    d; // 3.14
+    ```
+
+    `+c` here is showing the unary operator form (operator with only one operand) of the `+` operator. Instead of performing mathematic addition, the unary `+` explicitly coerces its operand (c) to a `number` value. The unary `-` operator also coerces like `+` does, but it also flips the sign of the number.
+
+- For coercing, `String(..)` is using the rules of the `ToString` operation, and `Number(..)` is using the rule of the `ToNumber` operation.
+- You can coerce a `Date` object into a `number` with the unary `+` operator. For example:
+
+    ```js
+    var a = +new Date();
+    a; // 1595032180893
+    ```
+
+- You can use `|` **bitwise OR** operator to do `ToInt32` explicit conversion. For example:
+
+    ```js
+    0 | -0;        // 0
+    0 | NaN;       // 0
+    0 | Infinity;  // 0
+    0 | -Infinity; // 0
+    ```
+
+- The `~` operator performs two's-complement (`-(x+1)`). For example:
+
+    ```js
+    ~42; // -(42+1) ==> -43
+    ```
+
+- Using `~` with `indexOf()` **coerces** (actually just transforms) the value to be appropriately `boolean`-coercible. For example:
+
+    ```js
+    var a = "Hello world";
+
+    ~a.indexOf("lo"); // -4 -- truthy!
+
+    if (~a.indexOf("lo")) { // true
+        // found it!
+    }
+
+    ~a.indexOf("ol"); // 0 -- falsy!
+    !~a.indexOf("ol"); // true
+
+    if (!~a.indexOf("ol")) { // true
+        // not found!
+    }
+    ```
+
+- Parsing a numeric value out of a string is tolerant of non-numeric characters -- it just stops parsing left-to-right when encountered -- whereas coercion is not tolerant and fails resulting in the `NaN` value. For example:
+
+    ```js
+    var a = "42";
+    var b = "42px";
+
+    Number(a); // 42
+    parseInt(a); // 42
+
+    Number(b); // NaN
+    parseInt(b); // 42
+    ```
+
+- `parseInt(..)` has a twin, `parseFloat(..)`, which (it sounds) pulls out a floating-point number from a string. Don't forget that `parseInt(..)` operates on `string` values. If you pass a non-`string`, the value you pass will automatically be coerced to a `string` first, which would clearly be a kind of hidden implicit coercion.
+- Never use `parseInt(..)` with a non-`string` value.
+- `Boolean(..)` is an explicit way of forcing the `ToBoolean` coercion. Consider:
+
+    ```js
+    var a = "0";
+    var b = [];
+    var c = {};
+
+    var d = "";
+    var e = 0;
+    var f = null;
+    var g;
+
+    Boolean(a); // true
+    Boolean(b); // true
+    Boolean(c); // true
+    !!a;        // true
+    !!b;        // true
+    !!c;        // true
+
+    Boolean(d); // false
+    Boolean(e); // false
+    Boolean(f); // false
+    Boolean(g); // false
+    !!d;        // false
+    !!e;        // false
+    !!f;        // false
+    !!g;        // false
+    ```
+
+    `Boolean(a)` and `!!a` are far better than as explicit coercion options.
+- Consider:
+
+    ```js
+    var a = "42";
+    var b = "0";
+
+    var c = 42;
+    var d = 0;
+
+    var e = [1, 2];
+    var f = [3, 4];
+
+    a + b; // "420"
+    c + d; // 42
+    e + f; // "1,23,4"
+    ```
+
+    If either operand to `+` is a `string`, the operation will be `string` concatination. Otherwise, it's always numeric addition.
+- You can coerce a `number` to a `string` simply by **adding** the `number` and the `""` empty `string`. For example:
+
+    ```js
+    var a = 42;
+    var b = a + "";
+
+    b; // "42"
+    ```
+
+- Consider:
+
+    ```js
+    var a = {
+        valueOf: function () { return 42; },
+        toString: function () { return 4; }
+    };
+
+    a + ""; // "42"
+
+    String(a); // "4"
+    ```
+
+    `a + ""` invokes `valueOf()` on the `a` value, whose return value is then finally converted to a `string` via the internal `ToString` abstract operation. But `String(a)` just invokes `toString()` directly.
+- Consider:
+
+    ```js
+    var a = "3.14";
+    var b = a - 0;
+
+    b; // 3.14
+
+    var c = [3];
+    var d = [1];
+
+    c - d; // 2
+    ```
+
+    The `-` operator is defined only for numeric subtraction, so `a - 0` forces `a`'s value to be coerced to a `number`. While far less common, `a * 1` or `a / 1` would accomplish the same result, as those operators are also only defined for numeric operations. What about `object` values with the `-` operator? Similar as for `+` above.
+- what sort of expression operations require/force (implicitly) a `boolean` coercion?
+    1. The test expression in an `if (..)` statement
+    2. The test expression (second clause) in a `for (..;..;..)` header
+    3. The test expression in `while(..)` and `do..while(..)` loops
+    4. The test expression (first clause) in `? :` ternary expressions.
+    5. The left-hand operand to the `||` (**logical or**) and `&&` (**logical and**) operators.
