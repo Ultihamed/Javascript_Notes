@@ -1169,3 +1169,48 @@ seriously consider not using `==`.
     ```
 
     Nonexistent properties, or properties that exist and are configurable will return `true` from the `delete` operator. Otherwise the result will be `false` or an error.
+
+## Contextual Rules
+
+- Consider:
+
+    ```js
+    function foo() {
+        // `bar` labeled-block
+        bar: {
+            console.log("Hello");
+            break bar;
+            console.log("never runs");
+        }
+        console.log("World");
+    }
+
+    foo();
+    // Hello
+    // World
+    ```
+
+    Labeled loops/blocks are extremely uncommon, and often frowned upon. It's best to avoid them if possible.
+- Consider:
+
+    ```js
+    function getData() {
+        // ..
+        return {
+            a: 42,
+            b: "foo"
+        };
+    }
+
+    var { a, b } = getData();
+
+    console.log(a, b); // 42 "foo"
+    ```
+
+    `var { a , b } = ..` is a form of ES6 destructing assignment, which is roughly equivalent to:
+
+    ```js
+    var res = getData();
+    var a = res.a;
+    var b = res.b;
+    ```
