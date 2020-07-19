@@ -1214,3 +1214,13 @@ seriously consider not using `==`.
     var a = res.a;
     var b = res.b;
     ```
+
+## `else if` And Optional Blocks
+
+- `if` and `else` statements are allowed to omit the `{}` around their attached block if they only contain a single statement. For example:
+
+    ```js
+    if (a) something(a);
+    ```
+
+    So `else if` is `else {} if {}`, thus `else` brackets can be removed, because it's a single statement.
