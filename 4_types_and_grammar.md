@@ -1120,3 +1120,52 @@
 - If either side of the comparison can have `true` or `false` values, don't ever, EVER use `==`.
 - If either side of the comparison can have `[]`, `""`, or `0` values,
 seriously consider not using `==`.
+
+## Statements & Expressions
+
+- Statements are sentences, expressions are phrases, and operators are conjunctions/punctuation.
+- Consider:
+
+    ```js
+    var a = 3 * 6;
+    var b = a;
+    b;
+    ```
+
+    In this snippet, `3 * 6` is an expression (evaluates to the value `18`). But `a` one the second line is also an expression, as is `b` on the third line. `var a = 3 * 6` and `var b = a` are called **declaration statements** because they each declare a variable (and optionally assign a value to it). The `a = 3 * 6` and `b = a` assignments (minus the `var`s) are called **assignment expressions**. The third line `b` is a expression statement.
+- The `++` increment operator and the `--` decrement operator are both unary operators, which can be used in either a postfix (**after**) position or prefix (**before**) position. For example:
+
+    ```js
+    var a = 42;
+
+    a++; // 42
+    a; // 43
+
+    ++a; // 44
+    a; // 44
+    ```
+
+- Consider:
+
+    ```js
+    var a = 42, b
+    b = (a++, a);
+
+    a; // 43
+    b; // 43
+    ```
+
+    The expression `a++, a` means that the second `a` statement expression gets evaluated after the after side effects of the first `a++` statement expression, which means it returns the `43` value for assignment to `b`.
+- Consider:
+
+    ```js
+    var obj = {
+        a: 42
+    };
+
+    obj.a; // 42
+    delete obj.a; // true
+    obj.a; // undefined
+    ```
+
+    Nonexistent properties, or properties that exist and are configurable will return `true` from the `delete` operator. Otherwise the result will be `false` or an error.
