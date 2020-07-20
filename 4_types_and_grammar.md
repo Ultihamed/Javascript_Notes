@@ -1224,3 +1224,17 @@ seriously consider not using `==`.
     ```
 
     So `else if` is `else {} if {}`, thus `else` brackets can be removed, because it's a single statement.
+
+## Operator Precedence
+
+- Consider:
+
+    ```js
+    var a = 5;
+    var b = (a++, a);
+
+    console.log(`a: ${a}`);
+    console.log(`a: ${b}`);
+    ```
+
+    Here `()` have precedence so it will execute first, then the value will assign to `b`.
