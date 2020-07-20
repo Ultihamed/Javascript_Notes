@@ -1238,3 +1238,42 @@ seriously consider not using `==`.
     ```
 
     Here `()` have precedence so it will execute first, then the value will assign to `b`.
+- The `&&` is more precedent than `||`, and `||` is more precedent than `? :`. Conider:
+
+    ```js
+    var a = 42;
+    var b = "foo";
+    var c = false;
+
+    var d = a && b || c ? c || b ? a : c && b : a;
+    ```
+
+    Its like this:
+
+    ```js
+    (a && b || c) ? (c || b) ? a : (c && b) : a;
+    ```
+
+    So answer is `42`. Another example:
+
+    ```js
+    true ? false : true ? true : true; // false
+    true ? false : (true ? true : true); // false
+    (true ? false : true) ? true : true; // true
+    ```
+
+- Use operator precedence/associativity where it leads to shorter and cleaner code, but use `()` manual grouping in places where it helps create clarity and reduce confusion.
+
+## Short Circuited
+
+- With `a && b`, `b` is not evaluated if `a` is falsy, because the result of the `&&` operand is already certain, so there's no point to bothering to check `b`. Likewise, with `a || b`, if `a` is thruthy, the result of operand is already certain, so there's no reason to check `b`. For example:
+
+    ```js
+    var a = true;
+    var b = true;
+
+    // `a` is true, so there's no reason to check `b`
+    if (a || b) {
+        console.log("Works!");
+    }
+    ```
