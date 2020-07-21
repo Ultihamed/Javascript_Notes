@@ -1349,3 +1349,117 @@ seriously consider not using `==`.
 
     foo(10, 32); // 42
     ```
+
+## `try..finally`
+
+- Consider:
+
+    ```js
+    function foo() {
+        try {
+            return 42;
+        }
+        finally {
+            console.log("Hello");
+        }
+
+        console.log("never runs");
+    }
+
+    console.log(foo());
+    // Hello
+    // 42
+    ```
+
+    The `return 42` runs right away, which sets up the completion value from the `foo()` call. The action completes the `try` clause and the `finally` clause immediately runs next. Only then is the `foo()` function complete, so that its completion value is returned back for the `console.log(..)` statement to use.
+
+    The exact same behavior is true of a `throw` inside `try`:
+
+    ```js
+    function foo() {
+        try {
+            throw 42;
+        }
+        finally {
+            console.log("Hello");
+        }
+
+        console.log("never runs");
+    }
+
+    console.log(foo());
+    // Hello
+    // Uncaught Exception: 42
+    ```
+
+- If an exception is thrown (accidentally or intentionally) inside a `finally` clause, it will override as the primary completion of that function. If a previous `return` in the `try` block had set a completion value for the function, that value will be abandoned. For example:
+
+    ```js
+    function foo() {
+        try {
+            return 42;
+        }
+        finally {
+            throw "Oops!";
+        }
+
+        console.log("never runs");
+    }
+
+    console.log(foo());
+    // Uncaught Exception: Oops!
+    ```
+
+    It shouldn't be surprising that other nonlinear control statements like `continue` and `break` exhibit similar behavior to `return` and `throw`:
+
+    ```js
+    for (var i = 0; i < 10; i++) {
+        try {
+            continue;
+        }
+        finally {
+            console.log(i);
+        }
+    }
+    // 0 1 2 3 4 5 6 7 8 9
+    ```
+
+- A `return` inside a `finally` has the special ability to override a previous `return` from the `try` or `catch` clause, but only if `return` is explicitly called:
+
+    ```js
+    function foo() {
+        try {
+            return 42;
+        }
+        finally {
+            // no `return ..` here, so no override
+        }
+    }
+
+    function bar() {
+        try {
+            return 42;
+        }
+        finally {
+            // override previous `return 42`
+            return;
+        }
+    }
+
+    function baz() {
+        try {
+            return 42;
+        }
+        finally {
+            // override previous `return 42`
+            return "Hello";
+        }
+    }
+
+    foo(); // 42
+    bar(); // undefined
+    baz(); // "Hello"
+    ```
+
+- Inside a `finally` block the omission of `return` does not act like an overriding `return undefined`. It just lets the previous `return` stand.
+- Using a `finally` + labeled `break` to effectively cancel a `return` is doing your best to create the most confusing code possible.
