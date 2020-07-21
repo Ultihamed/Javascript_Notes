@@ -1463,3 +1463,39 @@ seriously consider not using `==`.
 
 - Inside a `finally` block the omission of `return` does not act like an overriding `return undefined`. It just lets the previous `return` stand.
 - Using a `finally` + labeled `break` to effectively cancel a `return` is doing your best to create the most confusing code possible.
+
+## `switch`
+
+- Consider:
+
+    ```js
+    switch (a) {
+        case 2:
+            // do something
+            break;
+        case 42:
+            // do something
+            break;
+        default:
+            // fallback to here
+    }
+    ```
+
+    The matching that occurs between the `a` expression and each `case` expression is identical to the `===` algorithm.
+- You can use logical operators like `&&` or `||` in your expression. But this can bite you. For example:
+
+    ```js
+    var a = "hello world";
+    var b = 10;
+
+    switch (true) {
+        case (a || b == 10):
+            // never gets here
+            break;
+        default:
+            console.log("Oops");
+    }
+    // Oops
+    ```
+
+    Since the result of `(a || b == 10)` is `"hello world"` and not `true`, the strict match fails. You can fix this by force the expression to be a `true` or `false`, like this: `!!(a || b == 10):`.
