@@ -1499,3 +1499,8 @@ seriously consider not using `==`.
     ```
 
     Since the result of `(a || b == 10)` is `"hello world"` and not `true`, the strict match fails. You can fix this by force the expression to be a `true` or `false`, like this: `!!(a || b == 10):`.
+
+## ECMAScript
+
+- The offical name of the language is ECMAScript.
+- **JavaScript** is the common tradename of the language, of course, but more appropriately, **JavaScript** is basically the browser implementation of the spec.
