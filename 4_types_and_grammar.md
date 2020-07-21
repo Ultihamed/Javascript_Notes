@@ -1277,3 +1277,29 @@ seriously consider not using `==`.
         console.log("Works!");
     }
     ```
+
+## Automatic Semicolons
+
+- ASI (**A**utomatic **S**emicolon **I**nsertion) is when **JavaScript** assumes a `;` in certain places in your **JavaScript** program even if you didn't put one there.
+- It's important to note that ASI will only take effect in the presence of a newline (aka line break). Semicolons are not inserted in the middle of a line.
+- If the **JavaScript** parser parses a line where a parser error would occur (a missing expected `;`), and it can reasonably insert one, it does so.
+- Consider:
+
+    ```js
+    var a = 42, b
+    c;
+    ```
+
+    Here **JavaScript** assumes instead that there's an implied `;` (at the new line) after `b`. Thus, `c;` is left as a standalone expression statement.
+- The other major case where ASI kicks in is with the `break`, `continue`, `return`, and (ES6) `yield` keywords. For example:
+
+    ```js
+    function foo(a) {
+        if (!a) return
+        a *= 2;
+        // ..
+    }
+    ```
+
+- Most, but not all, semicolons are optional, but the two `;`s in the `for (..) ..` loop header are required.
+- Use semicolons wherever you know they are **required**, and limit your assumptions about ASI to a minimum.
