@@ -1513,3 +1513,42 @@ seriously consider not using `==`.
   - having certain predefined read-only properties
   - having methods that cannot be `this`-overriden to other objects
   - and more...
+
+## `<script>`
+
+- All scripts can intract together with `global` object (`window` in browser).
+- Consider:
+
+    ```js
+    <script>foo();</script>
+
+    <script>
+        function foo() { .. }
+    </script>
+    ```
+
+    This snippet have problem, because `foo()` is not declared yet. You can declared it in another separate code and put it in `<script>` first to call it. For example:
+
+    ```js
+    <script>
+        function foo() { .. }
+    </script>
+
+    <script>foo();</script>
+    ```
+
+- HTML-style or X(HT)ML-style comments around inline code is deprecated and doesn't work, so don't do it. For example:
+
+    ```js
+    <script>
+    <!--
+    alert( "Hello" );
+    //-->
+    </script>
+
+    <script>
+    <!--//--><![CDATA[//><!--
+    alert( "World" );
+    //--><!]]>
+    </script>
+    ```
