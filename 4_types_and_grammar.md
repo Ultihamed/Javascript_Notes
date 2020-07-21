@@ -1552,3 +1552,47 @@ seriously consider not using `==`.
     //--><!]]>
     </script>
     ```
+
+## Reserved Words
+
+- Prior to ES5, the reserved words also could not be property names or keys in object literals, but that restriction no longer exists. So, this is not allowed:
+
+    ```js
+    var import = "42";
+    ```
+
+    But this is allowed:
+
+    ```js
+    var obj = { import: "42" };
+    console.log(obj.import); // "42"
+    ```
+
+- Consider:
+
+    ```js
+    function addAll() {
+        var sum = 0;
+        for (var i = 0; i < arguments.length; i++) {
+            sum += arguments[i];
+        }
+        return sum;
+    }
+
+    var nums = [];
+    for (var i = 1; i < 100000; i++) {
+        nums.push(i);
+    }
+
+    addAll(2, 4, 6); // 12
+    addAll.apply(null, nums); // should be: 499950000
+    ```
+
+    In some **JavaScript** engines, you'll get the correct answer, but in others (like Safari 6.x), you'll get the error: **"RangeError: Maximum call stack size exceeded"**.
+- Examples of some limits known to exist:
+  - Maximum number of characters allowed in a string literal (not just a string value)
+  - Size (bytes) of data that can be sent in arguments to a function call (aka stack size)
+  - Number of parameters in a function declaration
+  - Maximum depth of non-optimized call stack (i.e., with recursion): how long a chain of function calls from one to the other can be
+  - number of seconds a **JavaScript** program can run continuously blocking the browser
+  - maximum length allowed for a variable name
