@@ -1504,3 +1504,12 @@ seriously consider not using `==`.
 
 - The offical name of the language is ECMAScript.
 - **JavaScript** is the common tradename of the language, of course, but more appropriately, **JavaScript** is basically the browser implementation of the spec.
+
+## Host Objects
+
+- Some behavior variations with host objects to be aware of can include:
+  - not having access to normal `object` built-ins like `toString()`
+  - not being overwritable
+  - having certain predefined read-only properties
+  - having methods that cannot be `this`-overriden to other objects
+  - and more...
