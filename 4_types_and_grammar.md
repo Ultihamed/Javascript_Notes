@@ -1303,3 +1303,49 @@ seriously consider not using `==`.
 
 - Most, but not all, semicolons are optional, but the two `;`s in the `for (..) ..` loop header are required.
 - Use semicolons wherever you know they are **required**, and limit your assumptions about ASI to a minimum.
+
+## Errors
+
+- ES5's `strict` mode defines even more early errors. For example, in `strict` mode, function parameter names cannot be duplicated:
+
+    ```js
+    function foo(a, b, c) { } // just fine
+    function foo(a, b, c) {"use strict"} // Error!
+    ```
+
+    Another `strict` mode early errors is an object literal having more than one property of the same name. For example:
+
+    ```js
+    (function () {
+        "use strict"
+
+        var a = {
+            b: 42,
+            b: 43
+        }; // Error!
+    })();
+    ```
+
+    Semantically speaking, such errors aren't technically syntax errors but more grammar errors -- the above snippets are syntactically valid. But since there is no `GrammerError` type, some browsers use `SyntaxError` instead.
+- Consider:
+
+    ```js
+    function foo(a) {
+        a = 42;
+        console.log(arguments[0]);
+    }
+
+    foo(2); // 42 (linked)
+    foo(); // undefined (not linked)
+    ```
+
+    If you pass an argument, the `arguments` slot and the named parameter are linked to always have the same value. If you ommit the argument, no such linkage occurs.
+- Never refer to a named parameter and its corresponding `arguments` slot at the same time. For example:
+
+    ```js
+    function foo(a) {
+        console.log(a + arguments[1]); // safe!
+    }
+
+    foo(10, 32); // 42
+    ```
