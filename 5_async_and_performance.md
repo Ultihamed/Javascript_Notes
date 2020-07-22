@@ -56,3 +56,26 @@
     a = 8 + b;
     b = a * 2;
     ```
+
+## Interaction
+
+- To address such a race condition, you can coordinate ordering interaction. For example:
+
+    ```js
+    var res = [];
+
+    function response(data) {
+        if (data.url == "http://some.url.1") {
+            res[0] = data;
+        }
+        else if (data.url == "http://some.url.2") {
+            res[1] = data;
+        }
+    }
+
+    // ajax(..) is some arbitrary Ajax function given by a library
+    ajax("http://some.url.1", response);
+    ajax("http://some.url.2", response);
+    ```
+
+    Regardless of which Ajax response comes back first, `res[0]` will always hold the `"http://some.url.1"` results and `res[1]` will always hold the `"http://some.url.2"` results. Through simple coordination, we eliminated the **race condition** nondeterminism.
