@@ -106,3 +106,52 @@
     ```
 
     It would print out `A C D B`, because the Jobs happen at the end of the current event loop tick, and the timer fires to schedule for the next event loop tick (if available!).
+
+## Callbacks
+
+- Callbacks are by far the most common way that asynchrony in **JavaScript** programs is expressed and managed. Indeed, the callback is the most fundamental async pattern in the language.
+- Callback function wraps or encapsulates the continuation of the program.
+- Consider:
+
+    ```js
+    doA(function () {
+        doB();
+
+        doC(function () {
+            doD();
+        })
+
+        doE();
+    });
+
+    doF();
+    ```
+
+    The operations will happen in this order:
+
+    ```js
+    `doA()`
+    `doF()`
+    `doB()`
+    `doC()`
+    `doE()`
+    `doD()`
+    ```
+
+    So imagine this snippent working like this:
+
+    ```js
+    doA(function () {
+        doC();
+
+        doD(function () {
+            doF();
+        })
+
+        doE();
+    });
+
+    doB();
+    ```
+
+- **Inversion of control** is when you take part of your program and give over control of its execution to another third party.
