@@ -79,3 +79,30 @@
     ```
 
     Regardless of which Ajax response comes back first, `res[0]` will always hold the `"http://some.url.1"` results and `res[1]` will always hold the `"http://some.url.2"` results. Through simple coordination, we eliminated the **race condition** nondeterminism.
+
+## Jobs
+
+- The **Job queue** is a queue hanging off the end of every tick in the event loop queue.
+- Certain async-implied actions that may occur during a tick of the event loop will not cause a whole new event to be added to the event loop queue, but will instead add an item (aka Job) to the end of the current tick's Job queue.
+- The event loop queue is like an amusement park ride, where once you finish the ride, you have to go to the back of the line to ride again. But the Job queue is like finishing the ride, but then cutting in line and getting right back on.
+- Jobs are kind of like the spirit of the `setTimeout(..0)` hack, but implemented in such a way as to have a much more well-defined and guaranteed ordering: **later, but as soon as possible**.
+- Consider:
+
+    ```js
+    console.log("A");
+
+    setTimeout(function () {
+        console.log("B");
+    }, 0);
+
+    // theoretical "Job API"
+    schedule(function () {
+        console.log("C");
+
+        schedule(function () {
+            console.log("D");
+        });
+    });
+    ```
+
+    It would print out `A C D B`, because the Jobs happen at the end of the current event loop tick, and the timer fires to schedule for the next event loop tick (if available!).
