@@ -190,3 +190,100 @@
     ```
 
 - Always invoke callbacks asynchronously, even if that's **right away** on the next turn of the event loop, so that all callbacks are predictably async.
+
+## Promises
+
+- Most new async APIs being added to **JavaScript**/DOM platform are being built on Promises.
+- With Promises, the `then(..)` call can actually take two functions, the first for fulfillment, and the second for rejection. For example:
+
+    ```js
+    add(fetchX(), fetchY())
+    .then(
+        // fulfillment handler
+        function (sum) {
+            console.log(sum);
+        },
+        // rejection handler
+        function (err) {
+            console.log(err); // bummer!
+        }
+    );
+    ```
+
+- Consider:
+
+    ```js
+    function foo(x) {
+        // start doing something that could take a while
+
+        // make a `listener` event notification
+        // capability to return
+
+        return listener;
+    }
+
+    var evt = foo(42);
+
+    evt.on("completion", function () {
+        // now we can do the next step!
+    });
+
+    evt.on("failure", function () {
+        // oops, something went wrong with `foo(..)`
+    });
+    ```
+
+    `foo(..)` expressly creates an event subscription capability to return back, and the calling code receives and registers the two event handlers against it.
+- In Promises we use `then(..)` to register a **then** event. Or perhaps more precisely, `then(..)` registers **fulfillment** and/or **rejection** event(s), though we don't see those terms used explicitly in the code.
+- Consider:
+
+    ```js
+    function foo(x) {
+        // start doing something that could take a while
+
+        // construct and return a promise
+        return new Promise(function (resolve, reject) {
+            // eventually, call `resolve(..)` or `reject(..)`,
+            // which are the resolution callbacks for
+            // the promise.
+        });
+    }
+
+    var p = foo(42);
+
+    bar(p);
+
+    baz(p);
+    ```
+
+    The internal of `bar(..)` and `baz(..)` might look like:
+
+    ```js
+    function bar(fooPromise) {
+        // listen for `foo(..)` to complete
+        fooPromise.then(
+            function () {
+                // `foo(..)` has now finished, so do `bar(..)`'s task
+            },
+            function () {
+                // oops, something went wrong in `foo(..)`
+            }
+        );
+    }
+
+    // ditto for `baz(..)`
+    ```
+
+- Given that Promises are constructed by the `new Promise(..)` syntax.
+- Consider:
+
+    ```js
+    Object.prototype.then = function () {};
+    Array.prototype.then = function () {};
+
+    var v1 = { hello: "world" };
+    var v2 = { "Hello", "World"};
+    ```
+
+    Both `v1` and `v2` will be assumed to be thenables. But they're don't.
+- Thenable duck typing can be hazardous if it incorrectly identifies something as a Promise that isn't.
