@@ -155,3 +155,38 @@
     ```
 
 - **Inversion of control** is when you take part of your program and give over control of its execution to another third party.
+
+## Trying to Save Callbacks
+
+- Split-callback design:
+
+    ```js
+    function success(data) {
+        console.log(data);
+    }
+
+    function failure(data) {
+        console.log(data);
+    }
+
+    ajax("http://some.url.1", success, failure);
+    ```
+
+- Error-first style (or **Node** style) design:
+
+    ```js
+    function response(err, data) {
+        // error?
+        if (err) {
+            console.log(err);
+        }
+        // otherwise, assume success
+        else {
+            console.log(data);
+        }
+    }
+
+    ajax("http://some.url.1", response);
+    ```
+
+- Always invoke callbacks asynchronously, even if that's **right away** on the next turn of the event loop, so that all callbacks are predictably async.
