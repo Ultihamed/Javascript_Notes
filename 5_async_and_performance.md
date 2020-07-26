@@ -194,6 +194,7 @@
 ## Promises
 
 - Most new async APIs being added to **JavaScript**/DOM platform are being built on Promises.
+- Promises can have, at most, one resolution value (fulfillment or rejection).
 - With Promises, the `then(..)` call can actually take two functions, the first for fulfillment, and the second for rejection. For example:
 
     ```js
@@ -287,3 +288,49 @@
 
     Both `v1` and `v2` will be assumed to be thenables. But they're don't.
 - Thenable duck typing can be hazardous if it incorrectly identifies something as a Promise that isn't.
+
+## Promise Trust
+
+- When you call `then(..)` on a Promise, even if that Promise was already resolved, the callback you provide to `then(..)` will **always** be called asynchronously. No more need to insert your own `setTimeout(..,0)` hacks. Promises prevent Zalgo **automatically**.
+- When a Promise is resolved, all `then(..)` registered callbacks on it will be called, in order, immediately at the next asynchronous opportunity, and nothing that happens inside of one of those callbacks can affect/delay the calling of the other callbacks. For example:
+
+    ```js
+    p.then( function () {
+        p.then(function () {
+            console.log("C");
+        });
+        console.log("A");
+    });
+    p.then(function () {
+        console.log("B");
+    });
+    // A B C
+    ```
+
+- If you register both fulfillment and rejection callbacks from a Promise, and the Promise get resolved, one of the two callbacks will always be called.
+- If for some reason the Promise creation code tries to call `resolve(..)` or `reject(..)` multiple times, or tries to call both, the Promise will accept only the first resolution, and will silently ignore any subsequent attempts. Because a Promise can only be resolved once, any `then(..)` registered callbacks will only ever be called once (each).
+- If you register the same callback more than once, (e.g., `p.then(..); p.then(..);`), it'll be called as many times as it was registered.
+- If you don't explicitly resolve with a value either way, the value is `undefined`, as is typical in **JavaScript**.
+- If you call `resolve(..)` or `reject(..)` with multiple parameters, all subsequent parameters beyond the first will be silently ignored.
+- If you reject a Promise with a reason (aka error message), that value is passed to the rejection callback(s).
+- If you pass an immediate, non-Promise, non-thenable value to `Promise.resolve(..)`, you get a promise that's fulfilled with that value. In other words, these two promises `p1` and `p2` will behave basically identically:
+
+    ```js
+    var p1 = new Promise(function (resolve, reject) {
+        resolve(42);
+    });
+
+    var p2 = Promise.resolve(42);
+    ```
+
+    But if you pass a genuine Promise to `Promise.resolve(..)`, you just get the same promise back:
+
+    ```js
+    var p1 = Promise.resolve(42);
+
+    var p2 = Promise.resolve(p1);
+
+    p1 === p2; // true
+    ```
+
+- `Promise.resolve(..)` will accept any thenable, and will unwrap it to its non-thenable value. But you get back from `Promise.resolve(..)` a real, genuine Promise in its place, **one that you can trust**.
