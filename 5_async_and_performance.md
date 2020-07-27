@@ -439,3 +439,43 @@
         }
     );
     ```
+
+## Terminology: Resovle, Fulfill, and Reject
+
+- Consider:
+
+    ```js
+    var p = new Promise(function (X, Y) {
+        // X() for fulfillment
+        // Y() for rejection
+    });
+    ```
+
+    The first parameter is usually used to mark the Promise as fulfilled, and the second parameter always marks the Promise as rejected. Almost all literature uses `reject(..)` as second parameter name, and because that's exactly (and only!) what is does, that's a very good choice for the name. I'd strongly recommand you always use `reject(..)`. For eaxmple:
+
+    ```js
+    var p = new Promise(function (resolve, reject) {
+        // resolve() for fulfillment
+        // reject() for rejection
+    });
+    ```
+
+- Consider:
+
+    ```js
+    var rejectedPr = new Promise(function (resolve, reject) {
+        // resolve this promise with a rejected promise
+        resolve(Promise.reject("Oops"));
+    });
+
+    rejectedPr.then(
+        function fulfilled() {
+            // never gets here
+        },
+        function rejected(err) {
+            console.log(err); // "Oops"
+        }
+    );
+    ```
+
+    It should be clear now that `resolve(..)` is the appropriate name for the first callback parameter of the `Promise(..)` constructor.
