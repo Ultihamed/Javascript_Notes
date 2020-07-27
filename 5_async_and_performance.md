@@ -528,3 +528,50 @@
         }
     ).catch(handleErrors);
     ```
+
+## Promise Patterns
+
+- Consider:
+
+    ```js
+    var p1 = request("http://some.url.1/");
+    var p2 = request("http://some.url.2/");
+
+    Promise.all([p1, p2])
+        .then(function (msgs) {
+            // both `p1` and `p2` fulfill and pass in
+            // their messages here
+            return request(
+                "http://some.url.3/?v=" + msgs.join(",")
+            );
+        })
+        .then(function (msg) {
+            console.log(msg);
+        });
+    ```
+
+    `Promise.all([..])` expects a single arguments, and `array`, consisting generally of Promise instances. The promise returned from the `Promise.all([..])` call will receive a fulfillment message (`msg` in this snippet) that is an `array` of all the fulfillment messages from the passed in promises, in the same order as specified (regardless of fulfillment order).
+- The main promise returned from `Promise.all([..])` will only be fulfilled if and when all its constituent promises are fulfilled. If any one of those promises instead is rejected, the main `Promise.all([ .. ])` promise is immediately rejected, discarding all results from any other promises.
+- `Promise.race([ .. ])` expects a single `array` argument, containing one or more Promises, thenables, or immediate values.
+- Similar to `Promise.all([..])`, `Promise.race([..])` will fulfill if any Promise resolution is a fulfillment, and it will reject if and when any Promise resolution is a rejection.
+- If you pass an empty `array`, instead of immediately resolving, the main `race([..])` Promise will never resolve. So be careful never to send in an empty `array`.
+- Consider:
+
+    ```js
+    var p1 = request("http://some.url.1/");
+    var p2 = request("http://some.url.2/");
+
+    Promise.race([p1, p2])
+        .then(function (msg) {
+            // either `p1` or `p2` will win the race
+            return request(
+                "http://some.url.3/?v=" + msg
+            );
+        })
+        .then(function (msg) {
+            console.log(msg);
+        });
+    ```
+
+    Because only one promise wins, the fulfillment value is a single message, not an `array` as it was for `Promise.all([..])`.
+- Promises cannot be canceled. So they can only be silently ignored.
