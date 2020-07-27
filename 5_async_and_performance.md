@@ -334,3 +334,108 @@
     ```
 
 - `Promise.resolve(..)` will accept any thenable, and will unwrap it to its non-thenable value. But you get back from `Promise.resolve(..)` a real, genuine Promise in its place, **one that you can trust**.
+
+## Chain Flow
+
+- We can string multiple Promises together to represent a sequence of async steps.
+- Every time you call `then(..)` on a Promise, it creates and returns a new Promise, which we can chain with.
+- Whatever value you return from the `then(..)` call's fulfillment callback (the first parameter) is automatically set as the fulfillment of the chained Promise (from the first point).
+
+- Consider:
+
+    ```js
+    var p = Promise.resolve(21);
+
+    var p2 = p.then(function (v) {
+        console.log(v); // 21
+
+        // fulfill `p2` with value `42`
+        return v * 2;
+    });
+
+    // chain off `p2`
+    p2.then(function (v){
+        console.log(v); // 42
+    });
+    ```
+
+    Thankfully, we can easily just chain these together:
+
+    ```js
+    var p = Promise.resovle(21);
+
+    p.then(function (v) {
+        console.log(v); // 21
+
+        // fulfill the chained promise with value `42`
+        return v * 2;
+    }).then(function (v) {
+        console.log(v); // 42
+    });
+    ```
+
+- Each Promise resolution is thus just a signal to proceed to the next step.
+- Consider:
+
+    ```js
+    function delay(time) {
+        return new Promise(function (resolve, reject) {
+            setTimeout(resolve, time);
+        });
+    }
+
+    delay(100) // step 1
+        .then(function STEP2() {
+            console.log("step 2 (after 100ms)");
+            return delay(200);
+        })
+        .then(function STEP3() {
+            console.log("step 3 (after another 200ms)");
+        })
+        .then(function STEP4() {
+            console.log("step 4 (next Job)");
+            return delay(50);
+        })
+        .then(function STEP5() {
+            console.log("step 5 (after another 50ms)");
+        });
+    ```
+
+    Calling `delay(200)` creates a promise that will fulfill in 200ms, and then we return that from the first `then(..)` fulfillment callback, which causes the second `then(..)`'s promise to wait on that 200ms promise.
+- If you call `then(..)` on a promise, and you only pass a fulfillment handler to it, an assumed rejection handler is substitute. For example:
+
+    ```js
+    var p = new Promise(function (resolve, reject) {
+        reject("Oops");
+    });
+
+    var p2 = p.then(
+        function fulfilled() {
+            // never gets here
+        }
+        // assumed rejection handler, if omitted or
+        // any other non-function value passed
+        // function(err) {
+        // throw err;
+        // }
+    );
+    ```
+
+    In essence, this allows the error to continue propagating along a Promise chain until an explicitly defined rejection handler is encountered.
+- If a proper valid function is not passed as the fulfillment handler parameter to `then(..)`, there's also a default handler substituted. For example:
+
+    ```js
+    var p = Promise.resolve(42);
+
+    p.then(
+        // assumed fulfillment handler, if omitted or
+        // any other non-function value passed
+        // function (v) {
+        //     return v;
+        // }
+        null,
+        function rejected(err) {
+            // never gets here
+        }
+    );
+    ```
