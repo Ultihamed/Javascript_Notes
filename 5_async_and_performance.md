@@ -479,3 +479,52 @@
     ```
 
     It should be clear now that `resolve(..)` is the appropriate name for the first callback parameter of the `Promise(..)` constructor.
+
+## Error Handling
+
+- Consider:
+
+    ```js
+    function foo(){
+        setTimeout(function () {
+            baz.bar();
+        }, 100);
+    }
+
+    try {
+        foo();
+        // later throws global error from `baz.bar()`
+    }
+    catch (err) {
+        // never gets here
+    }
+    ```
+
+    `try..catch` would certainly be nice to have, but it doesn't work across async operations. Now Consider:
+
+    ```js
+    var p = Promise.resolve(42);
+
+    p.then(
+        function fulfilled(msg) {
+            // numbers don't have string functions, so will throw an error
+            console.log(msg.toLowerCase());
+        },
+        function rejected(err) {
+            // never gets here
+        }
+    )
+    ```
+
+    To avoid losing an error to the silence of a forgotten/discarded Promise, always end your chain with a final `catch(..)`, like:
+
+    ```js
+    var p = Promise.resolve(42);
+
+    p.then(
+        function fulfilled(msg) {
+            // numbers don't have string functions, so will throw an error
+            console.log(msg.toLowerCase());
+        }
+    ).catch(handleErrors);
+    ```
