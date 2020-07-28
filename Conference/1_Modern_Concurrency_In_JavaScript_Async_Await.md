@@ -1,8 +1,6 @@
-# Async/Await: Modern Concurrency In JavaScript
+# Async/Await: Modern Concurrency In JavaScript [(Reference)](https://www.youtube.com/watch?v=NsQ2QIrQShU)
 
 ![Async/Await](https://i.ytimg.com/vi/NsQ2QIrQShU/maxresdefault.jpg)
-
-[Reference](https://www.youtube.com/watch?v=NsQ2QIrQShU)
 
 ## Concurrency
 
