@@ -120,3 +120,5 @@
 
     loadData().catch(dealWithErrors);
     ```
+
+- Use `async/await` for flow control.
