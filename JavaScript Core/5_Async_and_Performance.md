@@ -575,3 +575,93 @@
 
     Because only one promise wins, the fulfillment value is a single message, not an `array` as it was for `Promise.all([..])`.
 - Promises cannot be canceled. So they can only be silently ignored.
+
+## Promise API Recap
+
+- The revealing constructor `Promise(..)` must be used with `new`, and must be provided a function callback that is synchronously/immediately called. This function is passed two function callbacks that acts as resolution capabilities for the promise. We commonly label these `resolve(..)` and `reject(..)`. For example:
+
+    ```js
+    var p = new Promise(function (resolve, reject) {
+        // `resolve(..)` to resolve/fulfill the promise
+        // `reject(..)` to reject the promise
+    });
+    ```
+
+    If `resolve(..)` is passed an immediaten non-Promise, non-thenable value, then the promise is fulfilled with that value. But if `resolve(..)` is passed a genuine Promise or thenable value, that value is unwrapped recursively, and whatever its final resolution/state is will be adopted by the promise.
+- There are two shortcuts for creating an already-rejected and an already-fulfilled Promises. For example:
+
+    ```js
+    var p1 = new Promise(function (resolve, reject) {
+        reject("Oops");
+    });
+
+    var p2 = new Promise(function (resolve, reject) {
+        resolve("Done");
+    });
+
+    // an already-rejected Promise
+    var p3 = Promise.reject("Oops");
+
+    // an already-fulfilled Promise
+    var p4 = Promise.resolve("Done");
+    ```
+
+    However, `Promise.resolve(..)` also unwraps thenable values. The return value could be a fulfillment or a rejection. For example:
+
+    ```js
+    var fulfilledTh = {
+        then: function (cb) { c(42); }
+    };
+    var rejectedTh = {
+        then: function (cb, errCb) {
+            errCb("Oops");
+        }
+    };
+
+    var p1 = Promise.resolve(fulfilledTh);
+    var p2 = Promise.resolve(rejectedTh);
+
+    // `p1` will be a fulfilled promise
+    // `p2` will be a rejected promise
+    ```
+
+- Remember to `Promise.resolve(..)` doesn't do anything if what you pass is already a genuine Promise. It just returns the value directly.
+- Each Promise instance has `then(..)` and `catch(..)` methods, which allow registering of fulfillment and rejecion handlers for the Promise. Once the Promise is resolved, one or the other of these handlers will be called, but not both, and it will always be called asynchronously.
+- `catch(..)` takes only the rejection callback as a parameter, and automatically substitutes the default fulfillment callback. In other word, it's equivalent to `then(null, ..)`. For example:
+
+    ```js
+    p.then(fulfilled);
+
+    p.then(fulfilled, rejected);
+
+    p.catch(rejected); // or `p.then(null, rejected)`
+    ```
+
+- `then(..)` and `catch(..)` also create and return a new promise, which can be used to express Promise chain flow control.
+- The static helpers `Promise.all([..])` and `Promise.race([..])` on the ES6 `Promise` API both create a Promise as their return value.
+- For `Promise.all([..])`, all the promises you pass in must fulfill for the returned promise to fulfill. If any promise is rejected, the main returned promise is immediately rejected, too. For fulfillment, you receive an `array` of all the passed in promises fulfillment values. For rejection, you receive just the first promise rejection reason value. This pattern is classically called a **gate**: all must arrive before the gates opens.
+- For `Promise.race([..])`, only the first promise to resolve (fulfillment or rejection) **wins**. This pattern is classically called a **latch**: first one to open the latch gets through.
+- See these examples of `Promise.all([..])`and `Promsie.race([..])`:
+
+    ```js
+    var p1 = Promise.resolve(42);
+    var p2 = Promise.resolve("Hello World");
+    var p3 = Promise.reject("Oops");
+
+    Promise.race([p1, p2, p3])
+        .then(function (msg) {
+            console.log(msg); // 42
+        });
+
+    Promise.all([p1, p2, p3])
+        .then(function (err) {
+            console.log(err); // "Oops"
+        });
+
+    Promise.all ([p1, p2])
+        .then(function (msgs) {
+            console.log(msgs); // [42, "Hello World"]
+        });
+    ```
+
+    Be careful! If an empty `array` is passed to `Promise.all([..])`, it will fulfill immediately, but `Promise.race([..])` will hang forever and never resolve.
