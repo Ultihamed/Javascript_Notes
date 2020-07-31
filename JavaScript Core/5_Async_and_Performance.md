@@ -713,3 +713,7 @@
             console.log(x, y); // 200 599
         });
     ```
+
+## Promise Uncancelable
+
+- No individual Promise should be cancelable, but it's sensible for a sequence to be cancelable, because you don't pass around a sequence as a single immutable value like you do with a Promise.
