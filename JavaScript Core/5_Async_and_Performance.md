@@ -665,3 +665,51 @@
     ```
 
     Be careful! If an empty `array` is passed to `Promise.all([..])`, it will fulfill immediately, but `Promise.race([..])` will hang forever and never resolve.
+
+## Unwrap/Spread Arguments
+
+- Consider:
+
+    ```js
+    function spread(fn) {
+        return Function.apply.bind(fn, null);
+    }
+    Promise.all(foo(10, 20))
+        .then(
+            spread(function (x, y) {
+                console.log(x, y); // 200 599
+            })
+        );
+    ```
+
+    You could inline the functional magic to avoid the extra helper:
+
+    ```js
+    Promise.all(foo(10, 20))
+        .then(Function.apply.bind(
+            function (x, y) {
+                console.log(x, y); // 200 599
+            },
+            null
+        ));
+    ```
+
+    ES6 has an even better answer for us: **destructuring**. The array destructuring assignment form looks like this:
+
+    ```js
+    Promise.all(foo(10, 29))
+        .then(function (msgs) {
+            var [x, y] = msgs;
+
+            console.log(x, y); // 200 599
+        })
+    ```
+
+    But best of all, ES6 offers the array parameter destructuring form:
+
+    ```js
+    Promise.all(foo(10, 20))
+        .then(function ([x,y]) {
+            console.log(x, y); // 200 599
+        });
+    ```
