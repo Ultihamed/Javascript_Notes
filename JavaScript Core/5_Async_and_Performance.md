@@ -720,4 +720,5 @@
 
 ## Promise Performance
 
--
+- Promises are a bit slower than non-Promises. But in exchange you're getting a lot of trustability, non-Zalgo predictability, and composability built in.
+- Promises are awesome. Use them. They solve the *inversion of control* issues that plague us with callbacks-only code.
