@@ -722,3 +722,61 @@
 
 - Promises are a bit slower than non-Promises. But in exchange you're getting a lot of trustability, non-Zalgo predictability, and composability built in.
 - Promises are awesome. Use them. They solve the *inversion of control* issues that plague us with callbacks-only code.
+
+## Generators
+
+- Consider:
+
+    ```js
+    var x = 1;
+
+    function *foo() {
+        x++;
+        yield; // pause!
+        console.log("x: ", x);
+    }
+
+    function bar() {
+        x++;
+    }
+    ```
+
+    You will likely see most other **JavaScript** documentation/code that will format a generator declaration as `function* foo() { .. }` instead of as I've done here with `function *foo() { .. }`. The only difference being the stylistic positioning of the `*`. The two forms are functionally/syntactically identical, as is a third `function*foo() { .. }` (no space) form. I think `function *foo() { .. }` form is better.
+- A generator is a special kind of function that can start and stop one or more times, and doesn't necessarily ever have to finish.
+- Consider:
+
+    ```js
+    function *foo(x, y) {
+        return x + y;
+    }
+
+    var it = foo(10, 20);
+    var res = it.next();
+
+    console.log(res.value); // 30
+    console.log(res.done); // true
+    ```
+
+    The result of that `next(..)` call is an `object` with a `value` property on it holding whatever value (if anything) was returned from `*foo()`.
+- Consider:
+
+    ```js
+    function *foo(x) {
+        var y = x * (yield);
+        return y;
+    }
+
+    var it = foo(5);
+
+    // start `foo(..)`
+    it.next();
+
+    var res = it.next(2);
+
+    res.value; // 10
+    ```
+
+    You can set a value for `yield` with `next(..)` function. So, at this point, the assignment statement is essentially `var y = 5 * 2`. Now `return y` returns that `10` value back as the result of the `it.next(2)` call.
+- There's a mismatch between the `yield` and the `next(..)` call. In general, you're going to have one more `next(..)` call than you have `yield` statement. Why the mismatch? Because the first `next(..)` always starts a generator, and runs to the first `yield`.
+- The `yield` is basically asking a question: **What value should I insert here?** you sould answer this question with `next(..)`.
+- Always start a generator with an argument-free `next()`. Because the specification and all compliant browsers just silently discard anything passed to the first `next()`.
