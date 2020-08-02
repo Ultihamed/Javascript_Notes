@@ -780,3 +780,120 @@
 - There's a mismatch between the `yield` and the `next(..)` call. In general, you're going to have one more `next(..)` call than you have `yield` statement. Why the mismatch? Because the first `next(..)` always starts a generator, and runs to the first `yield`.
 - The `yield` is basically asking a question: **What value should I insert here?** you sould answer this question with `next(..)`.
 - Always start a generator with an argument-free `next()`. Because the specification and all compliant browsers just silently discard anything passed to the first `next()`.
+
+## Generatoring Values
+
+- The `for..of` loop automatically calls `next()` for each iteration (it does't pass any values in to the `next()`) and it will automatically terminate on receiving a `done: true`. It's quite handy for looping over a set of data.
+- Many built-in data structures in **JavaScript** (as of ES6), like `array`s , have default iterators. For example:
+
+    ```js
+    var a = [1, 3, 5, 7, 9];
+
+    for (var v of a) {
+        console.log(v);
+    }
+    // 1 3 5 7 9
+    ```
+
+    The `for..of` loop asks `a` for its iterator, and automatically uses it to iterate over `a`'s values.
+- You can manually itrate an `array` like generators using ES6 `Symbol`. For example:
+
+    ```js
+    var a = [1, 3, 5, 7, 9];
+
+    var it = a[Symbol.iterator]();
+
+    it.next().value; // 1
+    it.next().value; // 3
+    it.next().value; // 5
+    ..
+    ```
+
+- In a generator, such a loop is generally totally OK if it has a `yield` in it, as the generator will pause at each iteration, `yield`ing back to the main program and/or to the event loop queue.
+- Consider:
+
+    ```js
+    function *something() {
+        var nextVal;
+
+        while (true) {
+            if (nextVal === undefined) {
+                nextVal = 1;
+            }
+            else {
+                nextVal = (3 * nextVal) + 6;
+            }
+
+            yield nextVal;
+        }
+    }
+
+    for (var v of something()) {
+        console.log(v);
+
+        // don't let the loop run forever!
+        if (v > 500) {
+            break;
+        }
+    }
+    // 1 9 33 105 321 969
+    ```
+
+    Why couldn't we say `for (var v of something)..`? Because `something` here is a generator, which is not an iterable. We have to call `something()` to construct a producer for the `for..of` loop to iterate over. The `something()` call produces an iterator, but the `for..of` loop wants an iterable, right? Yep. The generator's iterator also has a `Symbol.iterator` function on it, which basically does a `return this`. In other words, **a generator's iterator is also an iterable**.
+- You can use `try..finally` in generators. It will always be run even when the generator is externally completed. This is useful if you need to clean up resources (database, connections, etc). For example:
+
+    ```js
+    function *something() {
+        var nextVal;
+
+        try {
+            while (true) {
+                if (nextVal === undefined) {
+                    nextVal = 1;
+                }
+                else {
+                    nextVal = (3 * nextVal) + 6;
+                }
+
+                yield nextVal;
+            }
+        }
+        // cleanup clause
+        finally {
+            console.log("cleaning up!");
+        }
+    }
+
+    for (var v of something()) {
+        console.log(v);
+
+        // don't let the loop run forever!
+        if (v > 500) {
+            break;
+        }
+    }
+    // 1 9 33 105 321 969 cleaning up!
+    ```
+
+- You can terminate a generator's iterator manually with `return()` function. For example:
+
+    ```js
+    var it = something();
+    for (var v of it) {
+        console.log(v);
+
+        // don't let the loop run forever!
+        if (v > 500) {
+            console.log (
+                // complete the generator's iterator
+                it.return("Hello World").value;
+            );
+            // no `break` needed here
+        }
+    }
+    // 1 9 33 105 321 969
+    // cleaning up!
+    // Hello World
+    ```
+
+    The `return()` function sets the generator's iterator to `done: true`, so the `for..of` loop will terminate on its next iteration.
