@@ -897,3 +897,41 @@
     ```
 
     The `return()` function sets the generator's iterator to `done: true`, so the `for..of` loop will terminate on its next iteration.
+
+## Iterating Generators Asynchronously
+
+- The `yield` allows the generator to `catch` an error. For example:
+
+    ```js
+    if (err) {
+        // throw an error into `*main()`
+        it.throw(err);
+    }
+    ```
+
+- The `yield`-pause nature of generators means that not only do we get synchronous-looking `return` values from async function calls, but we can also synchronously `catch` errors from those async function calls.
+- We can even `catch` the same error that we `throw()` into the generator, essentially giving the generator a chance to handle it but if it doesn't, the iterator code must handle it. For example:
+
+    ```js
+    function *main() {
+        var x = yield "Hello World";
+
+        // never gets here
+        console.log(x);
+    }
+
+    var it = main();
+
+    it.next();
+
+    try {
+        // will `*main()` handle this error? we'll see!
+        it.throw("Oops");
+    }
+    catch (err) {
+        // nope didn't handle it!
+        console.log(err); // Oops
+    }
+    ```
+
+    Synchronous-looking error handling (via `try..catch`) with async code is a huge win for readability and reason-ability.
