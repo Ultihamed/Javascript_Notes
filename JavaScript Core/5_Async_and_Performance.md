@@ -989,3 +989,56 @@
     ```
 
     We can even use ES6 destructuring assignment to simplify the `var r1 = .. var r2 = ..` assignments, with `var [r1, r2] = results`.
+
+## Generator Delegation
+
+- Consider:
+
+    ```js
+    function *foo() {
+        console.log("`*foo()` starting");
+        yield 3;
+        yield 4;
+        console.log("`*foo()` finished");
+    }
+
+    function* bar() {
+        yield 1;
+        yield 2;
+        yield *foo(); // `yield`-delegation!
+        yield 5;
+    }
+
+    var it = bar();
+
+    it.next().value; // 1
+    it.next().value; // 2
+    it.next().value; // `*foo()` starting
+                     // 3
+    it.next().value; // 4
+    it.next().value; // `*foo()` finished
+                     // 5
+    ```
+
+    First, calling `foo()` creates an iterator. Then, `yield *` delegates/transfers the iterator instance control (of the present `*bar` generator) over to this other `*foo()` iterator. So, the first two `it.next()` calls are controlling `*bar()`, but when we make the third `it.next()` call, now `*foo()` starts up, and now we're controlling `*foo()` instead of `*bar()`. That's why it's called delegation (`*bar()` delegated its iteration control to `*foo()`).
+- You could even use `yield`-delegation for async-capable generator **recursion** (a generator `yield`-delegating to itself). For example:
+
+    ```js
+    function *foo(val) {
+        if (val > 1) {
+            // generator recursion
+            var = yield *foo(val -1);
+        }
+
+        return yield request("http://some.url/?v=" + val);
+    }
+
+    function *bar() {
+        var r1 = yield *foo(3);
+        console.log(r1);
+    }
+
+    run(bar);
+    ```
+
+- Thunks do not in and of themselves have hardly any of the trustability or composability guarantees that Promises are designed with.
