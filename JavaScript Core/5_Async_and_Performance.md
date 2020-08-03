@@ -935,3 +935,57 @@
     ```
 
     Synchronous-looking error handling (via `try..catch`) with async code is a huge win for readability and reason-ability.
+
+## Generators + Promises
+
+- The best of all worlds in ES6 is to combine generators (synchronous-looking async code) with Promises (trustable and composable).
+- Consider:
+
+    ```js
+    function foo(x, y) {
+        return request(
+            "http://some.url.1/?x=" + x + "&y=" + y
+        );
+    }
+
+    async function main() {
+        try {
+            var text = await foo(11, 31);
+            console.log(text);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    main();
+    ```
+
+    Here instead of `yield`ing a Promise, we `await` for it to resolve.
+- The `async function` automatically knows what to do if you `await` a Promise. It will pause the function (just like with generators) until the Promise resolves.
+- The `async/await` is like combining Promises with sync-looking flow control code.
+- All of the concurrency capabilities of Promises are available to us in the generator + Promise approach. For example:
+
+    ```js
+    function *foo() {
+        // make both requests "in parallel," and
+        // wait until both promises resolve
+        var results = yield Promise.all([
+            request("http://some.url.1"),
+            request("http://some.url.2")
+        ]);
+
+        var r1 = results[0];
+        var r2 = results[1];
+
+        var r3 = yield request(
+            "http://some.url.3/?v=" + r1 + "," + r2
+        );
+
+        console.log(r3);
+    }
+
+    run(foo);
+    ```
+
+    We can even use ES6 destructuring assignment to simplify the `var r1 = .. var r2 = ..` assignments, with `var [r1, r2] = results`.
