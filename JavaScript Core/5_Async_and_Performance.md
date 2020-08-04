@@ -1042,3 +1042,83 @@
     ```
 
 - Thunks do not in and of themselves have hardly any of the trustability or composability guarantees that Promises are designed with.
+
+## Web Workers
+
+- Imagine splitting your program into two pieces, and running one of those pieces on the main UI thread, and running the other piece on an entirely separate thread.
+- **JavaScript** does not currently have any features that support threaded execution. But an environment like your browser can easily provide multiple instances of the **JavaScript Engine**, each on its own thread, and let you run a different program in each thread. Each of those separate threaded pieces of your program is called a **(Web) Worker**.
+- Consider:
+
+    ```js
+    var w1 = new Worker("http://some.url.1/mycoolworker.js");
+    ```
+
+    The URL should point to the location of a **JavaScript** file (not an HTML page!) which is intended to be loaded into a Worker.
+- Workers do not share any scope or resources with each other or the main program. But instead have a basic event messaging mechanism connecting them. Here's how to listen for events (actually, the fixed `"message"` event):
+
+    ```js
+    var w1 = new Worker("http://some.url.1/mycoolworker.js");
+
+    w1.addEventListener("message", function (evt) {
+        // evt.data
+    });
+    ```
+
+    And you can send the `"message"` event to the Worker:
+
+    ```js
+    w1.postMessage("something cool to say");
+    ```
+
+    Inside the Worker, the messaging is totally symmetrical:
+
+    ```js
+    // "mycoolworker.js"
+
+    addEventListener("message", function (evt) {
+        // evt.data
+    });
+
+    postMessage("a really cool reply");
+    ```
+
+- To kill a Worker immediately from the program that created it, call `terminate()` on the Worker object.
+- Terminating a Worker thread does not give it any chance to finish up its work or clean up any resources. It's akin to you closing a browser tab to kill a page.
+- Worker has access to its own copy of several important global variables/features, including `navigator`, `location`, `JSON` and `applicationCache`.
+- You can load extra **JavaScript** scripts into your Worker, using `importScripts(..)`. For example:
+
+    ```js
+    // inside the Worker
+    importScripts("foo.js", "bar.js");
+    ```
+
+- You can use Web Workers for:
+  - Processing intensive math calculations.
+  - Sorting large data sets.
+  - Data Operations (compression, audio analysis, image pixel manipulations, etc).
+  - High-traffic network communications.
+- You can create a single centralized Worker that all the page instances of your site or app can share is quite useful. That's called a `SharedWorker`. For example:
+
+    ```js
+    var w1 = new SharedWorker("http://some.url.1/mycoolworker.js");
+    ```
+
+- Because a shared Worker can be connected to or from more than one program instance or page on your site, the Worker needs a way to know which program a message comes from. So the calling program must use the `port` object of the Worker for communication. For example:
+
+    ```js
+    w1.port.addEventListener( "message", handleMessages );
+
+    // ..
+
+    w1.port.postMessage("something cool");
+    ```
+
+    Also, the port connection must be initialized, as:
+
+    ```js
+    w1.port.start();
+    ```
+
+- Shared Workers survive the termination of a port connection if other port connections are still alive, whereas dedicated Workers are terminated whenever the connection to their initiating program is terminated.
+- Workers are an API and not a syntax, they can be polyfilled, to an extent.
+- If a browser doesn't support Workers, there's simply no way to fake multithreading from the performance perspective.
