@@ -1122,3 +1122,9 @@
 - Shared Workers survive the termination of a port connection if other port connections are still alive, whereas dedicated Workers are terminated whenever the connection to their initiating program is terminated.
 - Workers are an API and not a syntax, they can be polyfilled, to an extent.
 - If a browser doesn't support Workers, there's simply no way to fake multithreading from the performance perspective.
+
+## SIMD
+
+- With SIMD (**S**ingle **I**nstruction, **M**ultiple **D**ata), threads don't provide the parallelism. Instead, modern CPUs provide SIMD capability with **vectors** of numbers.
+- The performance benefits for data-intensive applications (signal analysis, matrix operations on graphics, etc) with such parallel math processing are quite obvious.
+- SIMD first provided by **Intel**, by **Mohammad Haghighat**, in cooperation with Firefox and Chrome teams.
