@@ -1128,3 +1128,10 @@
 - With SIMD (**S**ingle **I**nstruction, **M**ultiple **D**ata), threads don't provide the parallelism. Instead, modern CPUs provide SIMD capability with **vectors** of numbers.
 - The performance benefits for data-intensive applications (signal analysis, matrix operations on graphics, etc) with such parallel math processing are quite obvious.
 - SIMD first provided by **Intel**, by **Mohammad Haghighat**, in cooperation with Firefox and Chrome teams.
+
+## asm.js
+
+- Early versions of the asm.js experiment required a `"use asm";` pragma (similar to strict mode's `"use strict";`) to help clue the **JavaScript** engine to be looking for asm.js optimization opportunities and hints.
+- asm.js is intended to provide an optimized way of handling specialized tasks such as intensive math operations (e.g., those used in graphics processing for games).
+- asm.js could be hand authored, but that's extremely tedious and error prone, akin to hand authoring assembly language (hence the name).
+- asm.js would be a good target for cross-compilation from other highly optimized program languages. For example, Emscripten transpiling C/C++ to **JavaScript**.
