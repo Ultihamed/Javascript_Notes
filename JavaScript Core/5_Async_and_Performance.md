@@ -1135,3 +1135,118 @@
 - asm.js is intended to provide an optimized way of handling specialized tasks such as intensive math operations (e.g., those used in graphics processing for games).
 - asm.js could be hand authored, but that's extremely tedious and error prone, akin to hand authoring assembly language (hence the name).
 - asm.js would be a good target for cross-compilation from other highly optimized program languages. For example, Emscripten transpiling C/C++ to **JavaScript**.
+
+## Benchmarking
+
+- The vast majority of **JavaScript** developers, if asked to benchmark the speed (execution time) of a certain operation, would initially go about it something like this:
+
+    ```js
+    var start = (new Date()).getTime(); // or `Date.now()`
+
+    // do some operation
+
+    var end = (new Date()).getTime();
+
+    console.log("Duration: ", (end - start));
+    ```
+
+    Don't do like this.
+- If you repeat an operation 100 times, and that whole loop reportedly takes a total of 137ms, then you can just divide by 100 and get an average duration of 1.37ms for each operation, right? Well, not exactly. Don't do it.
+- You are not actually qualified to write your own benchmarking logic.
+- Use **Benchmark.js** tool to test your program execution speed. Here's how you could use Benchmark.js to run a quick performance test:
+
+    ```js
+    function foo() {
+        // operation(s) to test
+    }
+
+    var bench = new Benchmark(
+        "foo test",      // test name
+        foo,             // function to test (just contents)
+        {
+            // ..        // optional extra options (see docs)
+        }
+    );
+
+    bench.hz; // number of operations per second
+    bench.stats.moe; // margin of error
+    bench.stats.variance; // variance across samples
+    ```
+
+    If you're going to try to test and benchmark your code, this library is the first place you should turn.
+- Consider:
+
+    ```js
+        // Case 1
+        var x = false;
+        var y = x ? 1 : 2;
+
+        // Case 2
+        var x;
+        var y = x ? 1 : 2;
+    ```
+
+    There is extra work to do the coercion in the second case. So always use first case.
+- Consider these three `for` loops:
+
+    ```js
+    // Option 1
+    for (var i = 0; i < 10; i++) {
+        console.log(i);
+    }
+
+    // Option 2
+    for (var i = 0; i < 10; ++i) {
+        console.log(i);
+    }
+
+    // Option 3
+    for (var i = -1; ++i < 10; ) {
+        console.log(i);
+    }
+    ```
+
+    These sort of obsession is basically nonsense in modern **JavaScript**. But you might do some tricks to optimize the performance. For example:
+
+    ```js
+    var x [..];
+
+    // Option 1
+    for (var i = 0; i < x.length; i++) {
+        // ..
+    }
+
+    // Option 2
+    for (var i = 0, len = x.length; i < 0; i++) {
+        // ..
+    }
+    ```
+
+    If you run performance benchmarks around `x.length` usage compared to caching it in a `len` variable, you'll find that while the theory sounds nice. But don't try to outsmart your **JavaScript Engine**, you'll probably lose when it comes to performance optimizations.
+- Don't pass the `arguments` variable from one function to any other function, as such **leakage** slows down the function implementation.
+- You shouldn't necessarily change a piece of code to work around one engine's difficulty with running a piece of code in an acceptably performant way.
+- Which one if any is the fastest?
+
+    ```js
+    var x = "42"; // need number `42`
+
+    // Option 1: let implicit coercion automatically happen
+    var y = x / 2;
+
+    // Option 2: use `parseInt(..)`
+    var y = parseInt(x, 0) / 2;
+
+    // Option 3: use `Number(..)`
+    var y = Number(x) / 2;
+
+    // Option 4: use `+` unary operator
+    var y = +x / 2;
+
+    // Option 5: use `|` unary operator
+    var y = (x | 0) / 2;
+    ```
+
+    If `x` can ever be a value that needs parsing, shuch as `"42px"` (like from a CSS style lookup), then `parseInt(..)` really is the only suitable option. `Number(..)` is also a function call. From a behavioral perspective, it's identical to the `+` unary operator option, but it may in fact be a little slower, requiring more machinery to execute the function.
+- If you write recursive functions without tail calls, the performance will still fall back to normal stack frame allocation, and the **Engines**' limits on such recursive call stacks will still apply.
+- jsPerf.com is a fantastic website for crowdsourcing performance benchmark test runs.
+- TCO (**T**ail **C**all **O**ptimization) allows a function call in the tail position of another function to execute without needing any extra resources, which means the engine no longer needs to place arbitrary restrictions on call stack depth for recursive algorithms.
