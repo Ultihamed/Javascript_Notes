@@ -11,3 +11,31 @@
 
 - The ill-fated ES4 never came about.
 - In 2009, ES5 was officially finalized (later ES5.1 in 2011), and settled as the widespread standard for **JavaScript** for the modern revolution and explosion of browsers, such as **Firefox**, **Chrome**, **Opera**, **Safari**, and many others.
+
+## Transpiling
+
+- You can transpile ((transformation + compile) your ES6 code to ES5 to run your program in older browsers. For example consider:
+
+    ```js
+    var foo = [1, 2, 3];
+
+    var obj = {
+        foo // means `foo: foo`
+    };
+
+    obj.foo; // [ 1, 2, 3 ]
+    ```
+
+    But (roughly) here's how that transpiles:
+
+    ```js
+    var foo [1, 2, 3];
+
+    var obj = {
+        foo: foo
+    };
+
+    obj.foo; // [ 1, 2, 3 ]
+    ```
+
+    It lets us shorten the `foo: foo` in an object literal declaration to just `foo`, if the names are the same.
