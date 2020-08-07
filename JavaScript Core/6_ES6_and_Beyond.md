@@ -180,3 +180,21 @@
 
     The `a` variable doesn't actually hold a constant array; rather, it holds a constant reference to the array. The array itself is freely mutable.
 - To avoid potentially confusing code, only use `const` for variables that you're intentionally and obviously signaling will not change. In other words, don't rely on `const` for code behavior, but instead use it as a tool for signaling intent, when intent can be signaled clearly.
+
+## Block-Scoped Functions
+
+- Consider:
+
+    ```js
+    {
+        foo(); // works!
+
+        function foo() {
+            // ..
+        }
+    }
+
+    foo(); // Reference Error
+    ```
+
+    The `foo()` function is declared inside the `{..}` block, and as ES6 is block-scoped there. So it's not available outside that block. But also note that it is **hoisted** within the block, as opposed to `let` declaration, which suffer the TDZ error trap.
