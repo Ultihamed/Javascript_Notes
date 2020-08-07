@@ -248,3 +248,64 @@
     ```
 
     The `...args` in the `foo(..)` function declaration is usually called **rest parameters**, because you're collecting the rest of the parameters.
+
+## Default Parameter Values
+
+- Consider this pre-ES6 snippet:
+
+    ```js
+    function foo(x, y) {
+        x = x || 11;
+        y = y || 31;
+
+        console.log(x + y);
+    }
+
+    foo(); // 42
+    foo(5, 6); // 11
+    foo(5); // 36
+    foo(null, 6); // 17
+    ```
+
+    This way can be more dangerous, if for example you need to be able to pass in what would otherwise be considered a falsy value for one of the parameters. For example:
+
+    ```js
+    foo(0, 42); // 53 <-- Oops, not 42
+    ```
+
+    Why? Because the `0` is falsy, and so the `x || 11` results in `11`, not the directly passed in `0`. To fix this gotcha, some people will instead write the check more verbosely like this:
+
+    ```js
+    function foo(x, y) {
+        x = (x !== undefined) ? x : 11;
+        y = (y !== undefined) ? x : 31;
+
+        console.log(x + y);
+    }
+
+    foo(0, 42); // 42
+    foo(undefined, 6); // 17
+    ```
+
+    There's a principle applied to **JavaScript**'s design here that is important to remember: `undefined` means missing. That is, there's no difference between `undefined` and missing, at least as far as function arguments go.
+- A nice helpful syntax added as of ES6 to streamline the assignment of default values to missing arguments:
+
+    ```js
+    function foo(x = 11, y = 31) {
+        console.log(x + y);
+    }
+
+    foo(); // 42
+    foo(5, 6); // 11
+    foo(0, 42); // 42
+
+    foo(5); // 36
+    foo(5, undefined); // 36 <-- `undefined` is missing
+    foo(5, null); // 5 <-- null coerces to `0`
+
+    foo(undefined, 6); // 17 <-- `undefined` is missing
+    foo(null, 6); // 6 <-- null coreces to `0`
+    ```
+
+    `x = 11` in a function declaration is more like `x !== undefined ? x : 11` than much more common idiom `x || 11`, so you'll need to be careful in converting your pre-ES6 code to this ES6 default parameter value syntax.
+- A rest/gather parameters cannot have a default value. So, while `function foo(...vals=[1, 2, 3]) {` might seem an intriguing capability, it's not valid syntax. You'll need to continue to apply that sort of logic manually if necessary.
