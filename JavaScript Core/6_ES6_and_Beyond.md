@@ -198,3 +198,53 @@
     ```
 
     The `foo()` function is declared inside the `{..}` block, and as ES6 is block-scoped there. So it's not available outside that block. But also note that it is **hoisted** within the block, as opposed to `let` declaration, which suffer the TDZ error trap.
+
+## Spread/Rest
+
+- ES6 introduces a new `...` operator that's typically referred to as the **spread or rest operator**, depending on where/how it's used. For example:
+
+    ```js
+    function foo(x, y, z) {
+        console.log(x, y, z);
+    }
+
+    foo(...[1, 2, 3]); // 1 2 3
+    ```
+
+    When `...` is used in front of an array (actually, any iterable), it acts to spread it out into its individual value. The `...` operator acts to give us a simpler syntactic replacement for the `apply(..)` method, which we would typically have used pre-ES6 as:
+
+    ```js
+    foo.apply(null, [1, 2, 3]);
+    ```
+
+- The `...` operator can be used to spread out/expand a value in other contexts as well, such as inside another array declaration. For example:
+
+    ```js
+    var a = [2, 3, 4];
+    var b = [1, ...a, 5];
+
+    console.log(b); // [ 1, 2, 3, 4, 5 ]
+    ```
+
+    In this usage of `...` is basically replacing `concat(..)`, as it behaves like `[1].concat(a, [5])` here.
+- You can use `...` operator to gather a set of values together into an array. Consider:
+
+    ```js
+    function foo(x, y, ...z) {
+        console.log(x, y, z);
+    }
+
+    foo(1, 2, 3, 4, 5); // 1 2 [ 3, 4, 5 ]
+    ```
+
+    The `...z` in this snippet essentially saying: "gather the rest of the arguments (if any) into an array called `z`". Because `x` was assigned `1`, and `y` was assigned `2`, the rest of the arguments `3`, `4`, and `5` were gathered into `z`. Of course, if you don't have any named parameters, the `...` gathers all arguments. For example:
+
+    ```js
+    function foo(...args) {
+        console.log(args);
+    }
+
+    foo(1, 2, 3, 4, 5); // [ 1, 2, 3, 4, 5 ]
+    ```
+
+    The `...args` in the `foo(..)` function declaration is usually called **rest parameters**, because you're collecting the rest of the parameters.
