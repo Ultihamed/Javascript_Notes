@@ -309,3 +309,53 @@
 
     `x = 11` in a function declaration is more like `x !== undefined ? x : 11` than much more common idiom `x || 11`, so you'll need to be careful in converting your pre-ES6 code to this ES6 default parameter value syntax.
 - A rest/gather parameters cannot have a default value. So, while `function foo(...vals=[1, 2, 3]) {` might seem an intriguing capability, it's not valid syntax. You'll need to continue to apply that sort of logic manually if necessary.
+
+## Default Value Expressions
+
+- Function default values can be any valid expression, even a function call. For example:
+
+    ```js
+    function bar(val) {
+        console.log("bar caleld!");
+        return y + val;
+    }
+
+    function foo(x = y + 3, z = bar(x)) {
+        console.log(x, y);
+    }
+
+    var y = 5;
+    foo();   // "bar called"
+             // 8 13
+    foo(10); // "bar called"
+             // 10 15
+
+    y = 6;
+    foo(undefined, 10); // 9 10
+    ```
+
+    The default value expressions are only run if and when they're needed -- that is, when a parameter's argument is ommited or is `undefined`.
+- A reference to an identifier in a default value expression first matches the formal parameters' scope before looking to an outer scope. Consider:
+
+    ```js
+    var w = 1, z = 2;
+
+    function foo(x = w + 1, y = x + 1, z = z + 1) {
+        console.log(x, y, z);
+    }
+
+    foo(); // ReferenceError
+    ```
+
+    The `w` in the `w + 1` default value expression looks for `w` in the formal parameters' scope, but does not find it, so the outer scope's `w` is used. Next, the `x` in the `x + 1` default value expression finds `x` in the formal parameters' scope, and luckily `x` has already been initialized, so the assignment to `y` works fine. However, the `z` in the `z + 1` finds `z` as a not-yet-initialized-at-that-moment paramater variable, so it never tries to find the `z` from the outer scope. ES6 has a TDZ, which prevents a variable from being accessed in its uninitialized state. As such, the `z + 1` default value expression throws a TDZ `ReferenceError` error.
+- A default value expression can even be an inline function expression call -- commonly referred to as an immediately invoked function expression (IIFE). For example:
+
+    ```js
+    function foo(x =
+        (function (v) { return v + 11; })(31)
+    ) {
+        console.log(x);
+    }
+
+    foo(); // 42
+    ```
