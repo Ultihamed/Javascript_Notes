@@ -359,3 +359,246 @@
 
     foo(); // 42
     ```
+
+## Destructing
+
+- Consider:
+
+    ```js
+    function foo() {
+        return [1, 2, 3];
+    }
+
+    var tmp = foo(),
+        a = tmp[0], b = tmp[1], c = tmp[2];
+
+    console.log(a, b, c); // 1 2 3
+    ```
+
+    As you can see, we created a manual assignment of the values in the array that `foo()` return individual variables `a`, `b`, and `c`, and to do so we (unfortunately) needed the `tmp` variable. Similarly, we can do the following with objects. For example:
+
+    ```js
+    function bar() {
+        return {
+            x: 4,
+            y: 5,
+            z: 6
+        };
+    }
+
+    var tmp = bar(),
+        x = tmp.x, y = tmp.y, z = tmp.z;
+
+    console.log(x, y, z); // 4 5 6
+    ```
+
+    ES6 adds a dedicated syntax for destructuring, specifically array destructuring and object destructuring. This syntax eliminates the need for the `tmp` variable in the previous snippet, making them much cleaner. Consider:
+
+    ```js
+    var [a, b, c] = foo();
+    var { x: x, y: y, z: z } = bar();
+
+    console.log(a, b, c); // 1 2 3
+    console.log(x, y, z); // 4 5 6
+    ```
+
+    That `[a, b ,c]` on the lefthand side of `=` assignment treated as a kind of **pattern** for decomposing the righthand side array value into separate variable assignment. Similarity, `{ x: x, y: y, z: z }` specifies a **pattern** to decompose the object value from `bar()` into separate variable assignments. If the property name being matched is the same as the variable you want to declare, you can actually shorten the syntax. For example:
+
+    ```js
+    var { x, y, z } = bar();
+
+    console.log(x, y, z); // 4 5 6
+    ```
+
+    We're actually leaving off the `x:` part when we use the shorter syntax.
+- When you use object destructuring assignment -- that is, putting the `{..}` object literal-looking syntax on the lefthand side of the `=` operator -- you invert that `target: source` pattern. Consider:
+
+    ```js
+    var { x: bam, y: baz, z: bap } = bar();
+    ```
+
+    Here `x: bam` means the `x` property is the source value and `bam` is the target variable to assign to. In other words, object literals are `target <-- source`, and object destructing assignments are `source --> target`. For example:
+
+    ```js
+    var aa = 10, bb = 20;
+
+    var o = { x: aa, y: bb };
+    var     { x: AA, y: BB } = o;
+
+    console.log(AA, BB);
+    ```
+
+- Destructuring is a general assignment operation, not just a declaration. For example:
+
+    ```js
+    var a, b, c, x, y, z;
+
+    [a, b, c] = foo();
+    ({ x, y, z } = bar());
+
+    console.log(a, b, c); // 1 2 3
+    console.log(x, y, z); // 4 5 6
+    ```
+
+    The assignment expression don't actually need to be just variable identifiers. Anything that's a valid assignment expression is allowed. For example:
+
+    ```js
+    var o = {};
+
+    [o.a, o.b, o.c] = foo();
+    ({ x: o.x, y: o.y, z: o.z } = bar());
+
+    console.log(o.a, o.b, o.c); // 1 2 3
+    console.log(o.x, o.y, o.z); // 4 5 6
+    ```
+
+    You can even use computed property expressions in the destructing. For example:
+
+    ```js
+    var which = "x", o = {};
+
+    ({ [which]: o[which] } = bar());
+
+    console.log(o.x); // 4
+    ```
+
+    The `o[which]` part is just a normal object key reference, which equates to `o.x` as the target of the assignment.
+- With object destructor you can use the general assignments to create object mappings/transformations. For example:
+
+    ```js
+    var o1 = {a: 1, b: 2, c: 3},
+        o2 = {};
+
+    ({ a: o2.x, b: o2.y, c: o2.z } = o1);
+
+    console.log(o2.x, o2.y, o2.z); // 1 2 3
+    ```
+
+    Or you can map an object to an array. For example:
+
+    ```js
+    var o1 = { a: 1, b: 2, c: 3},
+        o2 = [];
+
+    ({ a: o2[0], b: o2[1], c: o2[3] } = o1);
+
+    console.log(a2); // [ 1, 2 ,3 ]
+    ```
+
+    Or the other way around:
+
+    ```js
+    var a = [1, 2, 3].
+        o2 = {};
+
+    [o2.a, o2.b, o2.c] = a;
+
+    console.log(o2.a, o2.b, o2.c); // 1 2 3
+    ```
+
+    Or you could reorder one array to another:
+
+    ```js
+    var a1 = [1, 2, 3],
+        a2 = [];
+
+    [a2[2], a2[0], a2[1]] = a1;
+
+    console.log(a2); // [ 2, 3, 1 ]
+    ```
+
+- You can solve the traditional **swap two variables** task without a temporary variable using ES6 destructor. For example:
+
+    ```js
+    var x = 10, y = 20;
+
+    [y, x] = [x, y];
+
+    console.log(x, y); // 20 10
+    ```
+
+- The object destructuring form allows a source property (holding any value type) to be listed multiple times. For example:
+
+    ```js
+    var { a: X, a: Y } = { a: 1 };
+
+    console.log(X); // 1
+    console.log(Y); // 2
+    ```
+
+- You can use destructing assignment like JSON or with an object literal value for readability sake. For example:
+
+    ```js
+    // harder to read:
+    var { a: { b: [c, d], e: { f } }, g } = obj;
+
+    // better:
+    var {
+        a : {
+            b: [c, d],
+            e: {f}
+        },
+        g
+    } = obj;
+    ```
+
+- With both array destructuring assignment and object destructuring assignment, you do not have to assign all the values that are present. For example:
+
+    ```js
+    var [, b] = foo();
+    var { x, z } = bar();
+
+    console.log(b, x, y); // 2 4 6
+    ```
+
+    The `1` and `3` values that came back from `foo()` are discarded, as is the `5` value from `bar()`.
+- If you try to assign more values than are present in the value you're
+destructuring/decomposing, you get graceful fallback to `undefined`, as you'd expect. For example:
+
+    ```js
+    var [,, c, d] = foo();
+    var {w, z} = bar();
+
+    console.log(c, z); // 3 6
+    console.log(d, w); // undefined undefined
+    ```
+
+- In addition to the gather/rest usage in function declarations, `...` can perform the same behavior in destructing assignments. For example:
+
+    ```js
+    var a = [2, 3, 4];
+    var b = [1, ...a, 5];
+
+    console.log(b); // [ 1, 2, 3, 4, 5 ]
+    ```
+
+    If `...a` appears in an array destructing position, it performs the gather behavior. For example:
+
+    ```js
+    var a = [2, 3, 4];
+    var [b, ...c] = a;
+
+    console.log(b, c); // 2 [ 3, 4 ]
+    ```
+
+    The first part names `b` for the first value in `a` (`2`). But then `...c` gathers the rest of the values (`3` and `4`) into an array and calls it `c`.
+
+- Both forms of destructing (array and object) can offer a default value option for an assignment, using the `=` syntax similar to the default function argument values. For example:
+
+    ```js
+    var [a = 3, b = 6, c = 9, d = 12] = foo();
+    var { x = 5, y = 12, z = 15, w = 20 } = bar();
+
+    console.log(a, b, c, d); // 1 2 3 12
+    console.log(x, y, z, w); // 4 5 6 20
+    ```
+
+    Here `d` and `w` are `undefined` in `foo` and `bar` function. Instead they used their default values (`12` for `d`, and `20` for `w`). You can combine the default value assignment with the alternative assignment expression syntax. For example:
+
+    ```js
+    var { x, y, z, w: WW = 20 } = bar();
+
+    console.log(x, y, z, WW); // 4 5 6 20
+    ```
+
+- Destructuring is great and can be very useful, but it's also a sharp sword that can cause injury (to someone's brain) if used unwisely.
