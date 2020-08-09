@@ -823,3 +823,28 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     Object.setPrototypeOf(o2, o1);
     ```
+
+## Object `super`
+
+- You can use `super` in plain objects' concise methods. For example:
+
+    ```js
+    var o1 = {
+        foo() {
+            console.log("o1:foo");
+        }
+    };
+
+    var o2 = {
+        foo() {
+            super.foo();
+            console.log("o2:foo");
+        }
+    };
+
+    Object.setPrototypeOf(o2, o1);
+
+    o2.foo();
+    ```
+
+- `super` is only allowed in concise method, not regular function expression properties. It also only allowed in `super.XXX` form (for property/method access), not in `super()` form.
