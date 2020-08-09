@@ -737,3 +737,27 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - Concise methods imply anonymous function expressions.
+
+## ES5 Getter/Setter
+
+- Consider:
+
+    ```js
+    var o = {
+        __id: 10,
+        get id() { return this.__id++; },
+        set id(v) { this.__id = v; }
+    }
+
+    o.id; // 10
+    o.id; // 11
+    o.id = 20;
+    o.id; // 20
+
+    // ..
+    o.id; // 21
+    o.id; // 22
+    ```
+
+    These getter and setter literal forms are also present in classes.
+- The setter literal must have exactly one declared parameters. Omitting it or listing others is illegal syntax. The single required parameter can use destructuring and defaults (e.g., `set id({ id: v = 0 }) {..}`), but the gather/rest `...` is not allowed(`set id(...v) {..}`).
