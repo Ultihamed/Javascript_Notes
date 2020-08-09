@@ -681,3 +681,59 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     f3([]); // undefined undefined
     f3([1, 2, 3, 4], 5, 6); // 1 2 [ 3, 4 ] [ 5, 6 ]
     ```
+
+## Object Literal Extensions
+
+- If you need to define a property that is the same name as a lexical identifier, you can shorten it for example `x: x` to `x`. For example:
+
+    ```js
+    // pre-ES6
+    var x = 2, y = 3;
+    var obj = {
+        x: x,
+        y: y
+    }
+
+    // ES6 and beyond
+        var x = 2, y = 3;
+    var obj = {
+        x,
+        y
+    }
+    ```
+
+- Functions attached to properties in object literals have a concise form (concise method). For example:
+
+    ```js
+    // pre-ES6
+    var o = {
+        x: function {
+            // ..
+        },
+        y: function {
+            // ..
+        }
+    }
+
+    // ES6 and beyond
+    var o = {
+        x() {
+            // ..
+        },
+        y() {
+            // ..
+        }
+    }
+    ```
+
+    concise methods have special behaviors that their older counterpart don't. Specifically, the allowance for `super` keyword. Generators also have a concise method form. Fo example:
+
+    ```js
+    var o {
+        *foo() {
+            // ..
+        }
+    };
+    ```
+
+- Concise methods imply anonymous function expressions.
