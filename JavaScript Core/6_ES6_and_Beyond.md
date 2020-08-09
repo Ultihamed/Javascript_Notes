@@ -794,3 +794,32 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
         *["b" + "ar"]() {..} // computed concise generator
     }
     ```
+
+## Setting `[[Prototype]]`
+
+- Consider:
+
+    ```js
+    var o1 = {
+        //..
+    };
+
+    var o2 = {
+        __proto__: o1,
+        // ..
+    }
+    ```
+
+    `o2` is declared with a normal object literal, but it's also `[[Prototype]]`-linked to `o1`. The `__proto__` property name here can also be a string `"__proto__"`. It cannot be the result of a computed property name. Don't use it like `o.__proto__`. This form is both a getter than setter. Instead, you can use the ES6 `Object.setPrototypeOf(..)` utility. For example:
+
+    ```js
+    var o1 = {
+        // ..
+    };
+
+    var o2 = {
+        // ..
+    };
+
+    Object.setPrototypeOf(o2, o1);
+    ```
