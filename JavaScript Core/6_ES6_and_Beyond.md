@@ -749,15 +749,48 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
         set id(v) { this.__id = v; }
     }
 
-    o.id; // 10
-    o.id; // 11
+    o.id;      // 10
+    o.id;      // 11
     o.id = 20;
-    o.id; // 20
+    o.id;      // 20
 
     // ..
-    o.id; // 21
-    o.id; // 22
+    o.id;      // 21
+    o.id;      // 22
     ```
 
     These getter and setter literal forms are also present in classes.
 - The setter literal must have exactly one declared parameters. Omitting it or listing others is illegal syntax. The single required parameter can use destructuring and defaults (e.g., `set id({ id: v = 0 }) {..}`), but the gather/rest `...` is not allowed(`set id(...v) {..}`).
+
+## Computed Property Names
+
+- ES6 adds a syntax to the object literal definition which allows you to specify an expression that should be computed, whose result is the property name assigned. For example:
+
+    ```js
+    var prefix = "user_";
+
+    var o = {
+        baz: function (..) {..},
+        [prefix + "foo"]: function (..) {..},
+        [prefix + "baz"]: function (..) {..}
+        ..
+    };
+    ```
+
+    Probably the most common use of computed property names will be with `Symbol`s. For example:
+
+    ```js
+    var o = {
+        [Symbol.toStringTag]: "Really cool thing",
+        ..
+    };
+    ```
+
+- Computed property names can also appear as the name of a concise method or a concise generator. For example:
+
+    ```js
+    var o = {
+        ["f" + "oo"]() {..}, // computed concise method
+        *["b" + "ar"]() {..} // computed concise generator
+    }
+    ```
