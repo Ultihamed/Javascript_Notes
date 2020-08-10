@@ -848,3 +848,109 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - `super` is only allowed in concise method, not regular function expression properties. It also only allowed in `super.XXX` form (for property/method access), not in `super()` form.
+
+## Template Literals
+
+- ES6 introduces a new type of string literal, using the ``` ` ``` backtick as the delimiter. These string literals allow basic string interpolation expressions to be embedded, which are then automatically parsed and evaluated. Consider this old pre-ES6 way:
+
+    ```js
+    var name = "Kyle";
+
+    var greeting = "Hello" + name + "!";
+
+    console.log(greeting); // "Hello Kyle"
+    console.log(typeof greeting); // "string"
+    ```
+
+    Now, see the new ES6 way:
+
+    ```js
+    var name = "Kyle";
+
+    var greeting = `Hello ${name}!`;
+
+    console.log(greeting); // "Hello Kyle!"
+    console.log(typeof greeting); // "string"
+    ```
+
+    The fancy term for such parsing and evaluating is interpolation (much more accurate than templating). The result of a ``` `..` ``` string literal is, simply, just a string.
+- One really nice benefit of interpolated string literals is they are allowed to split across multiple lines. For example:
+
+    ```js
+    var text =
+        `Now is the time for all good men
+        to come to the aid of their
+        country!`;
+
+    console.log(text);
+    // Now is the time for all good men
+    // to come to the aid of their
+    // country!
+    ```
+
+- Any valid expression is allowed to appear inside `${..}` in an interpolated string literal, including function calls, inline function expression calls, and even other interpolated string literals. For example:
+
+    ```js
+    function upper(s) {
+        return s.toUpperCase();
+    }
+
+    var who = "reader";
+
+    var text =
+        `A very ${upper("warm")} welcome
+        to all of you ${upper(`${who}s`)}!`;
+
+    console.log(text);
+    // A very WARM welcome
+    // to all of you READERS!
+    ```
+
+- An interpolated string literal is just lexically scoped where it appears, not dynamically scoped in any way. For example:
+
+    ```js
+    function foo(str) {
+        var name = "foo";
+        console.log(str);
+    }
+
+    function bar() {
+        var name = "bar";
+        foo(`Hello from ${name}!`);
+    }
+
+    var name = "global";
+
+    bar(); // "Hello from bar!"
+    ```
+
+- You can split your interpolated string literal by using **tagged string literals**. For example:
+
+    ```js
+    function foo(strings, ...values) {
+        console.log(strings);
+        console.log(values);
+    }
+
+    var Hamed = "Hamed";
+    var Hamid = "Hamid";
+
+    // tag function
+    foo`My name is ${Hamed} and my brother name is ${Hamid}`;
+    // [ 'My name is ', ' and my brother name is ', '' ]
+    // [ 'Hamed', 'Hamid' ]
+    ```
+
+- ES6 comes with a built-in function that can be used as a string literal tag: `String.raw(..)`. It simply passes through the raw version of the `strings` values. For example:
+
+    ```js
+    console.log("Hello\nWorld");
+    // Hello
+    // World
+
+    console.log(String.raw`Hello\nWorld`);
+    // Hello\nWorld
+
+    console.log(String.raw`Hello\nWorld`.length);
+    // 12
+    ```
