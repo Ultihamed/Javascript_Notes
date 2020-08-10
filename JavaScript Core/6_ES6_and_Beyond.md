@@ -1008,3 +1008,54 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     Lexical `this` in the arrow function callback in the previous snippet now points to the same value as in the enclosing `makeRequest(..)` function. In other words, `=>` is a syntactic stand-in for `var self = this`.
+
+## `for..of` Loops
+
+- The value you loop over with `for..of` must be an iterable, or it must be a value which can be coerced/boxed to an object that is an iterable.
+- Let's compare `for..of` to `for..in` to illustrate the difference:
+
+    ```js
+    var a = ["a", "b", "c", "d", "e"];
+
+    for (var inx in a) {
+        console.log(idx);
+    }
+    // 0 1 2 3 4
+
+    for (var val of a) {
+        console.log(val);
+    }
+    // "a" "b" "c" "d" "e"
+    ```
+
+    As you can see, `for..in` loops over the keys/indexes in the `a` array, while `for..of` loops over the values in `a`.
+- Standard built-in values in **JavaScript** that are by default iterables (or provide them) include:
+  - Arrays
+  - Strings
+  - Generators
+  - Collections / TypedArrays
+- Here's how to loop over the characters in a primitive string:
+
+    ```js
+    for (var c of "hello") {
+        console.log(c);
+    }
+    // "h" "e" "l" "l" "o"
+    ```
+
+    The `"hello"` primitive string value is coerced/boxed to the `String` object wrapper equivalent, which is an iterable by default.
+- You can do assignmet expressions with `for..of`. For example:
+
+    ```js
+    var o = {};
+
+    for (o.a of [1, 2, 3]) {
+        console.log(o.a);
+    }
+    // 1 2 3
+
+    for ({x: o.a} of [{ x: 1 }, { x: 2 }, { x: 3 }]) {
+        console.log(o.a);
+    }
+    // 1 2 3
+    ```
