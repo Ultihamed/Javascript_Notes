@@ -954,3 +954,57 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     console.log(String.raw`Hello\nWorld`.length);
     // 12
     ```
+
+## Arrow Functions
+
+- It's the primary motivation for the new ES6 `=>` feature. Let's see an arrow function looks like, as compared to normal functions::
+
+    ```js
+    function foo(x, y) {
+        return x + y;
+    }
+
+    // versus
+
+    var foo = (x, y) => x + y;
+    ```
+
+    Here, brackets (`{..}`) were ommited. Because there's only one expression (it's optional). There's an implied `return` in front of the expression. Here's some other arrow function variations to consider:
+
+    ```js
+    var f1 = () => 12;
+    var f2 = x => x * 2;
+    var f3 = (x, y) = {
+        var z = x * 2 + y;
+        y++;
+        x *= 3;
+        return (x + y + z) / 2;
+    }
+    ```
+
+- Arrow functions are anonymous function expressions.
+- All the capabilities of normal function parameters are available to arrow functions, including default values, destructuring, rest parameters, and so on.
+- You can use arrow functions as callbacks. For example:
+
+    ```js
+    var a = [1, 2, 3, 4, 5];
+
+    a = a.map(v => v * 2);
+
+    console.log(a); // [ 2, 4, 6, 8, 10 ]
+    ```
+
+- Inside arrow functions, the `this` binding is not dynamic, but instead lexical. Consider:
+
+    ```js
+    var controller = {
+        makeRequest: function (..) {
+            btn.addEventListener("click", () => {
+                // ..
+                this.makeRequest(..);
+            }, false);
+        }
+    };
+    ```
+
+    Lexical `this` in the arrow function callback in the previous snippet now points to the same value as in the enclosing `makeRequest(..)` function. In other words, `=>` is a syntactic stand-in for `var self = this`.
