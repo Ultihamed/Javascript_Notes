@@ -1179,3 +1179,42 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     re.test(str); // false -- failed for positioning
     re.lastIndex; // 0 -- reset after failure
     ```
+
+## Regular Expression `flags`
+
+- Prior to ES6, if you wanted to examine a regular expression object to see what flags it had applied, you needed to parse them out. Probably with another regular expression (from the content of the `source` property). For example:
+
+    ```js
+    var re = /foo/ig;
+
+    re.toString(); // "/foo/ig"
+
+    var flags = re.toString().match(/\/([grim]*)$/)[1];
+
+    flags; // "ig"
+    ```
+
+    As of ES6, you can now get these values directly, with the new `flags` property. For example:
+
+    ```js
+    var re = /foo/ig;
+
+    re.flags; // "gi"
+    ```
+
+    It's a small nuance, but the ES6 specification calls for the expression's flags to be listed in this order: `"gimuy"`, regardless of what order the original pattern was specified with. That's the reason for the difference between `/ig` and `"gi"`.
+- In ES6 you can override the flags when duplicating. Prior to ES6, it would throw an error. For example:
+
+    ```js
+    var re1 = /foo*/y;
+    re1.source; // "foo*"
+    re1.flags; // "y"
+
+    var re2 = new RegExp(re1);
+    re2.source; // "foo*"
+    re2.flags; // "y"
+
+    var re3 = new RegExp(re1, "ig");
+    re3.source; // "foo*"
+    re3.flags; // "gi"
+    ```
