@@ -1218,3 +1218,51 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     re3.source; // "foo*"
     re3.flags; // "gi"
     ```
+
+## Number Literal Extensions
+
+- Consider:
+
+    ```js
+    var dec = 10,
+        oct = 052,
+        hex = 0x2a;
+    ```
+
+    The default output interpretation is always base-10. So, the three variables in the previous snippet all have the `42` value stored in them.
+- Consider:
+
+    ```js
+    Number("42"); // 42
+    Number("052"); // 52
+    Number("0x2a"); // 42
+    ```
+
+    ES5 continued to permit the browser-extended octal form (including such inconsistencies), except that in strict mode, the octal literal (`052`) form is disallowed. The old octal `052` form will be continue to be legal (though unspecified) in non-strict mode, but should really never be used anymore. Here are the new ES6 number literal forms:
+
+    ```js
+    var dec = 42,
+        oct = 0o52,     // or `0O52
+        hex = 0x2a,     // or `0X2a`
+        bin = 0b101010; // or `0B101010`
+    ```
+
+    The string representations of these forms are all able to be coerced/converted to their number equivalent. For example:
+
+    ```js
+    Number("42");       // 42
+    Number("0o52");     // 42
+    Number("0x2a");     // 42
+    Number("0b101010"); // 42
+    ```
+
+- In ES6 you can convert numbers to another numerial system forms. For example:
+
+    ```js
+    var a = 42;
+
+    a.toString(); // "42" -- also `a.toString(10)`
+    a.toString(8); // "52"
+    a.toString(16); // "2a"
+    a.toString(2); // "101010"
+    ```
