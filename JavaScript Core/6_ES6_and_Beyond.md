@@ -1203,7 +1203,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     It's a small nuance, but the ES6 specification calls for the expression's flags to be listed in this order: `"gimuy"`, regardless of what order the original pattern was specified with. That's the reason for the difference between `/ig` and `"gi"`.
-- In ES6 you can override the flags when duplicating. Prior to ES6, it would throw an error. For example:
+- As of ES6, you can override the flags when duplicating. Prior to ES6, it would throw an error. For example:
 
     ```js
     var re1 = /foo*/y;
@@ -1256,7 +1256,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     Number("0b101010"); // 42
     ```
 
-- In ES6 you can convert numbers to another numerial system forms. For example:
+- As of ES6, you can convert numbers to another numerial system forms. For example:
 
     ```js
     var a = 42;
@@ -1265,4 +1265,178 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     a.toString(8); // "52"
     a.toString(16); // "2a"
     a.toString(2); // "101010"
+    ```
+
+## Unicode
+
+- Prior to ES6, **JavaScript** strings could specify Unicode characters using Unicode escaping. For example:
+
+    ```js
+    var snowman = "\u2603";
+    console.log(snowman); // "☃"
+    ```
+
+    The `\uXXXX` Unicode escaping only supports four hexadecimal characters, so you can only represent the BMP set of characters in this way.
+- As of ES6, we now have a new form for Unicode escaping (in strings and regular expressions), called Unicode code point escaping. For example:
+
+    ```js
+    var gclef = "\u{1D11E}";
+    console.log(gclef); // "𝄞"
+    ```
+
+    Prior to ES6, you most do something like this:
+
+    ```js
+    var gclef = "\uD834\uDD1E";
+    console.log(gclef); // "𝄞"
+    ```
+
+    As you can see, the difference is the presence of the `{}` in the escape sequence, which allows it to contain any number of hexadecimal characters. Because you only need six to represent the highest possible code point value in Unicode (i.e., 0x10FFFF), this is sufficient.
+- By default, **JavaScript** string operations and methods are not sensitive to astral symbols in string values. For example:
+
+    ```js
+    var snowman = "☃";
+    snowman.length; // 1
+
+    var gclef = "𝄞";
+    gclef.length; // 2
+    ```
+
+    But you can do a trick to calculate it accurately:
+
+    ```js
+    var gclef = "𝄞";
+
+    [...gclef].length; // 1
+    Array.from(gclef).length; // 1
+    ```
+
+- As of ES6, strings have built-in iterators. This iterator happens to be Unicode-aware, meaning it will automatically output an astral symbol as a single value. But in some case it wouldn't work. For example:
+
+    ```js
+    var s1 = "\xE9",
+        s2 = "e\u0301";
+
+    // same output
+    console.log(s1); // "é"
+    console.log(s2); // "é"
+
+    [...s1].length; // 1
+    [...s2].lenght; // 2
+    ```
+
+    As you can see, `lenght` trick doesn't work with `s2`. In this case, we can perform a Unicode normalization on the value before inquiring about its length, using the ES6 `String#normalize(..)` utility. For example:
+
+    ```js
+    var s1 = "\xE9",
+        s2 = "e\u0301";
+
+    s1.normalize().length; // 1
+    s2.normalize().length; // 1
+
+    s1 === s2; // false
+    s1 === s2.normalize(); // true
+    ```
+
+    Normalization can even combine multiple adjacent combining marks if there's a suitable Unicode character they combine to. For example:
+
+    ```js
+    var s1 = "o\u0302\u0300",
+        s2 = s1.normalize(),
+        s3 = "ồ";
+
+    s1.length; // 3
+    s2.length; // 1
+    s3.length; // 1
+
+    s2 === s3; // true
+    ```
+
+    Unfortunately, normalization isn't fully perfect here, either. For example:
+
+    ```js
+    var s1 = "e\u0301\u0330";
+
+    console.log(s1); // "ḛ́"
+
+    s1.normalize().length; // 2
+    ```
+
+- Consider the `charAt(..)` function for pre-ES6 to see characters position:
+
+    ```js
+    var s1 = "abc\u0301d",
+        s2 = "ab\u0107d",
+        s3 = "ab\u{1d49e}d";
+
+    console.log(s1); // "abćd"
+    console.log(s2); // "abćd"
+    console.log(s3); // "abd"
+
+    s1.charAt(2); // "c"
+    s2.charAt(2); // "ć"
+    s3.charAt(2); // "" <-- unprintable surrogate
+    s3.charAt(3); // "" <-- unprintable surrogate
+    ```
+
+    You can hack this by a trick:
+
+    ```js
+    var s1 = "abc\u0301d",
+        s2 = "ab\u0107d",
+        s3 = "ab\u{1d49e}d";
+
+    [...s1.normalize()][2]; // "ć"
+    [...s2.normalize()][2]; // "ć"
+    [...s3.normalize()][2]; // ""
+    ```
+
+    But this trick isn't performance wise. What about a Unicode-aware version of the `charCodeAt(..)` utility? ES6 gives us `codePointAt(..)`. For example:
+
+    ```js
+    var s1 = "abc\u0301d",
+        s2 = "ab\u0107d",
+        s3 = "ab\u{1d49e}d";
+
+    s1.normalize().codePointAt(2).toString(16); // "107"
+    s2.normalize().codePointAt(2).toString(16); // "107"
+    s3.normalize().codePointAt(2).toString(16); // "1d49e"
+    ```
+
+    What about the other direction? A Unicode-aware version of `String.fromCharCode(..)` is ES6's `String.fromCodePoint(..)`. For example:
+
+    ```js
+    String.fromCodePoint(0x107); // "ć"
+
+    String.fromCodePoint(0x1d49e); // ""
+    ```
+
+    We can combine `String.fromCodePoint(..)` and `codePointAt(..)` to get a better version of a Unicode-aware `charAt(..)`. For example:
+
+    ```js
+    var s1 = "abc\u0301d",
+        s2 = "ab\u0107d",
+        s3 = "ab\u{1d49e}d";
+
+    String.fromCodePoint(s1.normalize().codePointAt(2)); // "ć"
+
+    String.fromCodePoint(s1.normalize().codePointAt(2)); // "ć"
+
+    String.fromCodePoint(s1.normalize().codePointAt(2)); // ""
+    ```
+
+- Unicode can also be used in identifier names (variables, properties, etc.). Prior to ES6, you could do this with Unicode-escapes. For example:
+
+    ```js
+    var \u03A9 = 42;
+
+    // same as: var Ω = 42;
+    ```
+
+    As of ES6, you can also use code point escape syntax/ For example:
+
+    ```js
+    var \u{2B400} = 42;
+
+    // same as: var 𫐀 = 42;
     ```
