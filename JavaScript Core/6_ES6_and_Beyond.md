@@ -1059,3 +1059,123 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     }
     // 1 2 3
     ```
+
+## Regular Expressions
+
+- In ES6, the `u` flag tells a regular expression to process a string with the interpretation of Unicode (UTF-16) characters, such that such an extended character will be mached as a single entity.
+- Consider:
+
+    ```js
+    // non-sticky mode
+    var re1 = /foo/,
+        str = "++foo++";
+
+    re1.lastIndex; // 0
+    re1.test(str); // true
+    re1.lastIndex; // 0 -- not updated
+
+    re1.lastIndex = 4;
+    re1.test(str); // true -- ignored `lastIndex`
+    re1.lastIndex; // 4 -- not updated
+    ```
+
+    1. `test(..)` doesn't pay any attension to `lastIndex`'s value, and always performs its match from the beginning of the input string.
+    2. Because our pattern does not have a `^` start-of-input anchor, the search for `"foo"` is free to move ahead through the whole string looking for a match.
+    3. `lastIndex` is not updated by `test(..)`.
+
+    Now let's try a **sticky mode** regular expression:
+
+    ```js
+    // sticky mode
+    var re2 = /foo/y,
+        str = "++foo++";
+
+    re2.lastIndex; // 0
+    re2.test(str); // false -- "foo" not around at `0`
+    re2.lastIndex; // 0
+
+    re2.lastIndex = 2;
+    re2.test(str); // true
+    re2.lastIndex; // 5 -- updated to after previous match
+
+    re2.test(str); // false
+    re2.lastIndex; // 0 -- reset after previous match failure
+    ```
+
+    1. `test(..)` uses `lastIndex` as the exact and only position in `str` to look to make a match. There is no moving ahead to look for the match -- it's either there at the `lastIndex` position or not.
+    2. If a match is made, `test(..)` updates `lastIndex` to point to the chatacter immediately following the match. If a match fails, `test(..)` resets `lastIndex` back to `0`.
+- Consider:
+
+    ```js
+    var re = /f../y,
+        str = "foo       far       fad";
+
+    str.match(re); // [ 'foo' ]
+
+    re.lastIndex = 10;
+    str.match(re); // [ 'far' ]
+
+    re.lastIndex = 20;
+    str.match(re); // [ 'fad' ]
+    ```
+
+    `y` requires that `lastIndex` be in the exact position for a match to occur. But it doesn't strictly require that you manually set `lastIndex`. If you can't predict the structure of the input string in a sufficiently patterned way, this technique may not be suitable and you may not be able to use `y`.
+- Consider:
+
+    ```js
+    var re = /\d+\.\s(.*?)(?:\s|$)/y,
+        str = "1. foo 2. bar 3. baz";
+
+    str.match(re); // [ '1. foo ', 'foo' ]
+
+    re.lastIndex; // 7 -- correct position!
+    str.match(str); // [ '1. bar ', 'bar ]
+
+    re.lastIndex; // 14 -- correct position!
+    str.match(str); // [ '3. baz ', 'baz ]
+    ```
+
+    This works because I knew something ahead of time about the structure of the input string: there is always a numeral prefix like `"1. "` before the desired match (`"foo"`, etc), and either a space after it, or the end of the string (`$` anchor). So the regular expression I constructed captures all of that in each main match, and then I use a matching group `()` so that the stuff I really care about is separated out for convenience. If you're going to use `y` sticky mode for repeated matches, you'll probably want to look for opportunities to have `lastIndex` automatically positioned as we've just demonstrated.
+- You can do a match with the `g` global match flag and the `exec(..)` method. For example:
+
+    ```js
+    var re = /o+./g,
+        str = "foot book more";
+
+    re.exec(str); // [ 'oot' ]
+    re.lastIndex; // 4
+
+    re.exec(str); // [ 'ook' ]
+    re.lastIndex; // 9
+
+    re.exec(str); // [ 'or' ]
+    re.lastIndex; // 13
+
+    re.exec(str); // null -- no more matches!
+    re.lastIndex; // 0 -- starts over now!
+    ```
+
+    Now consider:
+
+    ```js
+    var re = /o+./g,
+        str = "foot book more";
+
+    str.match(re); // [ 'oot', 'ook', 'or' ]
+    ```
+
+    The `y` sticky flag will give you one-at-a-time progressive matching with utilities like `test(..)` and `match(..)`. Just make sure the `lastIndex` is always in the right position for each match.
+- A pattern like `/^foo/y` will always and only find a `"foo"` match at the beginning of a string, if it's allowed to match there. If `lastIndex` is not `0`, the match will fail. For example:
+
+    ```js
+    var re = /^foo/y,
+        str = "foo";
+
+    re.test(str); // true
+    re.test(false); // false
+    re.lastIndex; // 0 -- reset after failure
+
+    re.lastIndex = 1;
+    re.test(str); // false -- failed for positioning
+    re.lastIndex; // 0 -- reset after failure
+    ```
