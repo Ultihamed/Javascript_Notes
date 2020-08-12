@@ -1635,3 +1635,251 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     z; // 3
     w; // [ 4, 5 ]
     ```
+
+## Generators
+
+- The position of the `*` in a generator is not functionally relevant. The same declaration could be written as any of the following:
+
+    ```js
+    function *foo()  {..}
+    function* foo()  {..}
+    function * foo() {..}
+    function*foo()   {..}
+    ```
+
+- As of ES6, there is a concise generator form in object literal. For example:
+
+    ```js
+    var a = {
+        *foo() {..}
+    };
+    ```
+
+    Though a generator is declared with `*`, you still execute it like a normal function. For example:
+
+    ```js
+    foo();
+    ```
+
+    You can still pass an arguments, as in:
+
+    ```js
+    function *foo(x, y) {
+        // ..
+    }
+
+    foo(5, 10);
+    ```
+
+    But it doesn't actually run the code in the generator. Instead, it produces an iterator that will control the generator to execute its code.
+- You can use `yield` keywork to signal the pause point in a generator. For example:
+
+    ```js
+    function *foo() {
+        var x = 10;
+        var y = 20;
+
+        yield;
+
+        var z = x + y;
+    }
+    ```
+
+    `yield` can appear any number of times (or not at all, technically!) in a generator.
+- `yield` is not just a pause point. It's an expression that sends out a value when pausing the generator. For example:
+
+    ```js
+    function *foo() {
+        while (true) {
+            yield Math.randome();
+        }
+    }
+    ```
+
+- `yield` without a value is the same as `yield undefined`.
+- The `yield ..` expression not only sends a value, but also receives (e,g., is replaced by) the eventual resumption value. For example:
+
+    ```js
+    function *foo() {
+        var x = yield 10;
+        console.log(x);
+    }
+    ```
+
+- Consider:
+
+    ```js
+    var a, b;
+
+    a = 3;             // valid
+    b = 2 + a = 3;     // invalid
+    b = 2 + (a = 3);   // valid
+
+    yield 3;           // valid
+    a = 2 + yield 3;   // invalid
+    a = 2 + (yield 3); // valid
+    ```
+
+    `yield ..` expression would behave similar to an assignment expression.
+- If you need `yield ..` to appear in a position where an assignment like `a = 3` would not itself be allowed, it needs to be wrapped in a `()`.
+- Because of the low precedence of the `yield` keyword, almost any expression after a `yield ..` will be computed first before being sent with `yield`. Only the `...` spread operator and the `,` comma operator have lower precedence, meaning they'd bind after the `yield` has been evaluated. You might use `()` to override (evelate) the low precedence of `yield`. For example:
+
+    ```js
+    yield 2 + 3; // same as `yield (2 + 3)`
+
+    (yield 2) + 3; // `yield 2` first, then `+ 3`
+    ```
+
+- `yield yield yield 3` is treated as `yield (yield (yield 3))`. A **left-associative** interpretation like `((yield) yield) yield 3)` would make no sense.
+- `yield * ..` (yield delegation) requires an iterable. It then invokes that iterable's iterator, and delegates its own host generator's control to that iterator until it's exhausted. For example:
+
+    ```js
+    function *foo() {
+        yield *[1, 2, 3];
+    }
+    ```
+
+    The `[1, 2, 3]` value produces an iterator that will step through its values. See another example:
+
+    ```js
+    function *foo() {
+        yield 1;
+        yield 2;
+        yield 3;
+    }
+
+    function *bar() {
+        yield *foo();
+    }
+    ```
+
+    Whatever value(s) `*foo()` produces will be produced by `*bar()`. Another example:
+
+    ```js
+    function *foo() {
+        yield 1;
+        yield 2;
+        yield 3;
+        return 4;
+    }
+
+    function *bar() {
+        var x = yield *foo();
+        console.log("x: ", x);
+    }
+
+    for (var v of bar()) {
+        console.log(v);
+    }
+    // 1 2 3
+    // x : { value: 4, done: true }
+    ```
+
+- Both of `return(..)` and `throw(..)` methods have the effect of aborting a paused generator immediately. For example:
+
+    ```js
+    function *foo() {
+        yield 1;
+        yield 2;
+        yield 3;
+    }
+
+    var it = foo();
+
+    it.next(); // { value: 1, done: false }
+
+    it.return(42); // { value: 42, done: true }
+
+    it.next(); // { value: undefined, done: true }
+    ```
+
+- As of ES6, `for..of` loop and the `...` spread operator are call `return(..)` automatically at the end of iteration.
+- Do not put a `yield` statement inside the `finally` clause. It's valid and legal, but it's a really terrible idea.
+- You can use multiple iterators attached to the same generator concurrently. For example:
+
+    ```js
+    function *foo() {
+        yield 1;
+        yield 2;
+        yield 3;
+    }
+
+    var it1 = foo();
+    it1.next(); // { value: 1, done: false }
+    it1.next(); // { value: 2, done: false }
+
+    var it2 = foo();
+    it2.next(); // { value: 1, done: false }
+
+    it1.next(); // { value: 3, done: false }
+
+    it2.next(); // { value: 2, done: false }
+    it2.next(); // { value: 3, done: false }
+
+    it2.next(); // { value: undefined, done: true }
+    it1.next(); // { value: undefined, done: true }
+    ```
+
+- `throw(..)` will pause the generator and throws an exception. For example:
+
+    ```js
+    function *foo() {
+        yield 1;
+        yield 2;
+        yield 3;
+    }
+
+    var it = foo();
+
+    it.next(); // { value: 1, done: false }
+
+    try {
+        it.throw("Oops!");
+    }
+    catch (err) {
+        console.log(err); // Exception: Oops!
+    }
+
+    it.next(); // { value: undefined, done: true }
+    ```
+
+- Unlike `return(..)`, the iterator's `throw(..)` method is never called automatically.
+- You can polyfill pre-ES6 generator simply. For example:
+
+    ```js
+    function foo() {
+        function nextState(v) {
+            switch (state) {
+                case 0:
+                    state++;
+
+                    // the `yield` expression
+                    return 42;
+                case 1:
+                    state++;
+
+                    // `yield` expression fulfilled
+                    x = v;
+                    console.log(x);
+
+                    // the implicit `return`
+                    return undefined;
+                // no need to handle state `2`
+            }
+        }
+
+        var state = 0, x;
+
+        return {
+            next: function (v) {
+                var ret = nextState(v);
+
+                return { value: ret, done: (state == 2) };
+            }
+
+            // we'll skip `return(..)` and `throw(..)`
+        };
+    }
+    ```
+
+- Generators are a powerful abstraction tool for organizing and controlling orderly production and consumption of data.
