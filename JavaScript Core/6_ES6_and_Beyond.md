@@ -1440,3 +1440,103 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     // same as: var 𫐀 = 42;
     ```
+
+## Symbols
+
+- Unlike the other primitive types, however, symbols don't have a literal form. For example:
+
+    ```js
+    var sym = Symbol("some optional description");
+
+    typeof sym; // "symbol"
+    ```
+
+- You cannot and should not use `new` with `Symbol(..)`. It's not a constructor, nor you producing an object.
+- The paramater passed to `Symbol(..)` is optional. If passed, it should be a string that gives a friendly description for the symbol's purpose.
+- The `typeof` output is a new value(`"symbol"`) that is the primary way to identify a symbol.
+- Similar to how primitive string values are not instances of `String`, symbols are also not instances of `Symbol`. For example:
+
+    ```js
+    sym instanceof Symbol; // false
+
+    var symObj = Object(sym);
+    symObj instanceof Symbol; // true
+
+    symObj.valueOf() === sym; // true
+    ```
+
+    There's not much reason to use the boxed wrapper object form (`symObj`) instead of the primitive form (`sym`). It's probably best to prefer `sym` over `symObj`.
+- The main point of a symbol is to create a string-like value that can't collide with any other value. Consider:
+
+    ```js
+    const EVT_LOGIN = Symbol("event.login");
+
+    evthub.listen(EVT_LOGIN, function (data) {
+        // ..
+    });
+    ```
+
+    Here `EVT_LOGIN` holds a value that cannot be duplicated (accidentally or otherwise) by any other value, so it is impossible for there to be any confusion of which event is being dispatched or handled.
+- Implicit string coercion of symbols is not allowed. You can coerce explicitly with `toString(..)` or `String(..)`.
+- To aid in organizing code with access to these symbols, you can create symbol values with the global symbol registry. For example:
+
+    ```js
+    const EVT_LOGIN = Symbol("event.login");
+
+    console.log(EVT_LOGIN); // Symbol(event.login)
+
+    function HappyFace() {
+        const INSTANCE = Symbol.for("instance");
+
+        if (HappyFace[INSTANCE]) return HappyFace[INSTANCE];
+
+        // ..
+
+        return HappyFace[INSTANCE] = {..};
+    }
+    ```
+
+    `Symbol.for(..)` looks in the global symbol registry to see if a symbol is already stored with the provided description text, and returns it if so. If not, it creates one to return. In other words, the global symbol registry treats symbol values, by description text, as singletons themselves.
+- You can retrieve a registered symbol's description text (key) using `Symbol.keyFor(..)`. For example:
+
+    ```js
+    var s = Symbol.for("something cool");
+
+    var desc = Symbol.keyFor(s);
+    console.log(desc); // "something cool"
+
+    // get the symbol from the registry again
+    var s2 = Symbol.for(desc);
+    console.log(desc); // Symbol(something cool)
+
+    s2 === s; // true
+    ```
+
+- If a symbol is used as a property/key of an object, it's stored in a special way so that the property will not show up in a normal enumeration of the object's properties. For example:
+
+    ```js
+    var o = {
+        foo: 42,
+        [Symbol("bar")]: "hello world",
+        baz: true
+    };
+
+    Object.getOwnPropertyNames(o); // [ 'foo', 'baz' ]
+    ```
+
+    To retrieve an object's symbol properties:
+
+    ```js
+    Object.getOwnPropertySymbols(o); // [ Symbol(bar) ]
+    ```
+
+- ES6 comes with a number of predefined built-in symbols that expose various meta behaviors on **JavaScript** object values. However, these symbols are not registered in the global symbol registry, as one might expect. Instead, they're stored as properties on the `Symbol` function object. For example:
+
+    ```js
+    // for example for using in `for..of` loop
+    var a = [1, 2, 3];
+
+    a[Symbol.iterator]; // native function
+    ```
+
+- The specification uses the `@@` prefix notation to refer to the built-in symbols, the most common ones being: `@@iterator`, `@@toStringTag`, `@@toPrimitive`.
