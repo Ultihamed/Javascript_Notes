@@ -1540,3 +1540,98 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - The specification uses the `@@` prefix notation to refer to the built-in symbols, the most common ones being: `@@iterator`, `@@toStringTag`, `@@toPrimitive`.
+
+## Iterators
+
+- The `IteratorResult` interface specifies that return value from any iterator operation will be an object of the form. For example:
+
+    ```js
+    { value: .. , done: true/false }
+    ```
+
+    Built-in iterators will always return values of this form, but more properties are, of course, allowed to be present on the return value, as necessary.
+- Consider:
+
+    ```js
+    var arr = [1, 2, 3];
+
+    var it = arr[Symbol.iterator]();
+
+    it.next(); // { value: 1, done: false }
+    it.next(); // { value: 2, done: false }
+    it.next(); // { value: 3, done: false }
+
+    it.next(); // { value: undefined, done: true }
+    ```
+
+    Each time the method located at `Symbol.iterator` is invoked on this `arr` value, it will produce a new fresh iterator. Most structures will do the same, including all the built-in data structures in **JavaScript**.
+- Primitive string values are also iterables by default. For example:
+
+    ```js
+    var greeting = "hello world";
+
+    var it = greeting[Symbol.iterator]();
+
+    it.next(); // { value: "h", done: false }
+    it.next(); // { value: "e", done: false }
+    ..
+    ```
+
+- You can call the interator `return(..)` function manually as well. `return(..)` will return an `IteratorResult` object just like `next(..)` does.
+- An iterator should not produce any more results after having called `return(..)` or `throw(..)`.
+- You make an iterator an iterable by giving it a `Symbol.iterator` method that simply returns the iterator itself. For example:
+
+    ```js
+    var it = {
+        // make the `it` iterator an interable
+        [Symbol.iterator]() { return this; },
+
+        next() {..},
+        ..
+    };
+
+    it[Symbol.iterator]() === it; // true
+    ```
+
+    Now we can consume the `it` iterator with a `for..of` loop:
+
+    ```js
+    for (var v of it) {
+        console.log(v);
+    }
+    ```
+
+- You can polyfill the `for..of` loop for pre-ES6 like this:
+
+    ```js
+    for (var v, res; (res = it.next()) && !res.done;) {
+        v = res.value;
+        console.log(v);
+    }
+    ```
+
+- `...` operator can also an iterator inside an array. For example:
+
+    ```js
+    var a = [1, 2, 3, 4, 5];
+    var b = [0, ...a, 6];
+
+    console.log(b); // [ 0, 1, 2, 3, 4, 5, 6 ]
+    ```
+
+    Array destructuring can partially or completely consume an iterator. For example:
+
+    ```js
+    var it = a[Symbol.iterator]();
+
+    var [x, y] = it; // take just the first two elements from `it`
+    var [z, ...w] = it; // take the third, then the rest all at once
+
+    // is `it` fully exhausted? Yep.
+    it.next(); // { value: undefined, done: true }
+
+    x; // 1
+    y; // 2
+    z; // 3
+    w; // [ 4, 5 ]
+    ```
