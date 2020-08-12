@@ -1883,3 +1883,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - Generators are a powerful abstraction tool for organizing and controlling orderly production and consumption of data.
+
+## Modules
+
+- The single most important code organization pattern in all of **JavaScript** is, and always has been, the module.
