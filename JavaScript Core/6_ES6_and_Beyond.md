@@ -1887,3 +1887,47 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 ## Modules
 
 - The single most important code organization pattern in all of **JavaScript** is, and always has been, the module.
+- The old way traditional module pattern is based on an outer function with inner variables and functions, and a returned **public API** with methods that have closure over the inner data and capabilities. It's often expressed like this:
+
+    ```js
+    function Hello(name) {
+        function greeting() {
+            console.log("Hello " + name + "!");
+        }
+
+        // public API
+        return {
+            greeting: greeting
+        };
+    }
+
+    var me = Hello("Hamed");
+    me.greeting(); // Hello Hamed!
+    ```
+
+- Sometimes (the old way), a module is only called for as a singleton (i.e., it just needs one instance), using an IIFE. For example:
+
+    ```js
+    var me = (function Hello(name) {
+        function greeting() {
+            console.log("Hello" + name + "!");
+        }
+
+        // public API
+        return {
+            greeting: greeting
+        };
+    })("Hamed");
+
+    me.greeting(); // Hello Hamed!
+    ```
+
+- As of ES6, we no longer need to rely on the enclosing function and closure to provide us with module support. ES6 modules have first class syntactic and functional support.
+- ES6 uses file-based modules, meaning one module per file.
+- The API of an ES6 module is static. That is, you define statically what all the top-level exports are on your module's public API, and those cannot be amended later.
+- ES6 modules are singletons. That is, there's only one instance of the module, which maintains its state. Every time you import that module to another module, you get a reference to the one centralized instance. If you want to be able to produce multiple module instances, your module will need to provide some sort of factory to do it.
+- With ES6, exporting a local private variable, even if it currently holds a primitive string/number/etc, exports a binding to the variable. If the module changes the variable's value, the external import binding now resolves to that new value.
+- Importing a module is the same thing as statically requesting it to load (if it hasn't aleady). If you're in a browser, that implies a blocking load over the network. If you're on a server (i.e., **Node.js**), it's a blocking load from the file system. However, don't panic about the performance implications. Because ES6 modules have static definitions, the import requirements can be statically scanned, and loads will happen preemptively, even before you've used the module.
+- The importing of a module uses a string value to represent where to get the module (URL, file path, etc), but this value is opaque in your program and only meaningful to the Loader itself.
+- The two main new keywords that enable ES6 modules are `import` and `export`.
+- Both `import` and `export` must always appear in the top-level scope of their respective usage. For example, you cannot put either an `import` or `export` inside an `if` conditional. They must be appear outside of all blocks and functions.
