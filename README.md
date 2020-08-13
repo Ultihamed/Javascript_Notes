@@ -1,5 +1,8 @@
 # Javascript_Notes
 
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/Hamed2012-dr)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
+
 ![Javascript](https://www.educative.io/api/page/5330288608542720/image/download/6288755792019456)
 
 Some good note for Javascript programming language.
