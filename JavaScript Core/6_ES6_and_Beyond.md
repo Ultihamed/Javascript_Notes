@@ -1931,3 +1931,38 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 - The importing of a module uses a string value to represent where to get the module (URL, file path, etc), but this value is opaque in your program and only meaningful to the Loader itself.
 - The two main new keywords that enable ES6 modules are `import` and `export`.
 - Both `import` and `export` must always appear in the top-level scope of their respective usage. For example, you cannot put either an `import` or `export` inside an `if` conditional. They must be appear outside of all blocks and functions.
+- The `export` keyword is either put in front of declaration, or used as an operator (of sorts) with a special list of binding to export. For example:
+
+    ```js
+    export function foo() {
+        // ..
+    }
+
+    export var awesome = 42;
+
+    var bar = [1, 2, 3];
+    export { bar };
+    ```
+
+    Another way of expressing the same exports:
+
+    ```js
+    function foo() {
+        // ..
+    }
+
+    var awesome = 42;
+    var bar = [1, 2, 3];
+
+    export { foo, awesome, bar };
+    ```
+
+    These are all called **named exports**. Anything you don't label with `export` stays private inside the scope of the module.
+- Modules do still have access to `window` and all the **global** that hangs of it, just not as lexical top-level scope. However, you really should stay away from the globals in your modules if at all possible.
+- You can **rename** (aka alias) a module member during name export. For example:
+
+    ```js
+    function foo() {..}
+
+    export { foo as bar }
+    ```
