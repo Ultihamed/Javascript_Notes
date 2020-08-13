@@ -1966,3 +1966,52 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     export { foo as bar }
     ```
+
+    When this module is imported, only the `bar` member name is available to import. `foo` stays hidden inside the module.
+- Consier:
+
+    ```js
+    var awesome = 42;
+    export { awesome };
+
+    // later
+    awesome = 100;
+    ```
+
+    When this module is imported, regardless of whether that's before or after the `awesome = 100` setting, once that assignment has happened, the imported binding resolves to the `100` value, not `42`. That's because the binding is, in essence, a reference to, or a pointer to, the `awesome` variable itself, rather than a copy of its value.
+- There can only be one `default` per module definition.
+- Consider these two snippets:
+
+    ```js
+    // ====== 1 ======
+    function foo(..) {
+        // ..
+    }
+
+    export default foo;
+
+    // ====== 2 ======
+    function foo(..) {
+        // ..
+    }
+
+    export { foo as default }
+    ```
+
+    In the first snippet, you are exporting a binding to the function expression value at that moment, not to the identifier `foo`. In other words, `export default ..` takes an expression. If you later assign `foo` to a different value inside your module, the module import still reveals the function originally exported, not the new value. By the way, the first snippet could also have been written as:
+
+    ```js
+    export default function foo(..) {
+        // ..
+    }
+    ```
+
+    In the second snippet, the default export binding is actually to the `foo` identifier rather than its value, so you get the previously described binding behavior (i.e., if you later change `foo`'s value, the value seen on the import side will also be updated). If you never plan to update a default export's value, `export default ..` is fine. If you do plan to update the value, you must use `export { .. as default }`. Either way, make sure to comment your code to explain your intent!
+- The advantage of having each member individually and explicitly exported is that the engine can do the static analysis and optimization.
+- You can re-export another module's exports. For example:
+
+    ```js
+    export { foo, bar } from "baz";
+    export { foo as FOO, bar as BAR } from "baz";
+    export * from "baz";
+    ```
