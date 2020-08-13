@@ -2173,3 +2173,26 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
   - While `function Foo` is **hoisted**, `class Foo` is not. The `extends ..` clause specifies an expression that cannot be **hoisted**. So, you must declare a `class` before you can instantiate it.
   - `class Foo` in the top global scope creates a lexical `Foo` identifier in that scope, but unlike `function Foo` does not create a global object property of that name.
 - A `class` can also be an expression, as, in: `var x = class Y {..}`. This is primarily useful for passing a class definition (technically, constructor) as a function argument or assigning it to an object property.
+- ES6 classes also have syntactic sugar for establishing the `[[Prototype]]` delegation link between two function prototypes using the class-oriented familiar terminology `extends` (commonly mislabeled **inheritance** or confusingly labeled **prototype iheritance**). For example:
+
+    ```js
+    class bar extends Foo {
+        constructor(a, b, c) {
+            super(a, b);
+            this.z = c;
+        }
+
+        gimmeXYZ() {
+            return super.gimmeXY() * this.z;
+        }
+    }
+
+    var b = new Bar(5, 15, 25);
+
+    b.x; // 5
+    b.y; // 15
+    b.z; // 25
+    b.gimmeXYZ(); // 1875
+    ```
+
+- In the constructor, `super` automatically refers to the **parent constructor**. In a method, it refers to the **parent object**, such that you can then make a property/method access off it.
