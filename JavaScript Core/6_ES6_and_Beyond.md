@@ -2123,3 +2123,53 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     This form does not actually import any of the module's bindings into your scope. It loads (if not already loaded), compiles (if not already compiled), and evaluates (if not already run) the `"foo"` module. There may be niche cases where a module's definition has side effects. You could envision using `import "foo"` as a sort of preload for a module that may be needed later.
+
+## Classes
+
+- Consider:
+
+    ```js
+    class Foo {
+        constructor(a, b) {
+            this.x = a;
+            this.y = y;
+        }
+
+        gimmeXY() {
+            return this.x * this.y;
+        }
+    }
+    ```
+
+  - `class Foo` implies creating a (special) function of the name `Foo`, much like you did pre-ES6.
+  - `constructor(..)` identifies the signature of that `Foo(..)` function, as well as its body contents.
+  - Class methods use the same **concise method** syntax available to object literal. This also includes the concise generator, as well as the ES6 getter/setter syntax. However, class methods are non-enumerable whereas object methods are by default enumerable.
+  - Unlike object literals, there are no commas (`,`) separating members in a `class` body. In fact, they're not even allowed.
+  - Look at the prototype-style of this snippet:
+
+    ```js
+    function Foo(a, b) {
+        this.x = a;
+        this.y = b;
+    }
+
+    Foo.prototype.gimmeXY = function () {
+        return this.x * this.y;
+    }
+    ```
+
+  - In either the pre-ES6 form or the new ES6 `class` form, this **class** can now be instantiated and used just as you'd expect:
+
+    ```js
+    var f = new Foo(5, 15);
+
+    f.x; // 5
+    f.y; // 15
+    f.gimmeXY(); // 75
+    ```
+
+- Though `class Foo` seems much like `function Foo()`, there are important differences:
+  - A `Foo(..)` call of `class Foo` must be made with `new`, as the pre-ES6 option of `Foo.call(obj)` will not work.
+  - While `function Foo` is **hoisted**, `class Foo` is not. The `extends ..` clause specifies an expression that cannot be **hoisted**. So, you must declare a `class` before you can instantiate it.
+  - `class Foo` in the top global scope creates a lexical `Foo` identifier in that scope, but unlike `function Foo` does not create a global object property of that name.
+- A `class` can also be an expression, as, in: `var x = class Y {..}`. This is primarily useful for passing a class definition (technically, constructor) as a function argument or assigning it to an object property.
