@@ -1276,7 +1276,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     console.log(snowman); // "☃"
     ```
 
-    The `\uXXXX` Unicode escaping only supports four hexadecimal characters, so you can only represent the BMP set of characters in this way.
+    The `\uXXXX` Unicode escaping only supports four hexadecimal characters, so you can only represent the BMP (**B**asic **M**ultilingual **P**lain) set of characters in this way.
 - As of ES6, we now have a new form for Unicode escaping (in strings and regular expressions), called Unicode code point escaping. For example:
 
     ```js
@@ -2015,3 +2015,111 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     export { foo as FOO, bar as BAR } from "baz";
     export * from "baz";
     ```
+
+- If you want to import certain specific named members of a module's API into your top-level scope, you use this syntax:
+
+    ```js
+    import { foo, bar, baz } from "foo";
+    ```
+
+    The `"foo"` string is called **module specifier**. Because the whole goal is statically analyzable syntax, the module specifier must be a string literal; it cannot be a variable holding the string value.
+- You can rename the bound identifiers imported, as:
+
+    ```js
+    import { foo as theFooFunc } from "foo";
+
+    theFooFunc();
+    ```
+
+- If the module has just a default export that you want to import and bind to an identifier, you can opt to skip the `{..}` surrounding syntax for that binding. For example:
+
+    ```js
+    import foo from "foo";
+
+    // or:
+    import { default as foo } from "foo";
+    ```
+
+- Consider:
+
+    ```js
+    export default function foo() {..}
+
+    export function bar() {..}
+    export function baz() {..}
+    ```
+
+    To import that module's default export and its two named exports, you can do like this:
+
+    ```js
+    import FOOFN, { bar, baz as BAZ } from "foo";
+
+    FOOFN();
+    bar();
+    BAZ();
+    ```
+
+- Consider a `"foo"` module exported as:
+
+    ```js
+    export function bar() {..}
+    export var x = 42;
+    export function baz() {..}
+    ```
+
+    You can import that entire API to a single namespace binding. For example:
+
+    ```js
+    import * as foo from "foo";
+
+    foo.bar();
+    foo.x; // 42
+    foo.baz();
+    ```
+
+- Consider `"world"` module exported as:
+
+    ```js
+    export default function foo() {..}
+    export function bar() {..}
+    export function baz() {..}
+    ```
+
+    If the module you're importing with `* as ..` has a default export, it is named `default` in the namespace specified. You can additionally name the default import outside of the namespace binding, as a top-level identifier. So you can import like this:
+
+    ```js
+    import foofn, * as hello from "world";
+
+    foofn();
+    hello.default();
+    hello.bar();
+    hello.baz();
+    ```
+
+    Avoid designing your module exports in this way, to reduce the chances that your module's users will suffer these strange quirks.
+- All imported bindings are immutable and/or read-only. For example:
+
+    ```js
+    import foofn, * as hello from "world";
+
+    foofn = 42;         // (runtime) TypeError!
+    hello.default = 42; // (runtime) TypeError!
+    hello.bar = 42;     // (runtime) TypeError!
+    hello.baz = 42;     // (runtime) TypeError!
+    ```
+
+- Declarations that occur as a result of an `import` are **hoisted**. For example:
+
+    ```js
+    foo();
+
+    import { foo } from "foo";
+    ```
+
+- Consider this import form:
+
+    ```js
+    import "foo";
+    ```
+
+    This form does not actually import any of the module's bindings into your scope. It loads (if not already loaded), compiles (if not already compiled), and evaluates (if not already run) the `"foo"` module. There may be niche cases where a module's definition has side effects. You could envision using `import "foo"` as a sort of preload for a module that may be needed later.
