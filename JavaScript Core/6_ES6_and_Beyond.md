@@ -2419,3 +2419,25 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
 - Combining the trustability of Promises and the synchronicity of code in generators effectively addresses all the major deficiencies of callbacks.
 - The yield-a-promise-resume-the-generator pattern is going to be so common and so powerful.
+
+## TypedArrays
+
+- The **type** in the name refers to a **view** layared on type of the bucket of bits which is essentially a mapping of whether the bits should be viewed as an array of 8-bit signed integers, 16-bit signed integers, and so on. You can construct such a bit-bucket. It's called a **buffer**, and you construct it most directly with the `ArrayBuffer(..)` constructor. For example:
+
+    ```js
+    var buf = new ArrayBuffer(32);
+    buf.byteLenght; // 32
+    ```
+
+    `buf` is now a binary buffer that is 32-bytes long (256-bits), that's pre initialized to all `0`s.
+- Several web platform features use or return array buffers, such as `FileReader#readAsArrayBuffer(..)`, `XMLHttpRequest$send(..)`, and `ImageData` (canvas data).
+- On the top of an array buffer, you can layer a **view**, which comes in the form of a typed array. For example:
+
+    ```js
+    var buf = new ArrayBuffer(32);
+
+    var arr = new Unit16Array(buf);
+    arr.length; // 16
+    ```
+
+    `arr` is a typed array of 16-bit unsigned integers mapped over the 256-bit `buf` buffer, meaning you get 16 elements.
