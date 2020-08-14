@@ -2195,4 +2195,4 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     b.gimmeXYZ(); // 1875
     ```
 
-- In the constructor, `super` automatically refers to the **parent constructor**. In a method, it refers to the **parent object**, such that you can then make a property/method access off it.
+- In the constructor, `super` automatically refers to the **parent constructor**. In a method, it refers to the **parent object**, such that you can then make a property/method access off it. `Bar extends Foo` of course means to like the `[[Prototype]]` of `Bar.prototype` to `Foo.prototype`.
