@@ -2325,3 +2325,92 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 - A Promise will propagates its rejection entire the chain and can caught by `catch(..)`.
 - You should always observe Promise rejection.
 - Promises are genuine instances of the `Promise(..)` constructor.
+- `Promise.resolve(..)` creates a Promise resolved to the value passed in. For example:
+
+    ```js
+    var p1 = Promise.resolve(42);
+
+    var p2 = new Promise(function (resolve) {
+        resolve(42);
+    });
+    ```
+
+    `p1` and `p2` will have essentially identical behavior. The same goes for resolving with a Promise:
+
+    ```js
+    var theP = ajax(..);
+
+    var p1 = Promise.resolve(theP);
+
+    var p2 = new Promise(function pr(resolve) {
+        resolve(theP);
+    });
+    ```
+
+- `Promise.reject(..)` creates an immediately rejected Promise, the same as its `Promise(..)` constructor counterpart. For example:
+
+    ```js
+    var p1 = Promise.reject("Oops");
+
+    var p2 = new Promise(function pr(resolve,reject) {
+        reject("Oops");
+    });
+    ```
+
+- `resolve(..)` and `Promise.resolve(..)` can accept a Promise and adopt its state/resolution. But `reject(..)` and `Promise.reject(..)` do not differentiate what value they receive.
+- `Promise.all([..])` accepts an array of one or more values (e.g., immediate values, Promises, thenables). It returns a Promise back that will be fulfilled if all the values fulfill, or reject immediately once the first of any of them rejects. Consider:
+
+    ```js
+    var p1 = Promise.resolve(42);
+    var p2 = new Promise(function pr(resolve) {
+        setTimeout(function () {
+            resolve(43);
+        }, 100);
+    });
+    var v3 = 44;
+    var p4 = new Promise(function pr(resolve,reject) {
+        setTimeout(function () {
+            reject("Oops");
+        }, 10);
+    });
+    ```
+
+    Now we're using `Promise.all([..])` for combinations of those values:
+
+    ```js
+    Promise.all([p1, p2, p3])
+        .then(function fulfilled(vals) {
+            console.log(vals); // [ 42, 43, 44 ]
+        });
+
+    Promise.all([p1, p2, p3, p4])
+        .then(
+            function fulfillment(vals) {
+                // never gets here
+            },
+            function rejected(reason) {
+                console.log(reason); // Oops
+            }
+        );
+    ```
+
+    While `Promise.all([..])` waits for all fulfillments (or the first rejection), `Promise.race([..])` waits only for either the first fulfillment or rejection. For example:
+
+    ```js
+    Promise.race([p1, p2, p3])
+        .then(function fulfilled(val) {
+            console.log(val); // 42
+        });
+
+    Promise.race([p2, p4])
+        .then(
+            function fulfilled(val) {
+                // never gets here
+            },
+            function rejected(reason) {
+                console.log(reason); // Oops
+            }
+        );
+    ```
+
+- You should never use `Promise.race([..])` with empty arrays. It will hang forever.
