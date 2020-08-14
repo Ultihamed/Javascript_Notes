@@ -2447,3 +2447,27 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     0000110000001101 / 0c0d (big endian)
     0000110100001100 / 0d0c (little endian)
     ```
+
+- `(3085).toString(2)` return `"110000001101"`, which with an assumed leading four `"0"`s appears to be the big-endian representation.
+- A single buffer can have multiple views attached to it. For example:
+
+    ```js
+    var buf = new ArrayBuffer(2);
+
+    var view8 = new Uint8Array(buf);
+    var view16 = new Uint16Array(buf);
+
+    view16[0] = 3085;
+    view8[0]; // 13
+    view8[1]; // 13
+
+    view8[0].toString(16); // "d"
+    view8[1].toString(16); // "c"
+
+    // swap (as if endian!)
+    var tmp = view8[0];
+    view8[0] = view8[1];
+    view8[1] = tmp;
+
+    view16[0]; // 3340
+    ```
