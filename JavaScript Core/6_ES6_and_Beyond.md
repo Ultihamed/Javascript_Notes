@@ -2303,3 +2303,25 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     Of course, a derived class can still vend instances of itself using `new this.constructor(..)`.
+
+## Promises
+
+- Promises provide a trustable intermediary to manage callbacks.
+- Promise is a **future value**, a time-independent container wrapped around a value.
+- A Promise can only have one of two possible resolution outcomes: **fulfilled** or **rejected**, with an optional single value.
+- Promises can only resolved (fulfillment or rejection) **once**.
+- Once a Promise is resolved, it's an immutable value that cannot be changed.
+- To construct a Promise instance, use the `Promise(..)` constructor. For example:
+
+    ```js
+    var p = new Promise(function pr(resolve, reject) {
+        // ..
+    });
+    ```
+
+    If you call `reject(..)`, the Promise is rejected, and if any value is passed to `reject(..)`, it is set as the reason for rejection. If you call `resolve(..)` with no value, or any non-Promise value, the Promise is fulfilled. If you call `resolve(..)` and pass another Promise, this Promise will simply adopts the state of the passed Promise (either fulfillment or rejection).
+- Promises have a `then(..)` method that accepts one or two callback functions. The first function (if present) is treated as the handler to call if the Promise is fulfilled successfully. The second function (if present) is treated as the handler to call if the Promise is rejected explicitly, or if any error/exception is caught during resolution.
+- The shorthand for calling `then(null, handleRejection)` is `catch(handleRejection)`.
+- A Promise will propagates its rejection entire the chain and can caught by `catch(..)`.
+- You should always observe Promise rejection.
+- Promises are genuine instances of the `Promise(..)` constructor.
