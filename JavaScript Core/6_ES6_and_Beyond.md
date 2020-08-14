@@ -2441,3 +2441,9 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     `arr` is a typed array of 16-bit unsigned integers mapped over the 256-bit `buf` buffer, meaning you get 16 elements.
+- Endian means if the low-order byte (collection of 8-bit) of a multi-byte number is on the right or the left of the number's byte. For example, let's imagine the base-10 number `3085`, which takes 16-bits to represent. If you have just one 16-bit number container, it'd be represented in binary as `0000110000001101` (hexadecimal `0c0d`) regardless of endianness. But if `3085` represented with two 8-bit numbers, the endianness would significantly affects its storage in memory:
+
+    ```txt
+    0000110000001101 / 0c0d (big endian)
+    0000110100001100 / 0d0c (little endian)
+    ```
