@@ -2287,3 +2287,19 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     That `static` members are on the class's prototype chain. They're actually on the dual/parallel chain between the function constructors.
+- If you define a derived class from `Array`, but you want those methods to continune to vend actual `Array` instances instead of from your derived class, this works. For example:
+
+    ```js
+    class MyCoolArray extends Array {
+        // force `species` to be parent constructor
+        static get [Symbol.species]() { return Array; }
+    }
+
+    var a = new MyCoolArray(1, 2, 3),
+        b = a.map(function (v) { return v * 2; });
+
+    b instanceof MyCoolArray; // false
+    b instanceof Array; // true
+    ```
+
+    Of course, a derived class can still vend instances of itself using `new this.constructor(..)`.
