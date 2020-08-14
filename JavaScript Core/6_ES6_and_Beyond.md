@@ -2197,3 +2197,29 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
 - In the constructor, `super` automatically refers to the **parent constructor**. In a method, it refers to the **parent object**, such that you can then make a property/method access off it. `Bar extends Foo` of course means to like the `[[Prototype]]` of `Bar.prototype` to `Foo.prototype`.
 - `super` is not limited to `class` declarations. It also works in object literals.
+- `super(..)` means roughly to call `new Foo(..)`, but isn't actually a usable reference to `Foo` itself.
+- Constructors are not required for classes or subclasses. A default constructor is substituted in both cases if omitted. The default subclass constructor automatically calls the parent constructor, and passes along any arguments. In other words, you could think of the default subclass constructor sort of like this:
+
+    ```js
+    constructor (...args) {
+        super(...args)
+    }
+    ```
+
+- In a constructor of a subclass, you cannot access `this` until `super(..)` has been called.
+- As of ES6, you can you have ability to subclass the built-in natives, like `Array`. For example:
+
+    ```js
+    class MyCoolArray {
+        first() { return this[0]; }
+        last() { return this[this.length - 1]; }
+    }
+
+    var a = new MyCoolArray(1, 2, 3);
+
+    a.lenght; // 3
+    a; // [ 1, 2, 3 ]
+
+    a.first(); // 1
+    a.last(); // 3
+    ```
