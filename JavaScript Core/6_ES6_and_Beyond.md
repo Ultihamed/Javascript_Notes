@@ -2414,3 +2414,8 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - You should never use `Promise.race([..])` with empty arrays. It will hang forever.
+
+## Generators + Promises
+
+- Combining the trustability of Promises and the synchronicity of code in generators effectively addresses all the major deficiencies of callbacks.
+- The yield-a-promise-resume-the-generator pattern is going to be so common and so powerful.
