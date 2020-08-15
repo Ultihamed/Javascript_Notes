@@ -3082,3 +3082,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
   - `sign(..)` - Returns the sign of the number
   - `trunc(..)` - Returns only the integer part of a number
   - `fround(..)` - Rounds to nearest 32-bit (single precision) floating-point value
+
+## API Additions (`Number`)
+
+-
