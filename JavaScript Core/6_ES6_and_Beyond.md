@@ -2471,3 +2471,31 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     view16[0]; // 3340
     ```
+
+- You can create a new view over a new buffer of `length` bytes with `[constructor] (length)`.
+- You can create a new view and buffer, and copies the contents from the `typedArr` view with `[constructor] (typedArr)`.
+- You can create a new view and buffer, and iterates over the array-like or object `obj` to copy its contents with `[constructor] (obj)`.
+- The following typed array constructors are available as of ES6:
+  - `Int8Array` (8-bit signed integers), `Uint8Array` (8-bit unsigned integers).
+    - `Uint8ClampedArray` (8-bit unsigned integers, each value clamped on setting to the `0` - `255` range).
+  - `Int16Array` (16-bit signed integers), `Uint16Array` (16-bit unsigned integers).
+  - `Int32Array` (32-bit signed integers), `Uint32Array` (32-bit unsigned integers).
+  - `Float32Array` (32-floating point, IEEE-754)
+  - `Float64Array` (64-floating point, IEEE-754)
+- Instances of typed array constructors are almost the same as regular native arrays.
+- You can use typed arrays as regular arrays without needing to convert. For example:
+
+    ```js
+    var a = new Int32Array(3);
+    a[0] = 10;
+    a[1] = 20;
+    a[2] = 30;
+
+    a.map(function (v) {
+        console.log(v);
+    });
+    // 10 20 30
+
+    a.join("-");
+    // "10-20-30"
+    ```
