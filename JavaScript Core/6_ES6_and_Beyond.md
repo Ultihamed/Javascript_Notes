@@ -2949,3 +2949,21 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     [...a[Symbol.iterator]()]; // [ 1, 2, 3]
     ```
+
+## API Additions (`Object`)
+
+- `Object.is(..)` works basically as same as `===` comaprison with two important exceptions. Consider:
+
+    ```js
+    var x = NaN, y = 0, z = -0;
+
+    x === x; // false
+    y === z; // true
+
+    Object.is(x, y); // true
+    Object.is(y, z); // false
+    ```
+
+    In cases where you're trying to strictly identify a `NaN` or `-0` value, `Object.is(..)` is now the preferred option.
+- ES6 adds a `Number.isNaN(..)` utility which may be a slightly more convenient test. You may prefer `Number.isNaN(x)` over `Object.is(x, NaN)`.
+- You can accurately test for `-0` with clumsy `x == 0 && 1 / x === -Infinity`, but in this case `Object.is(x, -0)` is much better.
