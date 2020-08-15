@@ -2865,3 +2865,47 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     a; // [ null, 42, 42, null ]
     ```
+
+- The most common way to search for a value in an array has generally been `indexOf(..)` method, which returns the index the value is found or `-1` if not found. For example:
+
+    ```js
+    var a = [1, 2, 3, 4, 5];
+
+    (a.indexOf(3) != -1); // true
+    (a.indexOf(7) != -1); // false
+
+    (a.indexOf("2") != -1); // false
+    ```
+
+    Another way to search is using `some(..)` method. It works by calling a function callback for each element, until one of those calls returns a `true`/truthy value, and then it stops. Because you get to define the callback function, you have full control over how a match is made:
+
+    ```js
+    var a = [1, 2, 3, 4, 5];
+
+    a.some(function matcher(v) {
+        return v == "2";
+    }); // true
+
+    a.some(function matcher(v) {
+        return v == 7;
+    }); // false
+    ```
+
+- `find(..)` lets you match against complex values like objects. For example:
+
+    ```js
+    var points = [
+        { x: 10, y: 20 },
+        { x: 20, y: 30 },
+        { x: 30, y: 40 },
+        { x: 40, y: 50 },
+        { x: 50, y: 60 }
+    ];
+
+    points.find(function matcher(point) {
+        return (
+            point.x % 3 == 0 &&
+            point.y % 4 == 0
+        );
+    }); // { x: 30, y: 40 }
+    ```
