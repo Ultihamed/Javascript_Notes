@@ -2562,3 +2562,21 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     m.get(x); // "foo"
     m.get(y); // "bar"
     ```
+
+- To get the list of values from a map, use `values()`, which returns an iterator. For example:
+
+    ```js
+    var m = new Map();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    m.set(x, "foo");
+    m.set(y, "bar");
+
+    var vals = [...m.values()];
+
+    vals;                   // [ 'foo', 'bar' ]
+    // creates an array from an iterable object
+    Array.from(m.values()); // [ 'foo', 'bar' ]
+    ```
