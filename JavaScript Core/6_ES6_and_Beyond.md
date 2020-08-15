@@ -3124,3 +3124,31 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     You can use `Number.isFinite(+x)`, which explicitly coerces `x` to a number before passing it in.
+- **JavaScript** number values are always floating point. ES6 adds a `Number.isInteger(..)` helper utility that potentially can determine if a number is integer or not. For example:
+
+    ```js
+    Number.isInteger(4);        // true
+    Number.isInteger(4.2);      // false
+    Number.isInteger(NaN);      // false
+    Number.isInteger(Infinity); // false
+    ```
+
+    The old way to determine an interger was:
+
+    ```js
+    x === Math.floor(x);
+    ```
+
+- In **JavaScript**, there's no difference between `4`, `4.`, `4.0`, or `4.0000`. All of these would be considered an **integer**, and would thus yield `true` from `Number.isInteger(..)`.
+- ES6 defines a `Number.isSafeInteger(..)` utility, which checks to make sure the value is both an integer and within the range of `Number.MIN_SAFE_INTEGER`-`Number.MAX_SAFE_INTEGER` (inclusive). For example:
+
+    ```js
+    var x = Math.pow(2, 53),
+        y = Math.pow(-2, 53);
+
+    Number.isSafeInteger(x - 1); // true
+    Number.isSafeInteger(y + 1); // true
+
+    Number.isSafeInteger(x); // false
+    Number.isSafeInteger(y); // false
+    ```
