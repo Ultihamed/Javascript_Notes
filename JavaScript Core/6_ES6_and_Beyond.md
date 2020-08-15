@@ -2803,3 +2803,50 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     });
     // [ 0, 1, 'FOO', 3 ]
     ```
+
+- If you use the base `Array.of(..)` you'll get an `Array` instance, but if you use for example `MyCoolArray.of(..)`, you'll get a `MyCoolArray` instance. But with `Symbol.species`, you can change its way. For example:
+
+    ```js
+    class MyCoolArray extends Array {
+        // force `species` to be parent constructor
+        static get [Symbol.species]() { return Array; }
+    }
+
+    var x = new MyCoolArray(1, 2, 3);
+
+    x.slice(1) instanceof MyCoolArray; // false
+    x.slice(1) instanceof Array; // true
+    ```
+
+    It's important to note that the `@@species` setting is only used for the prototype methods, like `slice(..)`. It's not used by `of(..)` and `from(..)`. They both just use the `this` binding. For example:
+
+    ```js
+    class MyCoolArray extends Array {
+        // force `species` to be parent constructor
+        static get [Symbol.species]() { return Array; }
+    }
+
+    var x = new MyCoolArray(1, 2, 3);
+
+    MyCoolArray.from(x) instanceof MyCoolArray; // true
+    MyCoolArray.of([2, 3]) instanceof MyCoolArray; // true
+    ```
+
+- `copyWithin(..)` copies a portion of an array to another location in the same array, overwriting whatever was there before. The arguments are target, start, and optionally end. If any of the arguments are negative, they're taken to be relative from the end of the array. For example:
+
+    ```js
+    [1, 2, 3, 4, 5].copyWithin(3, 0); // [ 1, 2, 3, 1, 2 ]
+
+    [1, 2, 3, 4, 5].copyWithin(3, 0, 1); // [ 1, 2, 3, 1, 5 ]
+
+    [1, 2, 3, 4, 5].copyWithin(0, -2, -1); // [ 4, 2, 3, 4, 5 ]
+    ```
+
+    The `copyWithin(..)` method does not extend the array's length. Copying simply stops when the end of the array is reached.
+- The copying doesn't always go in left-to-right (ascending index) order. Consider:
+
+    ```js
+    [1, 2, 3, 4, 5].copyWithin(2, 1); // ???
+    ```
+
+    The algorithm avoids this case by copying in reverse order to avoid that gotcha.
