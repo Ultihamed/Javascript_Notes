@@ -2909,3 +2909,32 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
         );
     }); // { x: 30, y: 40 }
     ```
+
+- As of ES6, You can find the position index of the matched value with `findIndex(..)`. For example:
+
+    ```js
+    var points = [
+        { x: 10, y: 20 },
+        { x: 20, y: 30 },
+        { x: 30, y: 40 },
+        { x: 40, y: 50 },
+        { x: 50, y: 60 }
+    ];
+
+    points.findIndex(function matcher(point) {
+        return (
+            point.x % 3 == 0 &&
+            point.y % 4 == 0
+        );
+    }); // 2
+
+    points.findIndex(function matcher(point) {
+        return (
+            point.x % 6 == 0 &&
+            point.y % 7 == 0
+        );
+    }); // -1
+    ```
+
+- Don't use `findIndex(..) != -1` (the way it's always been done with `indexOf(..)`) to get a boolean from the search, because `some(..)` already yields the `true`/`false` you want. And don't do `a[a.findIndex(..)]` to get the matched value, because that's what `find(..)` accomplishes.
+- Use `indexOf(..)` if you need the index of a strict match, or `firstIndex(..)` if you need the index of a more customized match.
