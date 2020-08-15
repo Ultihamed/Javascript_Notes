@@ -2510,3 +2510,55 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     var b = new Uint8Array([10, 1, 2]);
     b.sort(); // [ 1, 2, 10 ]
     ```
+
+## Maps
+
+- You can create an object that is unordered key/value-pair data structures in **JavaScript**, called **Maps**. For example:
+
+    ```js
+    var m = new Map();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    m.set(x, "foo");
+    m.set(y, "bar");
+
+    m.get(x); // "foo"
+    m.get(y); // "bar"
+    ```
+
+- To delete an element from a map, don't use the `delete` operator, but instead use the `delete(..)` method. For example:
+
+    ```js
+    m.set(x, "foo");
+    m.set(y, "bar");
+
+    m.delete(y);
+    ```
+
+- You can clear entire map's contents with `clear()`.
+- To get the length of a map (i.e., the number of keys), use the `size` property (not `length`).
+- The `Map(..)` constructor can receive an iterable, which must produce a list of arrays, where the first item in each array is the key and the second item is the value. You can use `entries(..)` method to do that. That makes it easy to make a copy of a map. For example:
+
+    ```js
+    var m2 = new Map(m.entries());
+
+    // same as:
+    var m2 = new Map(m);
+    ```
+
+    Because a map instance is an iterable, and its default iterator is the same as `entries()`, the second shorter form is more preferable. Of course, you can just manually specify an entries list (array of key/value arrays) in the `Map(..)` constructor form. For example:
+
+    ```js
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    var m = new Map([
+        [x, "foo"],
+        [y, "bar"]
+    ]);
+
+    m.get(x); // "foo"
+    m.get(y); // "bar"
+    ```
