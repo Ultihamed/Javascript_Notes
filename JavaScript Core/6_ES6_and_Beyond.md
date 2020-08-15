@@ -3089,3 +3089,16 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
   - `Number.EPSILON` - The minimum value between any two numbers: `2^-52`
   - `Number.MAX_SAFE_INTEGER` - The highest integer that can **safely** be represented unambiguously in a **JavaScript** number value: `2^53 - 1`
   - `Number.MIN_SAFE_INTEGER` - The lowest integer that can **safely** be represented unambiguously in a **JavaScript** number value: `-(2^53 - 1)` or `(-2)^53 + 1`
+- ES6 adds a fixed utility `Number.isNaN(..)` instead of broken `isNaN(..)`. For example:
+
+    ```js
+    var a = NaN, b = "NaN", c = 42;
+
+    isNaN(a); // true
+    isNaN(b); // true -- oops!
+    isNaN(c); // false
+
+    Number.isNaN(a); // true
+    Number.isNaN(b); // false -- fixed!
+    Number.isNaN(c); // false
+    ```
