@@ -2682,3 +2682,13 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     s.has(x); // true
     s.has(y); // false
     ```
+
+- The default iterator for a set is its `values()` iterator.
+- The inherent uniqueness of a set is its most useful trait. Set uniqueness does not allow coercion, so `1` and `"1"` are considered distinct values. For example:
+
+    ```js
+    var s = new Set([1, 2, 3, 4, "1", 2, 4, "5"]),
+        uniques = [...s];
+
+    uniques; // [ 1, 2, 3, 4, '1', '5' ]
+    ```
