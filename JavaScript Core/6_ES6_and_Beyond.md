@@ -2712,7 +2712,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
 - WeakSet values must be objects, not primitive values as is allowed with sets.
 
-## API Additions
+## API Additions (`Array`)
 
 - ES6 adds a number of helpers to Array, both static and prototype (instance).
 - If there's only one argument passed in an array, and that argument is a number, instead of making an array of one element with that number value in it, it constructs an empty array with a `length` property equal to the number. To avoid that, you can use `Array.of(..)` instead of `Array(..)`. For example:
@@ -2938,3 +2938,14 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
 - Don't use `findIndex(..) != -1` (the way it's always been done with `indexOf(..)`) to get a boolean from the search, because `some(..)` already yields the `true`/`false` you want. And don't do `a[a.findIndex(..)]` to get the matched value, because that's what `find(..)` accomplishes.
 - Use `indexOf(..)` if you need the index of a strict match, or `firstIndex(..)` if you need the index of a more customized match.
+- Consider:
+
+    ```js
+    var a = [1, 2, 3];
+
+    [...a.values()]; // [ 1, 2, 3 ]
+    [...a.keys()]; // [ 0, 1, 2 ]
+    [...a.entries()]; // [ [ 0, 1 ], [ 1, 2 ], [ 2, 3 ] ]
+
+    [...a[Symbol.iterator]()]; // [ 1, 2, 3]
+    ```
