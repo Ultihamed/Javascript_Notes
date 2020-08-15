@@ -3102,3 +3102,25 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     Number.isNaN(b); // false -- fixed!
     Number.isNaN(c); // false
     ```
+
+- Consider:
+
+    ```js
+    var a = NaN, b = Infinity, c = 42;
+
+    Number.isFinite(a); // false
+    Number.isFinite(b); // fasle
+
+    Number.isFininite(c); // true
+    ```
+
+    The standard global `isFinite(..)` coerces its argument, but `Number.isFinite(..)` omits the coercive behavior. For example:
+
+    ```js
+    var a = "42";
+
+    isFinite(a); // true
+    Number.isFinite(a); // false
+    ```
+
+    You can use `Number.isFinite(+x)`, which explicitly coerces `x` to a number before passing it in.
