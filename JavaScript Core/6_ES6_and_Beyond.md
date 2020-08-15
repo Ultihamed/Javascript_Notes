@@ -2967,3 +2967,14 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     In cases where you're trying to strictly identify a `NaN` or `-0` value, `Object.is(..)` is now the preferred option.
 - ES6 adds a `Number.isNaN(..)` utility which may be a slightly more convenient test. You may prefer `Number.isNaN(x)` over `Object.is(x, NaN)`.
 - You can accurately test for `-0` with clumsy `x == 0 && 1 / x === -Infinity`, but in this case `Object.is(x, -0)` is much better.
+- Symbols are likely going to be mostly used as special (meta) properties on objects. So the `Object.getOwnPropertySymbols(..)` utility was introduced, which retrieves only the symbol properties directly on an object. For example:
+
+    ```js
+    var o = {
+        foo: 42,
+        [Symbol("bar")]: "hello world",
+        baz: true
+    };
+
+    Object.getOwnPropertySymbols(o); // [ Symbol(bar) ]
+    ```
