@@ -2636,3 +2636,49 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     w = null; // { id: 4 } is not GC-eligible
     ```
+
+## Sets
+
+- A set is a collection of unique values (duplicated are ignored). For example:
+
+    ```js
+    var s = new Set();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    s.add(x);
+    s.add(y);
+    s.add(x); // ignored, because of duplication
+
+    s.size; // 2
+
+    s.delete(y);
+    s.size; // 1
+
+    s.clear();
+    s.size; // 0
+    ```
+
+- The `Set(..)` constructor form is similar to `Map(..)`, in that it can receive an iterable, like another set or simply an array of values. However, unlike how `Map(..)` expects entries list (array of key/value arrays), `Set(..)` expects a values list (arrays of values). For example:
+
+    ```js
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    var s = new Set([x, y]);
+    ```
+
+- A set doesn't need a `get(..)` because you don't retrieve a value from a set, but rather test if it is present or not, using `has(..)`:
+
+    ```js
+    var s = new Set();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    s.add(x);
+
+    s.has(x); // true
+    s.has(y); // false
+    ```
