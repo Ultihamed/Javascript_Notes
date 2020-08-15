@@ -2483,7 +2483,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
   - `Float32Array` (32-floating point, IEEE-754)
   - `Float64Array` (64-floating point, IEEE-754)
 - Instances of typed array constructors are almost the same as regular native arrays.
-- You can use typed arrays as regular arrays without needing to convert. For example:
+- You can use TypedArrays as regular arrays without needing to convert. For example:
 
     ```js
     var a = new Int32Array(3);
@@ -2498,4 +2498,15 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     a.join("-");
     // "10-20-30"
+    ```
+
+    You can't use certain `Array.prototype` methods with TypedArrays that don't make sense, such as the mutators (`splice(..)`, `push(..)`, etc) and `concat(..)`.
+- TypedArrays have a `sort(..)` method much like regular arrays, but this one defaults to numeric sort comparisons instead of coercing values to strings for lexicographic comparison. For example:
+
+    ```js
+    var a = [10, 1, 2];
+    a.sort(); // [ 1, 2, 10 ]
+
+    var b = new Uint8Array([10, 1, 2]);
+    b.sort(); // [ 1, 2, 10 ]
     ```
