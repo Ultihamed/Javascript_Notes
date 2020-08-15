@@ -2611,3 +2611,28 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     m.has(x); // true
     m.has(y); // false
     ```
+
+## WeakMaps
+
+- Weakmaps take (only) objects as keys. Those object are held weakly, which means if the object itself is GC'd (GC means **G**arbage **C**olletion), the entry in the WeakMap is also removed.
+- WeakMaps do not have a `size` property or `clear()` method, nor do they expose any iterators over their keys, values, or entries.
+- A WeakMap only holds its keys weakly, not it's values. For example:
+
+    ```js
+    var m = new WeakMap();
+
+    var x = { id: 1 },
+        y = { id: 2 },
+        z = { id: 3 },
+        w = { id: 4 };
+
+    m.set(x, y);
+
+    x = null; // { id: 1 } is GC-eligible
+    y = null; // { id: 2 } is GC-eligible
+              // only because { id: 1 } is
+
+    m.set(z, y);
+
+    w = null; // { id: 4 } is not GC-eligible
+    ```
