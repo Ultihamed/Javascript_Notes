@@ -2692,3 +2692,22 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     uniques; // [ 1, 2, 3, 4, '1', '5' ]
     ```
+
+## WeakSets
+
+- A WeakSet holds its values weakly. For example:
+
+    ```js
+    var s = new WeakSet();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    s.add(x);
+    s.add(y);
+
+    x = null; // `x` is GC-eligible
+    y = null; // `y` is GC-eligible
+    ```
+
+- WeakSet values must be objects, not primitive values as is allowed with sets.
