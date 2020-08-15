@@ -2580,3 +2580,34 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     // creates an array from an iterable object
     Array.from(m.values()); // [ 'foo', 'bar' ]
     ```
+
+- To get the list of keys, use `keys()`, which returns an iterator over the keys in the map. For example:
+
+    ```js
+    var m = new Map();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    m.set(x, "foo");
+    m.set(y, "bar");
+
+    var keys = [...m.keys()];
+
+    keys[0] === x; // true
+    keys[1] === y; // true
+    ```
+
+- To determine if a map has a given key, use `has(..)` method. For example:
+
+    ```js
+    var m = new Map();
+
+    var x = { id: 1 },
+        y = { id: 2 };
+
+    m.set(x, "foo");
+
+    m.has(x); // true
+    m.has(y); // false
+    ```
