@@ -3059,3 +3059,26 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     The `d`, `f`, and `Symbol("h")` properties are omitted from copying; non-enumerable properties and non-owned properties are all excluded from the assignment. Also, `e` is copied as a normal property assignment, not duplicated as a read-only property.
+
+## API Additions (`Math`)
+
+- ES6 adds some **Trigonometry** math APIs:
+  - `cosh(..)` - Hyperbolic cosine
+  - `acosh(..)` - Hyperbolic arccosine
+  - `sinh(..)` - Hyperbolic sine
+  - `asinh(..)` - Hyperbolic arcsine
+  - `tanh(..)` - Hyperbolic tangent
+  - `atanh(..)` - Hyperbolic arctanget
+  - `hypot(..)` - The squareroot of the sum of the squares(i.e., the generalized Pythagorean theorem)
+- ES6 adds some **Arithmetic** math APIs:
+  - `cbrt(..)` - Cube root
+  - `clz32(..)` - Count leading zeros in 32-bit binary representation
+  - `expm1(..)` - The same as `exp(..) - 1`
+  - `log2(..)` - Binary logarithms (log base 2)
+  - `log10(..)` - Log base 10
+  - `log1p(..)` - The same as `log(x + 1)`
+  - `imul(..)` - 32-bit integer multiplication of two numbers
+- ES6 adds some **Meta** math APIs:
+  - `sign(..)` - Returns the sign of the number
+  - `trunc(..)` - Returns only the integer part of a number
+  - `fround(..)` - Rounds to nearest 32-bit (single precision) floating-point value
