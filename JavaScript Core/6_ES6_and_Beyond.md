@@ -2711,3 +2711,77 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - WeakSet values must be objects, not primitive values as is allowed with sets.
+
+## API Additions
+
+- ES6 adds a number of helpers to Array, both static and prototype (instance).
+- If there's only one argument passed in an array, and that argument is a number, instead of making an array of one element with that number value in it, it constructs an empty array with a `length` property equal to the number. To avoid that, you can use `Array.of(..)` instead of `Array(..)`. For example:
+
+    ```js
+    var a = Array(3);
+    a.length; // 3
+    a[0]; // undefined
+
+    var b = Array.of(3);
+    b.length; // 1
+    b[0]; // 3
+
+    var c = Array.of(1, 2, 3);
+    c.length; // 3
+    c; // [ 1, 2, 3 ]
+    ```
+
+- `slice(..)` method is often used in duplicating a real array. For example:
+
+    ```js
+    var arr2 = arr.slice();
+    ```
+
+    The new ES6 `Array.from(..)` method can be a more understandable and graceful approach. For example:
+
+    ```js
+    var arr = Array.from(arrlike);
+
+    var arrCopy = Array.from(arr);
+    ```
+
+- `Array.from(..)` looks to see if the first argument is an iterable, and if so, it uses the iterator to produce values to **copy** into the returned array. Because real arrays have an iterator for those values, that iterator automatically used.
+- If you pass an array-like object as the first argument to `Array.from(..)`, it behaves basically the same as `slice()` (no arguments!) or `apply(..)` does which is that it simply loops over the value, accessing numerically named properties from `0` up to whatever the value of `length` is. Consider:
+
+    ```js
+    var arrLike = {
+        length: 4,
+        2: "foo"
+    };
+
+    Array.from(arrLike);
+    // [ undefined, undefined, 'foo', undefined ]
+    ```
+
+    You could produce a similar outcome like this:
+
+    ```js
+    var emptySlotArray = [];
+    emptySlotArray.length = 4;
+    emptySlotArray[2] = "foo";
+
+    Array.from(emptySlotArray);
+    // [ undefined, undefined, "foo", undefined ]
+    ```
+
+- `Array.from(..)` never produces empty slots.
+- Prior to ES6, if you wanted to produce an array initialized to a certain length with actual `undefined` values in each slot (no empty slots!), you had to do extra:
+
+    ```js
+    var a = Array(4); // four empty slots!
+
+    var b = Array.apply(null, { length: 4 }); // four `undefined` values
+    ```
+
+    But `Array.from(..)` now makes this easier:
+
+    ```js
+    var c = Array.from({ length: 4 }); // four `undefined` values
+    ```
+
+- You sould never intentionally work with empty slots, as it will almost certainly lead to strange/unpredictable bahavior in your programs.
