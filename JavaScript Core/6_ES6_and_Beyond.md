@@ -2740,7 +2740,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     The new ES6 `Array.from(..)` method can be a more understandable and graceful approach. For example:
 
     ```js
-    var arr = Array.from(arrlike);
+    var arr = Array.from(arrLike);
 
     var arrCopy = Array.from(arr);
     ```
@@ -2850,3 +2850,18 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     The algorithm avoids this case by copying in reverse order to avoid that gotcha.
+- As of ES6, you can fill an existing array entirely (or partially) with a specified value with `Array#fill(..)` method. For example:
+
+    ```js
+    var a = Array(4).fill(undefined);
+    a;
+    // [ undefined, undefined, undefined, undefined ]
+    ```
+
+    `fill(..)` optionally takes start and end paramaters, which indicate a subset portion of the array to fill. For example:
+
+    ```js
+    var a = [null, null, null, null].fill(42, 1, 3);
+
+    a; // [ null, 42, 42, null ]
+    ```
