@@ -3085,4 +3085,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
 ## API Additions (`Number`)
 
--
+- ES6 adds some helpful numeric constants as static properties:
+  - `Number.EPSILON` - The minimum value between any two numbers: `2^-52`
+  - `Number.MAX_SAFE_INTEGER` - The highest integer that can **safely** be represented unambiguously in a **JavaScript** number value: `2^53 - 1`
+  - `Number.MIN_SAFE_INTEGER` - The lowest integer that can **safely** be represented unambiguously in a **JavaScript** number value: `-(2^53 - 1)` or `(-2)^53 + 1`
