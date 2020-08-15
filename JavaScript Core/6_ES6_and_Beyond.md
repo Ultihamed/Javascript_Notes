@@ -2785,3 +2785,21 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - You sould never intentionally work with empty slots, as it will almost certainly lead to strange/unpredictable bahavior in your programs.
+- The `Array.from(..)`'s second parameter is a mapping callback (almost as the same as the regular `Array#map(..)` expects) which is called to map/transform each value from the source to the returned target. For example:
+
+    ```js
+    var arrLike = {
+        length: 4,
+        2: "foo"
+    };
+
+    Array.from(arrLike, function mapper(val, idx) {
+        if (typeof val == "string") {
+            return val.toUpperCase();
+        }
+        else {
+            return idx;
+        }
+    });
+    // [ 0, 1, 'FOO', 3 ]
+    ```
