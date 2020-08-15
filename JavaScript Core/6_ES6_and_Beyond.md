@@ -2978,3 +2978,34 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     Object.getOwnPropertySymbols(o); // [ Symbol(bar) ]
     ```
+
+- You can link objects `[[Prototype]]` with `Object.setPrototypeOf(..)` method. For example:
+
+    ```js
+    var o1 = {
+        foo() { console.log("foo"); }
+    };
+    var o2 = {
+        // .. o2's definition
+    };
+
+    Object.setPrototypeOf(o2, o1);
+
+    // delegates to `o1.foo()`
+    o2.foo(); // foo
+    ```
+
+    Alternatively:
+
+    ```js
+    var o1 = {
+        foo() { console.log("foo"); }
+    };
+
+    var o2 = Object.setPrototypeOf({
+        // .. o2's definition
+    }, o1);
+
+    // delegates to `o1.foo()`
+    o2.foo(); // foo
+    ```
