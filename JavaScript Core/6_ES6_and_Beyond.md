@@ -3318,3 +3318,38 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     The `with` statement is disallowed entirely in `strict` mode, and as such sould be considered deprecated from the language. Don't use it. Because `with` should be avoided, the `@@unscopables` symbol is also moot.
+- Here's a list of handlers you can define on a proxy for a target object/function, and how/when they are triggered:
+  - `get(..)`: via `[[Get]]`, a property is accessed on the proxy (`Reflect.get(..)`, `.` property operator, or `[..]` property operator).
+  - `set(..)`: via `[[Set]]`, a property value is set on the proxy (`Reflect.set(..)`, the `=` assignment operator, or destructing assignment if it targets an obejct property).
+  - `deleteProperty(..)`: via `[[Delete]]`, a property is deleted from the proxy (`Reflect.deleteProperty(..)` or `delete`).
+  - `apply(..)` (if target is a function): via `[[Call]]`, the proxy is invoked as a normal function/method (`Reflect.apply(..)`, `call(..)`, `apply(..)`, or the `(..)` call operator).
+  - `construct(..)` (if target is a constructor function): via `[[Construct]]`, the proxy is invoked as a constructor function (`Reflect.construct(..)`, or `new`).
+  - `getOwnPropertyDescriptor(..)`: via `[[GetOwnProperty]]`, a property descriptor is retrieved from the proxy (`Object.getOwnPropertyDescriptor(..)` or `Reflect.getOwnPropertyDescriptor(..)`).
+  - `defineProperty(..)`: via `[[DefineOwnProperty]]`, a property descriptor is set on the proxy (`Object.defineProperty(..)` or `Reflect.defineProperty(..)`).
+  - `getPrototypeOf(..)`: via `[[GetPrototypeOf]]`, the `[[Prototype]]` of the proxy is retrieved (`Object.getPrototypeOf(..)`, `Reflect.getPrototypeOf(..)`, `__proto__`, `Object#isPrototypeOf(..)`, or `instanceof`).
+  - `setPrototypeOf(..)`: via `[[SetPrototypeOf]]`, the `[[Prototype]]` of the proxy is set (`Object.setPrototypeOf(..)`, `Reflect.setPrototypeOf(..)`, or `__proto__`).
+  - `preventExtensions(..)`: via `[[PreventExtensions]]`, the proxy is made non-extensible (`Object.preventExtensions(..)` or `Reflect.preventExtensions(..)`).
+  - `isExtensible(..)`: via `[[IsExtensible]]`, the extensibility of the proxy is probed (`Object.isExtensible(..)` or `Reflect.isExtensible(..)`).
+  - `ownkeys(..)`: via `[[OwnPropertyKeys]]`, the set of owned properties and/or owned symbol properties of the proxy is retrieved (`Object.Keys(..)`, `Object.getOwnPropertyName(..)`, `Object.getOwnSymbolProperties(..)`, `Reflect.ownKeys(..)`, or `JSON.stringify(..)`).
+  - `enumerate(..)`: via `[[Enumerate]]`, an iterator is requested for the proxy's enumerable owned and **inherited** properties (`Reflect.enumerate(..)` or `for..in`).
+  - `has(..)`: via `[[HasProperty]]`, the proxy is probed to see if it has an owned or **inherited** property(`Reflect.has(..)`, `Object#hasOwnProperty(..)`, or `"prop" in obj`).
+- An example for a proxy:
+
+    ```js
+    var handlers = {
+        getOwnPropertyDescriptor(target, prop) {
+            console.log("getOwnPropertyDescriptor");
+            return Object.getOwnPropertyDescriptor(target, prop);
+        },
+        defineProperty(target, prop, desc) {
+            console.log("defineProperty");
+            return Object.defineProperty(target, prop, desc);
+        }
+    };
+
+    var proxy = new Proxy({}, handlers);
+
+    proxy.a = 2;
+    // getOwnPropertyDescriptor
+    // defineProperty
+    ```
