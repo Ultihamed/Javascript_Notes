@@ -3290,3 +3290,31 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     The `Symbol.toPrimitive` method will be provided with a hint of `"string"`, `"number"`, or `"default"` (which should interpreted as `"number"`), depending on what type the operation invoking `ToPrimitive` is expecting.
 - `Symbol.match` is used by the `isRegExp` abstract operation to determine if an object is intended to be used as a regular expression. To force this check to fail for an object so it's not treated as a regular expression, set the `Symbol.match` value to `false` (or something falsy).
+- The `@@isConcatSpreadable` symbol can be defined as a boolean property (`Symbol.isConcatSpreadable`) on any object (like an array or other iterable) to indicate if it should be spread out if passed to an array `concat(..)`. For example:
+
+    ```js
+    var a = [1, 2, 3],
+        b = [4, 5, 6];
+
+    b[Symbol.isConcatSpreadable] = false;
+    [].concat(a, b); // [ 1, 2, 3, [ 4, 5, 6 ] ]
+    ```
+
+- The `@@unscopables` symbol can be defined as an object property (`Symbol.unscopables`) on any object to indicate which properties can and cannot be exposed as lexical variables in a `with` statement. For example:
+
+    ```js
+    var o = { a: 1, b: 2, c: 3 },
+        a = 10, b = 20, c = 30;
+
+    o[Symbol.unscopables] = {
+        a: false,
+        b: true,
+        c: false
+    };
+
+    with (o) {
+        console.log(a, b, c); // 1 23 3
+    }
+    ```
+
+    The `with` statement is disallowed entirely in `strict` mode, and as such sould be considered deprecated from the language. Don't use it. Because `with` should be avoided, the `@@unscopables` symbol is also moot.
