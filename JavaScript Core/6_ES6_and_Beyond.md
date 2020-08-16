@@ -3163,3 +3163,15 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     String.raw`\ta${str}d\xE9`;
     // "\tabcd\xE9", not "    abcdé"
     ```
+
+- In languages like **Python** and **Ruby**, you can repeat a string as:
+
+    ```js
+    "foo" * 3; // "foofoofoo"
+    ```
+
+    That doesn't work in **JavaScript** and `"foo"` coerces to the `NaN` number. However, ES6 defines a string prototype method `repeat(..)` to accomplish the task. For example:
+
+    ```js
+    "foo".repeat(3); // "foofoofoo"
+    ```
