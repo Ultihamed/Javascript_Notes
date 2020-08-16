@@ -3175,3 +3175,18 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```js
     "foo".repeat(3); // "foofoofoo"
     ```
+
+- ES6 adds three new methods for searching/inspection through a string. `startsWith(..)`, `endsWith(..)` and `includes(..)`. For example:
+
+    ```js
+    var palindrome = "step on no pets";
+
+    palindrome.startsWith("step on"); // true
+    palindrome.startsWith("on", 5); // true
+
+    palindrome.endsWith("no pets"); // true
+    palindrome.endsWith("no", 10); // true
+
+    palindrome.includes("on"); // true
+    palindrome.includes("on", 6); // false
+    ```
