@@ -3267,3 +3267,5 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     obj1.toString(); // [object Object]
     obj2.toString(); // [object myObj]
     ```
+
+- If you need to define methods that generate new instances, use the meta programming of the `new this.constructor[Symbol.species](..)` pattern instead of the hard-writing of `new this.constructor(..)` or `new XYZ(..)`.
