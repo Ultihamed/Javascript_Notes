@@ -3255,3 +3255,15 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     }
     // 5 7 9
     ```
+
+- The `@@toStringTag` symbol on the prototype (or instance itself) specifies a string value to use the `[object___]` stringification. For example:
+
+    ```js
+    var obj1 = {};
+    var obj2 = {
+        [Symbol.toStringTag]: "myObj"
+    };
+
+    obj1.toString(); // [object Object]
+    obj2.toString(); // [object myObj]
+    ```
