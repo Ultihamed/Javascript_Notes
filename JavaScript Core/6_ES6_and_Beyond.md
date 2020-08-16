@@ -3269,3 +3269,23 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
 - If you need to define methods that generate new instances, use the meta programming of the `new this.constructor[Symbol.species](..)` pattern instead of the hard-writing of `new this.constructor(..)` or `new XYZ(..)`.
+- Consider:
+
+    ```js
+    var arr = [1, 2, 3, 4, 5];
+
+    arr + 10; // 1, 2, 3, 4 , 510
+
+    arr[Symbol.toPrimitive] = function (hint) {
+        if (hint == "default" || hint == "number") {
+            // sum all numbers
+            return this.reduce(function (acc, curr) {
+                return acc + curr;
+            }, 0);
+        }
+    };
+
+    arr + 10; // 25
+    ```
+
+    The `Symbol.toPrimitive` method will be provided with a hint of `"string"`, `"number"`, or `"default"` (which should interpreted as `"number"`), depending on what type the operation invoking `ToPrimitive` is expecting.
