@@ -3289,3 +3289,4 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     The `Symbol.toPrimitive` method will be provided with a hint of `"string"`, `"number"`, or `"default"` (which should interpreted as `"number"`), depending on what type the operation invoking `ToPrimitive` is expecting.
+- `Symbol.match` is used by the `isRegExp` abstract operation to determine if an object is intended to be used as a regular expression. To force this check to fail for an object so it's not treated as a regular expression, set the `Symbol.match` value to `false` (or something falsy).
