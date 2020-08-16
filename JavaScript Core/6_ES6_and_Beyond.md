@@ -1408,7 +1408,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```js
     String.fromCodePoint(0x107); // "ć"
 
-    String.fromCodePoint(0x1d49e); // ""
+    String.fromCodePoint(0x1d49e); // "𝒞"
     ```
 
     We can combine `String.fromCodePoint(..)` and `codePointAt(..)` to get a better version of a Unicode-aware `charAt(..)`. For example:
@@ -1422,7 +1422,7 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     String.fromCodePoint(s1.normalize().codePointAt(2)); // "ć"
 
-    String.fromCodePoint(s1.normalize().codePointAt(2)); // ""
+    String.fromCodePoint(s1.normalize().codePointAt(2)); // "𝒞"
     ```
 
 - Unicode can also be used in identifier names (variables, properties, etc.). Prior to ES6, you could do this with Unicode-escapes. For example:
@@ -3151,4 +3151,15 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     Number.isSafeInteger(x); // false
     Number.isSafeInteger(y); // false
+    ```
+
+## API Additions (`String`)
+
+- You can use `String.raw(..)` for obtain the raw string value without any processing of escape sequences. This function will almost never be called manually, but will be used with tagged template literals. For example:
+
+    ```js
+    var str = "bc";
+
+    String.raw`\ta${str}d\xE9`;
+    // "\tabcd\xE9", not "    abcdé"
     ```
