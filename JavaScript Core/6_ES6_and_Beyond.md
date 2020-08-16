@@ -3190,3 +3190,44 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     palindrome.includes("on"); // true
     palindrome.includes("on", 6); // false
     ```
+
+## Meta Programming
+
+- Meta programming focuses on one or more of the following: code inspecting itself, code modifying itself, or code modifying default language behavior so other code is affected.
+- If a function has a `name` value assigned, that's typically the name used in stack traces in developer tool.
+- You can see the result of `name` properties from these functions below:
+
+    ```js
+    (function () {..}); // name:
+    (function* () {..}); // name:
+    window.foo = function () {..}; // name:
+
+    class Awesome {
+        constructor() {..} // name: Awesome
+        funny() {..} // name: funny
+    }
+
+    var c = class Awesome {..}; // name: Awesome
+
+    var o = {
+        foo() {..}, // name: foo
+        *bar() {..}, // name: bar
+        baz: () => {..}, // name: baz
+        bam: function () {..}, // name: bam
+        get qux() {..}, // name: qux
+        set fuz() {..}, // name: fuz
+        ["b" + "iz"]: function () {..}, // name: biz
+        [Symbol("buz")]: function () {..} // name: [buz]
+    };
+
+    var x = o.foo.bind(o); // name: bound foo
+    (function () {..}).bind(o); // name: bound
+
+    export default function () {..} // name: default
+
+    var y = new Function(); // name: anonymous
+    var GeneratorFunction = function* () {}.__proto__.constructor;
+    var z = new GeneratorFunction(); // name: anonymous
+    ```
+
+    You can use `Object.defineProperty(..)` to manually change they `name` property if so desired.
