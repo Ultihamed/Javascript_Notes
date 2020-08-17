@@ -3525,3 +3525,35 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
 
     In this program, `bar(..)` is clearly recursive, but `foo(..)` is just a regular function call. In both cases, the function calls are in proper tail position. The `x + 1` is evaluated before the `bar(..)` call, and whenever that call finishes, all that happens in the `return`.
 - As of ES6, all PTC (**P**roper **T**ail **C**alls) should be optimizable in this way, recursion or not.
+- Consider:
+
+    ```js
+    "use strict"
+
+    function foo(x) {
+        if (x <= 1) return 1;
+        return (x / 2) + foo(x - 1);
+    }
+
+    foo(123456); // RangeError
+    ```
+
+    The call to `foo(x - 1)` isn't a PTC because its result has to be added to `(x / 2)` before `return`ing. However, to make this code eligible for TCO in an ES6 **Engine**, we can rewrite it as follows:
+
+    ```js
+    "use strict"
+
+    var foo = (function () {
+        function _foo(acc, x) {
+            if (x <= 1) return acc;
+        }
+
+        return function (x) {
+            return _foo(1, x);
+        }
+    })();
+
+    foo(123456); // 3810376848.5
+    ```
+
+    However, it'll still fail with a `RangeError` in non-TCO **Engines**.
