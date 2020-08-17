@@ -3353,3 +3353,71 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     // getOwnPropertyDescriptor
     // defineProperty
     ```
+
+- Once a revocable proxy is revoked, any attempts to access it (trigger any of its traps) will throw a `TypeError`. For example:
+
+    ```js
+    var obj = { a: 1 },
+        handlers = {
+            get(target, key, context) {
+                // note: target === obj,
+                // context === pobj
+                console.log("accessing: ", key);
+                return target[key];
+            }
+        },
+        { proxy: pobj, revoke: prevoke } = Proxy.revocable(obj, handlers);
+
+    pobj.a;
+    // accessing: a
+    // 1
+
+    // later:
+    prevoke();
+
+    pobj.a;
+    // TypeError
+    ```
+
+- The meta programming benefits of Proxy handlers should be obvious. We can almost fully intercept (and thus override) the behavior of objects, meaning we can extend object behavior beyond core **JavaScript** in some very powerful ways.
+- You may wish to predefine all the properties/methods for an object, and have an error thrown if a nonexistent property name is subsequently used. We can accomplish this with a proxy. For example:
+
+    ```js
+    var obj = {
+        a: 1,
+        foo() {
+            console.log("a: ", this.a);
+        }
+    },
+        handlers = {
+            get(target, key, context) {
+                if (Reflect.has(target, key)) {
+                    return Reflect.get(
+                        target, key, context
+                    );
+                }
+                else {
+                    throw " No such property/method!";
+                }
+            },
+            set(target, key, val, context) {
+                if (Reflect.has(target, key)) {
+                    return Reflect.get(
+                        target, key, val, context
+                    );
+                }
+                else {
+                    throw "No such property/method!";
+                }
+            }
+        },
+        pobj = new Proxy(obj, handlers);
+
+    pobj.a = 3;
+    pobj.foo(); // a: 3
+
+    pobj.b = 4; // Error: No such property/method!
+    pobj.bar(); // Error: No such property/method!
+    ```
+
+    For both `get(..)` and `set(..)`, we only forward the operaion if the target object's property already exists (error throw otherwise).
