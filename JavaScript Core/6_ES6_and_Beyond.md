@@ -3455,3 +3455,29 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     Object.getOwnPropertyNames(o); // [ 1, 2, 'b', 'a' ]
     Object.getOwnPropertySymbols(o); // [ Symbol(c) ]
     ```
+
+- `Reflect.enumerable(..)`, `Object.keys(..)`, and `for..in` (as well as `JSON.stringify` by extension) continue to share an observable ordering with each other, as they always have.
+- Consider:
+
+    ```js
+    if (!Number.isNaN) {
+        Number.isNaN = function (x) {
+            return x !== x;
+        };
+    }
+    ```
+
+    The `if` statement in this snippet is meta programmingL we're probing our program and its runtime environment to determine if and how we sould proceed.
+- Consider:
+
+    ```js
+    try {
+        new Function("(() => {})");
+        ARROW_FUNCS_ENABLED = true;
+    }
+    catch (err) {
+        ARROW_FUNC_ENABLED = false;
+    }
+    ```
+
+    Here we're meta programming by determining if a feature like arrow functions can compile in the current engine or not.
