@@ -3481,3 +3481,47 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     Here we're meta programming by determining if a feature like arrow functions can compile in the current engine or not.
+- Normally, when a function call is made from inside another function, a second stack frame is allocated to separately manage the variables/state of that other function invocation. Not only does this allocation cost some processing time, but it takes up some extra memory. A call stack chain typically has a most 10-15 jumps from one function to another and another. In those scenarios, the memory usage is not likely any kind of practical problem. **JavaScript Engines** have to set an arbitary limit to prevent such programming techniques from crashing by running the browser and device out of memory. That's why we get the frustrating **"RangeError: Maximum call stack size exceeded"** thrown if the limit is hit.
+- A tail call is a `return` statement with a function call, where nothing has to happen after the call except returning its value. This optimization can only be applied in `strict` mode. Yet another reason to always be writing all your code as `strict`.
+- Consider this function that is not in tail position:
+
+    ```js
+    "use strict"
+
+    function foo(x) {
+        return x * 2;
+    }
+
+    function bar(x) {
+        // not a tail call
+        return 1 + foo(x);
+    }
+
+    bar(10); // 21
+    ```
+
+    `1 + ..` has to be performed after the `foo(x)` call completes, so the state of that `bar(..)` invocation needs to be preserved. So you can optimize it with TCO (**T**ail **C**all **O**ptimization):
+
+    ```js
+    "use strict"
+
+    function foo(x) {
+        return x * 2;
+    }
+
+    function bar(x) {
+        x = x + 1;
+        if (x < 10) {
+            return foo(x);
+        }
+        else {
+            return bar(x + 1);
+        }
+    }
+
+    bar(5); // 24
+    bar(15); // 32
+    ```
+
+    In this program, `bar(..)` is clearly recursive, but `foo(..)` is just a regular function call. In both cases, the function calls are in proper tail position. The `x + 1` is evaluated before the `bar(..)` call, and whenever that call finishes, all that happens in the `return`.
+- As of ES6, all PTC (**P**roper **T**ail **C**alls) should be optimizable in this way, recursion or not.
