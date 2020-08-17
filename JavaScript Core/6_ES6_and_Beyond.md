@@ -3669,3 +3669,42 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
   - A **cancel token** can be passed to an async function at call time
   - Return value changes to a cancelable-promise type that's added
   - Return value changes to something else non-promise (e.g., observable, or control token with promise and cancel capabilities)
+- As of ES6, you can listen for updates a data object and syncing the DOM representation of that data (with `Object.observe(..)`). There are six kind of changes that you can observe:
+  - add
+  - update
+  - delete
+  - reconfigure
+  - setPrototype
+  - preventExtensions
+
+    By default, you'll be notified of all these change types, but you can filter down to only the ones you care about. For example:
+
+    ```js
+    var obj = { a: 1, b: 2 };
+
+    Object.observe(
+        obj,
+        function (changes) {
+            for (var change of changes) {
+                console.log(change);
+            }
+        },
+        ["add", "update", "delete"]
+    );
+
+    obj.c = 3;
+    // { name: 'c', object: obj, type: add }
+
+    obj.a = 42;
+    // { name: 'a', object: obj, type: 'update', oldValue: 1 }
+
+    delete obj.b;
+    // { name: 'b', object: obj, type: 'delete', oldValue: 2 }
+    ```
+
+    In addition to the main `"add"`, `"update"`, and `"delete"` change types:
+    - The `"reconfigure"` change event is fired if one of the object's properties is reconfigured with `Object.defineProperty(..)`, such as changing its `writable` attribute.
+    - The `"preventExtensions"` change event is fired if the object is made non-extensible via `Object.preventExtensions(..)`. `"reconfigure"` change events will also be fired for each property on the object.
+    - The `"setPrototype"` change event is fired if the `[[Prototype]]` of an object is changed, either by setting it with the `__proto__` setter, or using `Object.setPrototypeOf(..)`.
+
+    Notice that these change events are notified immediately after said change. Don't confuse this with Proxies where you can intercept the actions before they occur. Object observation lets you respond after a change (or set of changes) occurs.
