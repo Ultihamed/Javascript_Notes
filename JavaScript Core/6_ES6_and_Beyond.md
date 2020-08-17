@@ -3435,3 +3435,23 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
   - `Reflect.get(..)`: For example, `Reflect.get(o, "foo")` retrieves `o.foo`.
   - `Reflect.set(..)`: For example, `Reflect.set(o, "foo", 42)` essentially performs `o.foo = 42`.
   - `Reflect.deleteProperty(..)`: For example, `Reflect.deleteProperty(o, "foo")` essentially performs `delete o.foo`.
+- As of ES6, the order for listing owned properties is now defined by the `[[OwnPropertyKeys]]` algorithm, which produces all owned properties (strings or symbols), regardless of enumerability. The ordering is:
+  1. First, enumerate any owned properties that are integer indexes, in ascending numeric order.
+  2. Next, enumerate the rest of the owned string property names in creation order.
+  3. Finally, enumerate owned symbol properties in creation order.
+
+  For example:
+
+    ```js
+    var o = {}
+
+    o[Symbol("c")] = "yay";
+    o[2] = true;
+    o[1] = true;
+    o.b = "awesome";
+    o.a = "cool";
+
+    Reflect.ownKeys(o); // [ 1, 2, 'b', 'a', Symbol(c) ]
+    Object.getOwnPropertyNames(o); // [ 1, 2, 'b', 'a' ]
+    Object.getOwnPropertySymbols(o); // [ Symbol(c) ]
+    ```
