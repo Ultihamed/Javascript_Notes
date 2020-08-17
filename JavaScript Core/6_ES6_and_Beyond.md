@@ -3557,3 +3557,115 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     However, it'll still fail with a `RangeError` in non-TCO **Engines**.
+
+## Beyond ES6
+
+- Consider:
+
+    ```js
+    run(function *main() {
+        var ret = yield step1();
+
+        try {
+            ret = yield step2(ret);
+        }
+        catch (err) {
+            ret = yield step2Failed(err);
+        }
+
+        ret = yield Promise.all([
+            step3a(ret),
+            step3b(ret),
+            step3c(ret)
+        ]);
+
+        yield step4(ret);
+    })
+        .then(
+            function fulfilled() {
+                // `*main()` completed successfully
+            },
+            function rejected() {
+                // Oops, something went wrong
+            }
+        );
+    ```
+
+    The `async function` syntax can express this same flow control logic without needing the `run(..)` utility, because **JavaScript** will automatically know how to look for promises to wait and resume. For example:
+
+    ```js
+    async function main() {
+        var ret = await step1();
+
+        try {
+            ret = await step2(ret);
+        }
+        catch (err) {
+            ret = await step2Failed(err);
+        }
+
+        ret = await Promise.all([
+            step3a(ret),
+            step3b(ret),
+            step3c(ret)
+        ]);
+
+        await step4(ret);
+    }
+
+    main()
+        .then(
+            function fulfilled() {
+                // `main()` completed successfully
+            },
+            function rejected() {
+                // Oops, something wrong
+            }
+        )
+    ```
+
+    Instead of the `function *main() { ..` declaration, we declare with the `async function main() { ..` form. And instead of `yield`ing a promise, we `await` the promise. The call to run the function `main()` actually returns a promise that we can directly observe. That's the equivalent to the promise that we get back from a `run(main)` call.
+- `async function` is essentially syntactic sugar for the generators + promises + `run(..)` pattern (under the cover, it operates the same).
+- If you're a **C#** developer and this `async`/`await` looks familiar, it's because this feature is directly inspired by **C#**'s feature.
+- Consider:
+
+    ```js
+    async function request(url) {
+        var resp = await (
+            new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", url);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readystate == 4) {
+                        if (xhr.status == 200) {
+                            resolve(xhr);
+                        }
+                        else {
+                            reject(xhr.statusText);
+                        }
+                    }
+                };
+                xhr.send();
+            })
+        );
+
+        return resp.responseText;
+    }
+
+    var pr = request("http://some.url1.1");
+
+    pr.then(
+        function fulfillment(responseText) {
+            // ajax success
+        },
+        function rejected(reason) {
+            // Oops, something went wrong
+        }
+    );
+    ```
+
+    Promises are not cancelable (at the time of writing, anyway). In my opinion, as well as many others, they never should be. And even if a promise did have a `cancel()` method on it, does that necessarily mean that calling `pr.cancel()` should actually propagate a cancelation signal all the way back up the promise chain to the `async function`? Several possible resolutions to this debate have surfaced:
+  - `async function`s won't be cancelable at all (status quo)
+  - A **cancel token** can be passed to an async function at call time
+  - Return value changes to a cancelable-promise type that's added
+  - Return value changes to something else non-promise (e.g., observable, or control token with promise and cancel capabilities)
