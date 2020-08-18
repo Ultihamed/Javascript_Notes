@@ -3708,3 +3708,19 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     - The `"setPrototype"` change event is fired if the `[[Prototype]]` of an object is changed, either by setting it with the `__proto__` setter, or using `Object.setPrototypeOf(..)`.
 
     Notice that these change events are notified immediately after said change. Don't confuse this with Proxies where you can intercept the actions before they occur. Object observation lets you respond after a change (or set of changes) occurs.
+- Just like with normal event listeners, you may with to stop observing an object's change events. For that, you use `Object.unobserve(..)`. Fore example:
+
+    ```js
+    var obj = { a: 1, b: 2 };
+
+    Object.observe(obj, function observer(changes) {
+        for (var change of changes) {
+            if (change.type == "setPrototype") {
+                Object.unobserve(
+                    change.object, observer
+                );
+                break;
+            }
+        }
+    });
+    ```
