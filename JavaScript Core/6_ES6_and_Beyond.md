@@ -3787,3 +3787,5 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
         // found it!
     }
     ```
+
+- Parallel math operations are critical for the next generations of high performance **JavaScript** applications.
