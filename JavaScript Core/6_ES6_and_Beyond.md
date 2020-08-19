@@ -3758,3 +3758,32 @@ destructuring/decomposing, you get graceful fallback to `undefined`, as you'd ex
     ```
 
     Here, the `...o2` re-gathers the destructed `c` and `d` properties back into an `o2` object (`o2` does not have a `b` property like `o1` does). These are just proposals under consideration beyond ES6. But it'll be cool if they do land.
+- One extremely common task **JavaScript** developers need to perform is searching for a value inside an array of values. Consider:
+
+    ```js
+    var vals = ["foo", "bar", 42, "baz"];
+
+    if (vals.indexOf(42) >= 0) {
+        // found it!
+    }
+    ```
+
+    The reason for the `>= 0` check is because `indexOf(..)` returns a numeric value of `0` or greater if found, or `-1` if not found. In other words, we're using an index-returning function in a boolean context. But because `-1` is truthy instead of falsy, we have to be more manual with our checks. For example:
+
+    ```js
+    var vals = ["foo", "bar", 42, "baz"];
+
+    if (~vals.indexOf(42)) {
+        // found it
+    }
+    ```
+
+    The `~` operator here conforms the return value of `indexOf(..)` to a value range that is suitably boolean coercible. That is, `-1` produces `0` (falsy), and anything else produces a non-zero (thruthy) value, which is what we for deciding if we found the value or not. But if you don't care about `-0` values in your program, use `Array#includes(..)`, but if you do care about `-0`, you'll need to do your own searching logic, likely using the `Object.is(..)` utility. For example:
+
+    ```js
+    var vals = ["foo", "bar", 42, "baz"];
+
+    if (vals.includes(42)) {
+        // found it!
+    }
+    ```
