@@ -38,3 +38,9 @@
   - Google's **JavaScript Engine** (V8) was extracted to run **JavaScript** anywhere (called **Node.js**, **Deno**, and etc).
   - **Node.js** can be executed on any machine and its therefore often used to build we backends (server-side **JavaScript**).
   - **Node.js** can access the local filesystem, interact with the operating system, and etc. It can't manipulate HTML or CSS.
+
+## Difference Between **Java** and **JavaScript**
+
+- **Java** doesn't (can't) run in a browser.
+- **Java** is an object-oriented and strongly type language.
+- All syntax, concepts, core features, and etc in **JavaScript** environments are same.
