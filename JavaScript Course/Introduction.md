@@ -44,3 +44,12 @@
 - **Java** doesn't (can't) run in a browser.
 - **Java** is an object-oriented and strongly type language.
 - All syntax, concepts, core features, and etc in **JavaScript** environments are same.
+
+## **JavaScript** History
+
+- 1995: Netscape introduces **LiveScript**/**JavaScript**.
+- 1996: Microsoft releases its own version for IE.
+- Late 1996: **JavaScript** submitted to **ECMA International** to start standardization (ECMA stands for **E**uropean **C**omputer **M**anufactures **A**ssociation).
+- 1997 - 2005: Standardization efforts, Microsoft didn't really join and support the standardized **JavaScript** version though.
+- 2006 - 2011: Huge progress in **JavaScript** ecosystem and Microsoft eventually joined forces.
+- 2015 - 2016: **JavaScript** saw a major overhaul, a brand new version you could almost say with a lot of important changes and many tutorials and courses actually teach you the old **JavaScript** syntax which still works but which is not the most recent one and which has certain downsides and then they later switch to the modern syntax.
