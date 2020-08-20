@@ -27,3 +27,14 @@
 - Data types are assumed (e.g. assigned to variables) automatically.
 - You don't define that some variable has to hold a certain value (e.g. a number).
 - Data types are not set in stone but can change.
+
+## **JavaScript** Runs On A Host Environment
+
+- Brower-side:
+  - **JavaScript** was invented to create more dynamic websites by executing in the browser.
+  - **JavaScript** can manipulate the HTML code, CSS, send background http requests and much more.
+  - **JavaScript** can't access the local file system, interact with the operating system, and etc.
+- Server-side:
+  - Google's **JavaScript Engine** (V8) was extracted to run **JavaScript** anywhere (called **Node.js**, **Deno**, and etc).
+  - **Node.js** can be executed on any machine and its therefore often used to build we backends (server-side **JavaScript**).
+  - **Node.js** can access the local filesystem, interact with the operating system, and etc. It can't manipulate HTML or CSS.
