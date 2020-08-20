@@ -20,3 +20,10 @@
 ![How JavaScript Is Executed](Assets/3.png)
 
 - All these operations happens on a single thread.
+
+## Dynamic and Weakly Typed Languages
+
+- In **JavaScript** code can change at runtime (e.g. type of a variable).
+- Data types are assumed (e.g. assigned to variables) automatically.
+- You don't define that some variable has to hold a certain value (e.g. a number).
+- Data types are not set in stone but can change.
