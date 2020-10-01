@@ -5,7 +5,7 @@
 
 ![Javascript](https://www.educative.io/api/page/5330288608542720/image/download/6288755792019456)
 
-Some good note for Javascript programming language.
+Some good notes for Javascript programming language.
 
 ## Telegram = [https://t.me/hamedalavi6540](https://t.me/hamedalavi6540)
 
