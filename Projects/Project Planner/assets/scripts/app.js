@@ -80,6 +80,7 @@ class ProjectItem {
         this.updateProjectListsHandler = updateProjectListsFunction;
         this.connectMoreInfoButton();
         this.connectSwitchButton(type);
+        this.connectDrag();
     }
 
     showMoreInfoHandler() {
@@ -99,6 +100,17 @@ class ProjectItem {
         const projectItemElement = document.getElementById(this.id);
         const moreInfoBtn = projectItemElement.querySelector("button:first-of-type");
         moreInfoBtn.addEventListener("click", this.showMoreInfoHandler.bind(this));
+    }
+
+    connectDrag() {
+        const item = document.getElementById(this.id);
+        item.addEventListener("dragstart", event => {
+            event.dataTransfer.setData("text/plain", this.id);
+            event.dataTransfer.effectAllowed = "move";
+        });
+        item.addEventListener("dragend", event => {
+            console.log(event);
+        })
     }
 
     connectSwitchButton(type) {
@@ -125,6 +137,34 @@ class ProjectList {
             this.projects.push(new ProjectItem(prjItem.id, this.switchProject.bind(this), this.type));
         }
         console.log(this.projects);
+        this.connectDroppable();
+    }
+
+    connectDroppable() {
+        const list = document.querySelector(`#${this.type}-projects ul`);
+
+        list.addEventListener("dragover", event => {
+            if (event.dataTransfer.types[0] === "text/plain") {
+                event.preventDefault();
+            }
+            list.parentElement.classList.add("droppable");
+        });
+        list.addEventListener("dragleave", event => {
+            if (event.relatedTarget.closest(`#${this.type}-projects ul`)) {
+                if (event.relatedTarget.closest(`#${this.type}-projects ul`) !== list) {
+                    list.parentElement.classList.remove("droppable");
+                }
+            }
+        });
+        list.addEventListener("drop", event => {
+            const prjId = event.dataTransfer.getData("text/plain");
+            if (this.projects.find(p => p.id === prjId)) {
+                return;
+            }
+            document.getElementById(prjId).querySelector("button:last-of-type").click();
+            list.parentElement.classList.remove("droppable");
+            // event.preventDefault(); // not required
+        });
     }
 
     setSwitchHandlerFunction(switchHandlerFunction) {
